@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOWARP — Work</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <style>
+    /*
+      --vw = min(window.innerWidth, 1920) / 100  (JS로 설정)
+      1920px 기준: 모든 크기는 calc(var(--vw) * X) 사용
+    */
+    @font-face {
+      font-family: 'Karlsbader Grotesk';
+      src: url('/fonts/KarlsbaderGrotesk-400.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    :root { --vw: 19.2px; }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body { background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+    /* ─── HEADER ─────────────────────────────── */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      background: rgba(255,255,255,0.9);
+    }
+
+    /* 마키 섹션: 흰 배경 + 상단 패딩 */
+    .marquee-section {
+      width: 100%;
+      padding: calc(var(--vw) * 1.042) calc(var(--vw) * 4.167) 0; /* top:20px, 좌우:80px */
+      background: rgba(255,255,255,0.9);
+    }
+
+    .marquee-bar {
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    .marquee-bar-inner {
+      background: #000;
+      width: 100%;
+      height: calc(var(--vw) * 2.083); /* 40px */
+      display: flex;
+      align-items: center;
+    }
+
+    .marquee-track {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      will-change: transform;
+    }
+
+    .marquee-set {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--vw) * 5.208); /* 100px */
+      padding-right: calc(var(--vw) * 5.208);
+      flex-shrink: 0;
+    }
+
+    .marquee-text {
+      font-family: Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.729);
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .marquee-logo {
+      height: calc(var(--vw) * 0.852);
+      width: auto;
+      display: block;
+      filter: invert(1);
+    }
+
+    /* 메인 헤더 바 */
+    .header-main {
+      width: 100%;
+      height: calc(var(--vw) * 5.208); /* 100px */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 calc(var(--vw) * 4.167); /* 80px */
+      position: relative;
+    }
+
+    .header-logo-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      height: calc(var(--vw) * 2.802);
+      width: auto;
+      display: block;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: calc(var(--vw) * 4.167); /* 80px */
+      align-items: center;
+    }
+
+    .header-nav a {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.729);
+      text-decoration: none;
+      color: #999796;
+      text-transform: capitalize;
+    }
+
+    .header-nav a.active { color: #000; }
+
+    .header-cta {
+      background: #000;
+      color: #fff;
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.729);
+      padding: calc(var(--vw) * 0.625) calc(var(--vw) * 0.729);
+      border-radius: calc(var(--vw) * 0.417);
+      text-decoration: none;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    /* ─── PAGE BODY ───────────────────────────── */
+    .page-body {
+      padding-top: calc(var(--vw) * 13.854); /* 266px */
+      padding-left: calc(var(--vw) * 4.167);  /* 80px */
+      padding-right: calc(var(--vw) * 4.167);
+      padding-bottom: calc(var(--vw) * 4.167);
+    }
+
+    /* ─── GALLERY ─────────────────────────────── */
+    .project-gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      column-gap: calc(var(--vw) * 1.224); /* 23.5px */
+      row-gap: calc(var(--vw) * 0.625);    /* 12px */
+    }
+
+    .gallery-item {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--vw) * 3.125); /* 60px */
+    }
+
+    .gallery-label {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--vw) * 0.521); /* 10px */
+    }
+
+    .gallery-label-line {
+      width: 100%;
+      height: 1px;
+      background: #000;
+    }
+
+    .gallery-label span {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.833); /* 16px */
+      font-weight: 400;
+      color: #000;
+      text-transform: uppercase;
+    }
+
+    .gallery-item {
+      position: relative;
+    }
+    .gallery-item:not(:nth-child(3n))::after {
+      content: '';
+      position: absolute;
+      right: calc(var(--vw) * -0.612);
+      top: 0;
+      height: 100%;
+      width: 1px;
+      background: #000;
+    }
+
+    .gallery-media {
+      width: 100%;
+      aspect-ratio: 571 / 714;
+      overflow: hidden;
+      background: #080808;
+    }
+
+    .gallery-media video,
+    .gallery-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ─── SCROLL REVEAL ──────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.9s ease,
+                  transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="marquee-section">
+      <div class="marquee-bar">
+        <div class="marquee-bar-inner">
+        <div class="marquee-track" id="marqueeTrack">
+          <div class="marquee-set">
+            <span class="marquee-text">Brand &amp; Creative Agency</span>
+            <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+            <span class="marquee-text">브랜드 &amp; 크리에이티브 에이전시</span>
+            <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+            <span class="marquee-text">Brand &amp; Creative Agency</span>
+            <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+            <span class="marquee-text">브랜드 &amp; 크리에이티브 에이전시</span>
+            <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-main">
+      <nav class="header-nav">
+        <a href="#" class="active">Work</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+      </nav>
+      <img class="header-logo-center" src="/media/fowarp-logo-center.svg" alt="FOWARP">
+      <a href="#" class="header-cta">Get in Touch</a>
+    </div>
+  </header>
+
+  <div class="page-body">
+    <div class="project-gallery">
+
+      <!-- Row 1 -->
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>GoVenture Forum</span>
+        </div>
+        <div class="gallery-media">
+          <video autoplay muted loop playsinline>
+            <source src="/media/B01/goventure.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>Starbucks® COFFEE AT HOME</span>
+        </div>
+        <div class="gallery-media">
+          <video autoplay muted loop playsinline>
+            <source src="/media/B01/starbucks.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>Hyundai Motor CMK Foundation</span>
+        </div>
+        <div class="gallery-media">
+          <video autoplay muted loop playsinline>
+            <source src="/media/B01/cmk.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>NESCAFÉ® Dolce Gusto®</span>
+        </div>
+        <div class="gallery-media">
+          <img src="/media/B01/nescafe.jpg" alt="NESCAFÉ® Dolce Gusto®">
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>veggiet</span>
+        </div>
+        <div class="gallery-media">
+          <img src="/media/B01/veggiet.jpg" alt="veggiet">
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>ReSaltZ</span>
+        </div>
+        <div class="gallery-media">
+          <img src="/media/B01/resaltz.jpg" alt="ReSaltZ">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function updateVW() {
+      var w = Math.min(window.innerWidth, 1920);
+      document.documentElement.style.setProperty('--vw', (w / 100) + 'px');
+    }
+    updateVW();
+    window.addEventListener('resize', updateVW);
+
+    // Smooth scroll (Lenis)
+    var lenis = new Lenis({
+      duration: 0.9,
+      easing: function(t) { return 1 - Math.pow(1 - t, 4); },
+      smoothWheel: true
+    });
+    function lenisRaf(time) { lenis.raf(time); requestAnimationFrame(lenisRaf); }
+    requestAnimationFrame(lenisRaf);
+
+    // Scroll reveal
+    (function() {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+      var targets = document.querySelectorAll('.gallery-item');
+      targets.forEach(function(el, i) {
+        el.classList.add('reveal');
+        el.style.transitionDelay = (i * 0.08) + 's';
+        observer.observe(el);
+      });
+    })();
+
+    /* ── Seamless marquee ── */
+    (function() {
+      var track = document.getElementById('marqueeTrack');
+      var set   = track.querySelector('.marquee-set');
+
+      var pos      = 0;
+      var speed    = 0.6;
+      var setWidth = 0;
+      var raf;
+
+      function fillClones() {
+        while (track.children.length > 1) track.removeChild(track.lastChild);
+        setWidth = set.offsetWidth;
+        var copies = Math.ceil(window.innerWidth / setWidth) + 1;
+        for (var i = 0; i < copies; i++) {
+          track.appendChild(set.cloneNode(true));
+        }
+      }
+
+      function measure() { fillClones(); }
+
+      function tick() {
+        pos -= speed;
+        if (pos <= -setWidth) pos += setWidth;
+        track.style.transform = 'translateX(' + pos + 'px)';
+        raf = requestAnimationFrame(tick);
+      }
+
+      measure();
+      tick();
+      window.addEventListener('load', function() {
+        cancelAnimationFrame(raf);
+        measure();
+        tick();
+      });
+
+      window.addEventListener('resize', function() {
+        cancelAnimationFrame(raf);
+        updateVW();
+        setTimeout(function() { measure(); tick(); }, 50);
+      });
+    })();
+  </script>
+</body>
+</html>
