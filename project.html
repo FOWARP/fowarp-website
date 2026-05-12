@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FOWARP — Portfolio</title>
+  <title>FOWARP — Project</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
   <style>
@@ -139,10 +139,10 @@
       padding-bottom: calc(var(--vw) * 4.167);
     }
 
-    /* ─── GALLERY ─────────────────────────────── */
+    /* ─── GALLERY (4-column) ──────────────────── */
     .project-gallery {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       column-gap: calc(var(--vw) * 1.224); /* 23.5px */
       row-gap: calc(var(--vw) * 0.625);    /* 12px */
     }
@@ -151,7 +151,7 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      height: calc(var(--vw) * 41.719); /* 801px */
+      height: calc(var(--vw) * 30.885); /* ~593px @ 1920 (proportional to 3-col 801px) */
     }
 
     .gallery-label {
@@ -175,7 +175,7 @@
       text-transform: uppercase;
     }
 
-    .gallery-item:not(:nth-child(3n))::after {
+    .gallery-item:not(:nth-child(4n))::after {
       content: '';
       position: absolute;
       right: calc(var(--vw) * -0.612);
@@ -280,14 +280,13 @@
           <div class="gallery-label-line"></div>
           <span>NO SUGAR ADDED</span>
         </div>
-        <div class="gallery-media" style="margin-top: auto; flex: none; height: calc(var(--vw) * 19.323);">
+        <div class="gallery-media" style="margin-top: auto; flex: none; height: calc(var(--vw) * 14.281);">
           <video autoplay muted loop playsinline>
             <source src="/media/gallery/nosugar.mp4" type="video/mp4">
           </video>
         </div>
       </div>
 
-      <!-- Row 2 -->
       <div class="gallery-item">
         <div class="gallery-label">
           <div class="gallery-label-line"></div>
@@ -303,7 +302,7 @@
               <div style="color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*1.011);line-height:1.1;text-transform:uppercase;">
                 SKIN HEALER<br>PLASMA DEVICE
               </div>
-              <div style="color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*0.536);line-height:1.4;text-transform:uppercase;max-width:calc(var(--vw)*26);text-align:left;">
+              <div style="color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*0.536);line-height:1.4;text-transform:uppercase;max-width:calc(var(--vw)*20);text-align:left;">
                 A HOME CARE DEVICE ENGINEERED TO DELIVER ION PLASMA DIRECTLY THROUGH A VACUUM TUBE FOR EFFECTIVE SKINCARE.
               </div>
             </div>
@@ -311,12 +310,13 @@
         </div>
       </div>
 
+      <!-- Row 2 -->
       <div class="gallery-item">
         <div class="gallery-label">
           <div class="gallery-label-line"></div>
           <span>KOHONJIN</span>
         </div>
-        <div class="gallery-media" style="margin-top: auto; flex: none; height: calc(var(--vw) * 20.677);">
+        <div class="gallery-media" style="margin-top: auto; flex: none; height: calc(var(--vw) * 15.281);">
           <video autoplay muted loop playsinline>
             <source src="/media/gallery/kohonjin.mp4" type="video/mp4">
           </video>
@@ -335,7 +335,6 @@
         </div>
       </div>
 
-      <!-- Row 3 -->
       <div class="gallery-item">
         <div class="gallery-label">
           <div class="gallery-label-line"></div>
@@ -356,6 +355,7 @@
         </div>
       </div>
 
+      <!-- Row 3 -->
       <div class="gallery-item">
         <div class="gallery-label">
           <div class="gallery-label-line"></div>
