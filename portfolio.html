@@ -422,9 +422,10 @@
       var set   = track.querySelector('.marquee-set');
 
       var pos      = 0;
-      var speed    = 0.6;
+      var PX_PER_SEC = 60; /* 화면 크기와 무관하게 초당 60px 고정 */
       var setWidth = 0;
       var raf;
+      var lastTime = null;
 
       function fillClones() {
         while (track.children.length > 1) track.removeChild(track.lastChild);
@@ -435,27 +436,33 @@
         }
       }
 
-      function measure() { fillClones(); }
-
-      function tick() {
-        pos -= speed;
+      function tick(now) {
+        var delta = lastTime !== null ? now - lastTime : 0;
+        lastTime = now;
+        pos -= PX_PER_SEC * (delta / 1000);
         if (pos <= -setWidth) pos += setWidth;
         track.style.transform = 'translateX(' + pos + 'px)';
         raf = requestAnimationFrame(tick);
       }
 
-      measure();
-      tick();
+      fillClones();
+      raf = requestAnimationFrame(tick);
+
       window.addEventListener('load', function() {
         cancelAnimationFrame(raf);
-        measure();
-        tick();
+        lastTime = null;
+        fillClones();
+        raf = requestAnimationFrame(tick);
       });
 
       window.addEventListener('resize', function() {
         cancelAnimationFrame(raf);
         updateVW();
-        setTimeout(function() { measure(); tick(); }, 50);
+        setTimeout(function() {
+          lastTime = null;
+          fillClones();
+          raf = requestAnimationFrame(tick);
+        }, 50);
       });
     })();
   </script>
