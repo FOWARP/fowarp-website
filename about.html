@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOWARP — About</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Karlsbader Grotesk';
+      src: url('/fonts/KarlsbaderGrotesk-400.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    :root { --vw: 19.2px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+    /* ─── HEADER ─────────────────────────────── */
+    .header { position: fixed; top: 0; left: 0; width: 100%; z-index: 100; background: rgba(255,255,255,0.9); }
+
+    .marquee-section {
+      width: 100%;
+      padding: calc(var(--vw) * 1.042) calc(var(--vw) * 4.167) 0;
+      background: rgba(255,255,255,0.9);
+    }
+    .marquee-bar { width: 100%; overflow-x: hidden; }
+    .marquee-bar-inner {
+      background: #000; width: 100%;
+      height: calc(var(--vw) * 2.083);
+      display: flex; align-items: center;
+    }
+    .marquee-track { display: flex; align-items: center; white-space: nowrap; will-change: transform; }
+    .marquee-set {
+      display: flex; align-items: center;
+      gap: calc(var(--vw) * 5.208);
+      padding-right: calc(var(--vw) * 5.208);
+      flex-shrink: 0;
+    }
+    .marquee-text { font-family: Arial, sans-serif; font-size: calc(var(--vw) * 0.729); color: #fff; white-space: nowrap; }
+    .marquee-logo { height: calc(var(--vw) * 0.852); width: auto; display: block; filter: invert(1); }
+
+    .header-main {
+      width: 100%; height: calc(var(--vw) * 5.208);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 calc(var(--vw) * 4.167); position: relative;
+    }
+    .header-logo-center {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      height: calc(var(--vw) * 1.4); width: auto; display: block;
+    }
+    .header-nav { display: flex; gap: calc(var(--vw) * 4.167); align-items: center; }
+    .header-nav a {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.729);
+      text-decoration: none; color: #999796; text-transform: capitalize;
+    }
+    .header-nav a.active { color: #000; }
+    .header-cta {
+      background: #000; color: #fff;
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.729);
+      padding: calc(var(--vw) * 0.625) calc(var(--vw) * 0.729);
+      border-radius: calc(var(--vw) * 0.417);
+      text-decoration: none; text-transform: capitalize; white-space: nowrap;
+    }
+
+    /* ─── PAGE ───────────────────────────────── */
+    .page-body {
+      padding-top: calc(var(--vw) * 13.854);
+      padding-left: calc(var(--vw) * 4.167);
+      padding-right: calc(var(--vw) * 4.167);
+    }
+
+    /* ─── HERO ───────────────────────────────── */
+    .about-hero {
+      padding-bottom: calc(var(--vw) * 4.167);
+    }
+
+    .about-headline {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .about-headline span {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 8.75);
+      font-weight: 400;
+      line-height: 0.88;
+      text-transform: uppercase;
+      color: #000;
+      letter-spacing: -0.02em;
+      display: block;
+    }
+
+    .about-headline span.hl-right {
+      text-align: right;
+    }
+
+    /* ─── DIVIDER ────────────────────────────── */
+    .rule { width: 100%; height: 1px; background: #000; }
+
+    /* ─── INFO ───────────────────────────────── */
+    .about-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: calc(var(--vw) * 8.333);
+      padding: calc(var(--vw) * 4.167) 0;
+    }
+
+    .about-section-label {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.625);
+      color: #999796;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: calc(var(--vw) * 2.083);
+    }
+
+    .about-body {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.99);
+      line-height: 1.65;
+      color: #000;
+      text-transform: uppercase;
+    }
+
+    .about-body + .about-body {
+      margin-top: calc(var(--vw) * 1.563);
+    }
+
+    .services-list { list-style: none; }
+
+    .services-list li {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.99);
+      color: #000;
+      text-transform: uppercase;
+      padding: calc(var(--vw) * 0.938) 0;
+      border-bottom: 1px solid #000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .services-list li:first-child { border-top: 1px solid #000; }
+
+    .service-arrow {
+      font-size: calc(var(--vw) * 0.729);
+      color: #999796;
+    }
+
+    /* ─── STATS ──────────────────────────────── */
+    .about-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid #000;
+      border-left: 1px solid #000;
+    }
+
+    .stat-item {
+      padding: calc(var(--vw) * 2.604) calc(var(--vw) * 2.083);
+      border-right: 1px solid #000;
+      border-bottom: 1px solid #000;
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--vw) * 1.042);
+    }
+
+    .stat-num {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 5.208);
+      font-weight: 400;
+      line-height: 1;
+      color: #000;
+    }
+
+    .stat-label {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.625);
+      color: #999796;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    /* ─── CTA ────────────────────────────────── */
+    .about-cta {
+      padding: calc(var(--vw) * 5.208) 0 calc(var(--vw) * 6.25);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .about-cta-headline {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 4.688);
+      font-weight: 400;
+      line-height: 0.9;
+      text-transform: uppercase;
+      color: #000;
+    }
+
+    .about-cta-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: calc(var(--vw) * 0.833);
+      padding-bottom: calc(var(--vw) * 0.417);
+    }
+
+    .about-email {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.833);
+      color: #999796;
+      text-transform: uppercase;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+
+    .about-cta-btn {
+      background: #000;
+      color: #fff;
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.729);
+      padding: calc(var(--vw) * 0.729) calc(var(--vw) * 1.042);
+      border-radius: calc(var(--vw) * 0.417);
+      text-decoration: none;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    /* ─── SCROLL REVEAL ──────────────────────── */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.9s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="marquee-section">
+      <div class="marquee-bar">
+        <div class="marquee-bar-inner">
+          <div class="marquee-track" id="marqueeTrack">
+            <div class="marquee-set">
+              <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text">브랜드 전략 &amp; 디자인 에이전시</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text">브랜드 전략 &amp; 디자인 에이전시</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-main">
+      <nav class="header-nav">
+        <a href="/portfolio">Project</a>
+        <a href="/about" class="active">About</a>
+        <a href="/social">Social</a>
+      </nav>
+      <img class="header-logo-center" src="/media/fowarp-logo-center.svg" alt="FOWARP">
+      <a href="/contact" class="header-cta">Get in Touch</a>
+    </div>
+  </header>
+
+  <div class="page-body">
+
+    <!-- Hero -->
+    <section class="about-hero reveal">
+      <div class="about-headline">
+        <span>We Build</span>
+        <span class="hl-right">Brands That</span>
+        <span>Matter.</span>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- Info -->
+    <section class="about-info">
+      <div class="reveal" style="transition-delay:0.08s">
+        <p class="about-section-label">About</p>
+        <p class="about-body">FOWARP is a Seoul-based brand strategy and design agency. We partner with ambitious companies to build brands that resonate — from the strategic foundation to the finest visual detail.</p>
+        <p class="about-body">Every project begins with a deep understanding of your audience and ends with work that endures. We believe a great brand is not just seen — it is felt.</p>
+      </div>
+      <div class="reveal" style="transition-delay:0.16s">
+        <p class="about-section-label">Disciplines</p>
+        <ul class="services-list">
+          <li>Brand Strategy <span class="service-arrow">01</span></li>
+          <li>Visual Identity <span class="service-arrow">02</span></li>
+          <li>Digital Design <span class="service-arrow">03</span></li>
+          <li>Motion &amp; Film <span class="service-arrow">04</span></li>
+          <li>Brand Content <span class="service-arrow">05</span></li>
+          <li>Campaign Design <span class="service-arrow">06</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <!-- Stats -->
+    <div class="about-stats">
+      <div class="stat-item reveal" style="transition-delay:0.0s">
+        <span class="stat-num">2020</span>
+        <span class="stat-label">Founded</span>
+      </div>
+      <div class="stat-item reveal" style="transition-delay:0.08s">
+        <span class="stat-num">60+</span>
+        <span class="stat-label">Projects</span>
+      </div>
+      <div class="stat-item reveal" style="transition-delay:0.16s">
+        <span class="stat-num">40+</span>
+        <span class="stat-label">Clients</span>
+      </div>
+      <div class="stat-item reveal" style="transition-delay:0.24s">
+        <span class="stat-num">06</span>
+        <span class="stat-label">Disciplines</span>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <section class="about-cta reveal">
+      <div class="about-cta-headline">
+        Let's work<br>together.
+      </div>
+      <div class="about-cta-right">
+        <a href="mailto:hi@fowarp.com" class="about-email">hi@fowarp.com</a>
+        <a href="/contact" class="about-cta-btn">Get in Touch</a>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    function updateVW() {
+      var w = Math.min(window.innerWidth, 1920);
+      document.documentElement.style.setProperty('--vw', (w / 100) + 'px');
+    }
+    updateVW();
+    window.addEventListener('resize', updateVW);
+
+    var lenis = new Lenis({
+      duration: 0.9,
+      easing: function(t) { return 1 - Math.pow(1 - t, 4); },
+      smoothWheel: true
+    });
+    function lenisRaf(time) { lenis.raf(time); requestAnimationFrame(lenisRaf); }
+    requestAnimationFrame(lenisRaf);
+
+    (function() {
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+    })();
+
+    (function() {
+      var track = document.getElementById('marqueeTrack');
+      var set = track.querySelector('.marquee-set');
+      var pos = 0, speed = 0.6, setWidth = 0, raf;
+      function fillClones() {
+        while (track.children.length > 1) track.removeChild(track.lastChild);
+        setWidth = set.offsetWidth;
+        var copies = Math.ceil(window.innerWidth / setWidth) + 1;
+        for (var i = 0; i < copies; i++) track.appendChild(set.cloneNode(true));
+      }
+      function tick() {
+        pos -= speed;
+        if (pos <= -setWidth) pos += setWidth;
+        track.style.transform = 'translateX(' + pos + 'px)';
+        raf = requestAnimationFrame(tick);
+      }
+      fillClones(); tick();
+      window.addEventListener('load', function() { cancelAnimationFrame(raf); fillClones(); tick(); });
+      window.addEventListener('resize', function() { cancelAnimationFrame(raf); updateVW(); setTimeout(function() { fillClones(); tick(); }, 50); });
+    })();
+  </script>
+</body>
+</html>
