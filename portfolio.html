@@ -98,7 +98,13 @@
     .header-logo-center {
       position: absolute;
       left: 50%;
-      transform: translateX(-50%);
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: block;
+      line-height: 0;
+    }
+
+    .header-logo-center img {
       height: calc(var(--vw) * 1.4);
       width: auto;
       display: block;
@@ -243,7 +249,7 @@
         <a href="/about">About</a>
         <a href="/social">Social</a>
       </nav>
-      <a href="/portfolio"><img class="header-logo-center" src="/media/fowarp-logo-center.svg" alt="FOWARP"></a>
+      <a href="/portfolio" class="header-logo-center"><img src="/media/fowarp-logo-center.svg" alt="FOWARP"></a>
       <a href="/contact" class="header-cta">Get in Touch</a>
     </div>
   </header>
