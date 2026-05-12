@@ -148,15 +148,17 @@
     }
 
     .gallery-item {
+      position: relative;
       display: flex;
       flex-direction: column;
-      gap: calc(var(--vw) * 3.125); /* 60px */
+      height: calc(var(--vw) * 41.719); /* 801px */
     }
 
     .gallery-label {
       display: flex;
       flex-direction: column;
       gap: calc(var(--vw) * 0.521); /* 10px */
+      flex-shrink: 0;
     }
 
     .gallery-label-line {
@@ -173,9 +175,6 @@
       text-transform: uppercase;
     }
 
-    .gallery-item {
-      position: relative;
-    }
     .gallery-item:not(:nth-child(3n))::after {
       content: '';
       position: absolute;
@@ -188,7 +187,8 @@
 
     .gallery-media {
       width: 100%;
-      aspect-ratio: 571 / 714;
+      margin-top: calc(var(--vw) * 3.125); /* 60px gap from label */
+      flex: 1;
       overflow: hidden;
       background: #080808;
     }
@@ -280,8 +280,8 @@
           <div class="gallery-label-line"></div>
           <span>NO SUGAR ADDED</span>
         </div>
-        <div class="gallery-media">
-          <img src="/media/gallery/nosugar.png" alt="NO SUGAR ADDED">
+        <div class="gallery-media" style="margin-top: auto; flex: none; height: calc(var(--vw) * 16.719);">
+          <img src="/media/gallery/nosugar.png" alt="NO SUGAR ADDED" style="object-position: bottom center;">
         </div>
       </div>
 
@@ -301,7 +301,7 @@
           <div class="gallery-label-line"></div>
           <span>KOHONJIN</span>
         </div>
-        <div class="gallery-media">
+        <div class="gallery-media" style="margin-top: auto; flex: none; height: calc(var(--vw) * 16.719);">
           <img src="/media/gallery/kohonjin-row2.png" alt="KOHONJIN">
         </div>
       </div>
@@ -311,7 +311,7 @@
           <div class="gallery-label-line"></div>
           <span>Hwanghugung Samgyetang</span>
         </div>
-        <div class="gallery-media">
+        <div class="gallery-media" style="margin-top: auto; flex: none; height: calc(var(--vw) * 22.292);">
           <img src="/media/gallery/hwanghugung.png" alt="Hwanghugung Samgyetang">
         </div>
       </div>
