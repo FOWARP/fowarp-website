@@ -233,26 +233,6 @@
       transform: translateX(-50%);
     }
 
-    /* from-intro 전환 오버레이 */
-    #intro-overlay {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      gap: calc(var(--vw) * 0.833);
-      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
-      font-size: calc(var(--vw) * 6.458);
-      font-weight: 400;
-      color: #fff;
-      mix-blend-mode: difference;
-      letter-spacing: calc(var(--vw) * -0.129);
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 200;
-      transition: opacity 0.35s ease;
-    }
-
     /* ─── SCROLL REVEAL ──────────────────────── */
     .reveal {
       opacity: 0;
@@ -508,35 +488,92 @@
     function lenisRaf(time) { lenis.raf(time); requestAnimationFrame(lenisRaf); }
     requestAnimationFrame(lenisRaf);
 
-    // From-intro 전환
+    // From-intro FLIP transition: overlay flies from center → top while growing
     (function() {
       if (!sessionStorage.getItem('fromIntro')) return;
       sessionStorage.removeItem('fromIntro');
 
-      var header   = document.querySelector('.header');
-      var pageBody = document.querySelector('.page-body');
+      var header     = document.querySelector('.header');
+      var pageBody   = document.querySelector('.page-body');
+      var stickyWrap = document.querySelector('.tagline-sticky-wrap');
+      var sticky     = document.querySelector('.tagline-sticky');
 
-      header.style.opacity   = '0';
-      pageBody.style.opacity = '0';
+      // Hide page content before first paint
+      header.style.transition   = 'none';
+      header.style.opacity      = '0';
+      pageBody.style.transition = 'none';
+      pageBody.style.opacity    = '0';
 
-      var overlay = document.createElement('div');
-      overlay.id = 'intro-overlay';
-      overlay.innerHTML = '<span>Move</span><span>Forward</span><span>like a</span><span>Warp</span>';
-      document.body.appendChild(overlay);
+      // Temporarily anchor sticky-wrap at top to measure rendered position
+      stickyWrap.style.transition = 'none';
+      stickyWrap.style.top = '0';
+      sticky.offsetHeight; // force reflow
 
+      var r = sticky.getBoundingClientRect();
+      var targetCX = r.left + r.width  / 2;
+      var targetCY = r.top  + r.height / 2;
+
+      // Restore sticky-wrap and hide sticky while overlay animates
+      stickyWrap.style.top = 'calc(var(--vw) * 45.521)';
+      sticky.style.opacity = '0';
+
+      // --vw for size math
+      var vw = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--vw'));
+
+      // Overlay starts matching index.html tagline at moment of navigation
+      var ov = document.createElement('div');
+      ov.style.cssText = [
+        'position:fixed',
+        'top:'  + (window.innerHeight / 2) + 'px',
+        'left:' + (window.innerWidth  / 2) + 'px',
+        'transform:translate(-50%,-50%)',
+        'display:flex',
+        'gap:'            + (vw * 0.833) + 'px',
+        'font-family:Karlsbader Grotesk,Arial,sans-serif',
+        'font-size:'      + (vw * 3.333) + 'px',
+        'font-weight:400',
+        'color:#fff',
+        'mix-blend-mode:difference',
+        'letter-spacing:' + (-vw * 0.067) + 'px',
+        'white-space:nowrap',
+        'pointer-events:none',
+        'z-index:200'
+      ].join(';');
+      ov.innerHTML = '<span>Move</span><span>Forward</span><span>like a</span><span>Warp</span>';
+      document.body.appendChild(ov);
+
+      // Two frames: ensure overlay renders at start position before animating
       requestAnimationFrame(function() {
         requestAnimationFrame(function() {
+          var ease = 'cubic-bezier(0.25, 0, 0.25, 1)';
+          ov.style.transition = [
+            'top 0.6s '           + ease,
+            'font-size 0.6s '     + ease,
+            'letter-spacing 0.6s' + ease,
+            'opacity 0.25s ease'
+          ].join(',');
           header.style.transition   = 'opacity 0.5s ease';
           pageBody.style.transition = 'opacity 0.5s ease';
-          header.style.opacity      = '1';
-          pageBody.style.opacity    = '1';
+
+          // Fly overlay up + grow to match sticky size
+          ov.style.top           = targetCY + 'px';
+          ov.style.fontSize      = (vw * 6.458) + 'px';
+          ov.style.letterSpacing = (-vw * 0.129) + 'px';
+
+          // Reveal page content simultaneously
+          header.style.opacity   = '1';
+          pageBody.style.opacity = '1';
+
+          // Fade out overlay after position animation, then restore sticky
+          setTimeout(function() {
+            ov.style.opacity = '0';
+            setTimeout(function() {
+              ov.remove();
+              sticky.style.opacity = '';
+            }, 250);
+          }, 600);
         });
       });
-
-      setTimeout(function() {
-        overlay.style.opacity = '0';
-        setTimeout(function() { overlay.remove(); }, 350);
-      }, 300);
     })();
 
     // Scroll reveal

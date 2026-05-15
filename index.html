@@ -21,7 +21,7 @@
       height: 100vh;
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
-      transition: background 0.35s ease;
+      transition: background 0.3s ease;
     }
 
     .chip {
@@ -56,13 +56,6 @@
       white-space: nowrap;
       pointer-events: none;
       z-index: 10;
-      transition: font-size 0.45s cubic-bezier(0.2, 0, 0, 1),
-                  letter-spacing 0.45s cubic-bezier(0.2, 0, 0, 1);
-    }
-
-    #tagline.scaled {
-      font-size: calc(var(--vw) * 6.458);
-      letter-spacing: calc(var(--vw) * -0.129);
     }
 
     .word {
@@ -94,7 +87,6 @@
     setVW();
     window.addEventListener('resize', setVW);
 
-    // Figma 고정 위치 (1920×1080 기준 vw/vh %)
     var CHIPS = [
       { text: 'BRAND IDENTITY', color: '#a600ce', x: 14.84, y: 23.89 },
       { text: 'PACKAGE',        color: '#009da0', x: 24.69, y: 30.65 },
@@ -111,9 +103,8 @@
     ];
 
     var WORD_DELAYS = [200, 380, 560, 740];
-    var OUT_START   = 850;
-    var SCALE_START = 850;
-    var NAV_TIME    = 1500;
+    var OUT_START   = 850;  // 칩 아웃 + 배경 → 흰색
+    var NAV_TIME    = 900;  // 즉시 이동 (50ms 후)
     var PREVIEW     = location.search.includes('preview');
 
     var tagline = document.getElementById('tagline');
@@ -130,16 +121,15 @@
       return el;
     });
 
-    var startTs   = null;
-    var wordShown = [false, false, false, false];
-    var done      = { out: false, scale: false, nav: false };
+    var startTs  = null;
+    var shown    = [false, false, false, false];
+    var done     = { out: false, nav: false };
     var raf;
 
     function tick(ts) {
       if (!startTs) startTs = ts;
       var t = ts - startTs;
 
-      // 칩 순서대로 페이드인
       chipEls.forEach(function(el, i) {
         if (!el._in) {
           var p = Math.min(1, Math.max(0, (t - i * 20) / 120));
@@ -148,28 +138,20 @@
         }
       });
 
-      // 단어 순차 등장
       WORD_DELAYS.forEach(function(delay, i) {
-        if (!wordShown[i] && t >= delay) {
+        if (!shown[i] && t >= delay) {
           words[i].classList.add('show');
-          wordShown[i] = true;
+          shown[i] = true;
         }
       });
 
-      // 칩 페이드아웃 + 배경 → 흰색
       if (t >= OUT_START && !done.out) {
         done.out = true;
         chipEls.forEach(function(el) { el.style.opacity = '0'; });
         document.body.style.background = '#fff';
       }
 
-      // 타이틀 확대
-      if (t >= SCALE_START && !done.scale) {
-        done.scale = true;
-        tagline.classList.add('scaled');
-      }
-
-      // 이동
+      // 흰 배경 전환 시작 직후 이동 — project.html에서 FLIP 이어받음
       if (!PREVIEW && t >= NAV_TIME && !done.nav) {
         done.nav = true;
         sessionStorage.setItem('fromIntro', '1');
