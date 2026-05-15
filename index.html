@@ -13,7 +13,6 @@
     }
 
     :root { --vw: 19.2px; }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
@@ -22,17 +21,11 @@
       height: 100vh;
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
-    }
-
-    #intro {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      overflow: hidden;
+      transition: background 0.35s ease;
     }
 
     .chip {
-      position: absolute;
+      position: fixed;
       padding: calc(var(--vw) * 0.521) calc(var(--vw) * 1.042);
       border-radius: calc(var(--vw) * 0.313);
       font-family: 'Karlsbader Grotesk', sans-serif;
@@ -44,11 +37,11 @@
       white-space: nowrap;
       pointer-events: none;
       opacity: 0;
-      will-change: transform, opacity;
+      transition: opacity 0.2s ease;
     }
 
     #tagline {
-      position: absolute;
+      position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -58,16 +51,25 @@
       font-size: calc(var(--vw) * 3.333);
       font-weight: 400;
       color: #fff;
+      mix-blend-mode: difference;
       letter-spacing: calc(var(--vw) * -0.067);
       white-space: nowrap;
       pointer-events: none;
+      z-index: 10;
+      transition: font-size 0.45s cubic-bezier(0.2, 0, 0, 1),
+                  letter-spacing 0.45s cubic-bezier(0.2, 0, 0, 1);
+    }
+
+    #tagline.scaled {
+      font-size: calc(var(--vw) * 6.458);
+      letter-spacing: calc(var(--vw) * -0.129);
     }
 
     .word {
       opacity: 0;
-      transform: translateY(calc(var(--vw) * 1.25));
-      transition: opacity 0.55s cubic-bezier(0.25, 0, 0.25, 1),
-                  transform 0.55s cubic-bezier(0.25, 0, 0.25, 1);
+      transform: translateY(calc(var(--vw) * 0.8));
+      transition: opacity 0.22s cubic-bezier(0.25, 0, 0.25, 1),
+                  transform 0.22s cubic-bezier(0.25, 0, 0.25, 1);
     }
 
     .word.show {
@@ -77,135 +79,102 @@
   </style>
 </head>
 <body>
-  <div id="intro">
-    <div id="tagline">
-      <span class="word">Move</span>
-      <span class="word">Forward</span>
-      <span class="word">like a</span>
-      <span class="word">Warp</span>
-    </div>
+  <div id="tagline">
+    <span class="word">Move</span>
+    <span class="word">Forward</span>
+    <span class="word">like a</span>
+    <span class="word">Warp</span>
   </div>
 
   <script>
     function setVW() {
-      const vw = Math.min(window.innerWidth, 1920) / 100;
+      var vw = Math.min(window.innerWidth, 1920) / 100;
       document.documentElement.style.setProperty('--vw', vw + 'px');
     }
     setVW();
     window.addEventListener('resize', setVW);
 
-    const CHIPS = [
-      { text: 'BRAND IDENTITY', color: '#a600ce' },
-      { text: 'PACKAGE',        color: '#009da0' },
-      { text: 'UI/UX',          color: '#15a000' },
-      { text: 'DETAIL PAGE',    color: '#606060' },
-      { text: 'BROCHURE',       color: '#8da600' },
-      { text: '3D VISUAL',      color: '#3355ff' },
-      { text: 'Motion Graphic', color: '#e65010' },
-      { text: 'Generative AI',  color: '#9d33ff' },
-      { text: 'POSTER',         color: '#f416c1' },
-      { text: 'BRAND STRATEGY', color: '#bb2c2e' },
-      { text: 'BRAND GUIDE',    color: '#005f50' },
-      { text: 'website',        color: '#e0256c' },
+    // Figma 고정 위치 (1920×1080 기준 vw/vh %)
+    var CHIPS = [
+      { text: 'BRAND IDENTITY', color: '#a600ce', x: 14.84, y: 23.89 },
+      { text: 'PACKAGE',        color: '#009da0', x: 24.69, y: 30.65 },
+      { text: 'UI/UX',          color: '#15a000', x: 41.82, y: 66.30 },
+      { text: 'DETAIL PAGE',    color: '#606060', x: 35.16, y: 13.61 },
+      { text: 'BROCHURE',       color: '#8da600', x: 50.00, y: 84.91 },
+      { text: '3D VISUAL',      color: '#3355ff', x: 62.29, y: 19.35 },
+      { text: 'Motion Graphic', color: '#e65010', x: 30.63, y: 73.52 },
+      { text: 'Generative AI',  color: '#9d33ff', x: 53.39, y: 26.11 },
+      { text: 'POSTER',         color: '#f416c1', x: 71.46, y: 74.44 },
+      { text: 'BRAND STRATEGY', color: '#bb2c2e', x: 72.34, y: 66.30 },
+      { text: 'BRAND GUIDE',    color: '#005f50', x: 75.10, y: 36.76 },
+      { text: 'website',        color: '#e0256c', x: 11.93, y: 66.30 },
     ];
 
-    const PREVIEW     = location.search.includes('preview');
-    const WORD_DELAYS = [700, 1200, 1700, 2200];
-    const INTRO_FADE  = PREVIEW ? 999999 : 3800;
-    const FADE_DUR    = 700;
+    var WORD_DELAYS = [200, 380, 560, 740];
+    var OUT_START   = 850;
+    var SCALE_START = 850;
+    var NAV_TIME    = 1500;
+    var PREVIEW     = location.search.includes('preview');
 
-    const intro   = document.getElementById('intro');
-    const tagline = document.getElementById('tagline');
-    const words   = tagline.querySelectorAll('.word');
+    var tagline = document.getElementById('tagline');
+    var words   = tagline.querySelectorAll('.word');
 
-    const chipState = [];
+    var chipEls = CHIPS.map(function(c) {
+      var el = document.createElement('div');
+      el.className = 'chip';
+      el.textContent = c.text;
+      el.style.background = c.color;
+      el.style.left = c.x + 'vw';
+      el.style.top  = c.y + 'vh';
+      document.body.appendChild(el);
+      return el;
+    });
 
-    function rand(min, max) { return min + Math.random() * (max - min); }
-
-    function spawnChips() {
-      const W = window.innerWidth;
-      const H = window.innerHeight;
-      const CX = W / 2, CY = H / 2;
-      const AVOID = 280;
-
-      CHIPS.forEach((c) => {
-        const el = document.createElement('div');
-        el.className = 'chip';
-        el.textContent = c.text;
-        el.style.background = c.color;
-        intro.insertBefore(el, tagline);
-
-        let x, y, tries = 0;
-        do {
-          x = rand(0.04 * W, 0.85 * W);
-          y = rand(0.06 * H, 0.85 * H);
-          tries++;
-        } while (tries < 60 && Math.hypot(x - CX, y - CY) < AVOID);
-
-        const speed = rand(0.18, 0.38);
-        const angle = rand(0, Math.PI * 2);
-
-        chipState.push({
-          el,
-          x, y,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          phase: rand(0, Math.PI * 2),
-        });
-
-        el.style.left = x + 'px';
-        el.style.top  = y + 'px';
-      });
-    }
-
-    spawnChips();
-
-    let startTs   = null;
-    let wordShown = CHIPS.map(() => false).slice(0, 4);
-    let raf;
+    var startTs   = null;
+    var wordShown = [false, false, false, false];
+    var done      = { out: false, scale: false, nav: false };
+    var raf;
 
     function tick(ts) {
       if (!startTs) startTs = ts;
-      const elapsed = ts - startTs;
+      var t = ts - startTs;
 
-      const W = window.innerWidth;
-      const H = window.innerHeight;
-
-      chipState.forEach((c, i) => {
-        const fadeStart = i * 55;
-        const fadeEnd   = fadeStart + 380;
-        c.el.style.opacity = Math.min(1, Math.max(0, (elapsed - fadeStart) / (fadeEnd - fadeStart)));
-
-        c.phase += 0.009;
-        c.x += c.vx + Math.sin(c.phase + i * 0.7) * 0.12;
-        c.y += c.vy + Math.cos(c.phase * 0.8 + i) * 0.12;
-
-        const cw = c.el.offsetWidth  || 140;
-        const ch = c.el.offsetHeight || 46;
-        if (c.x < 0)     { c.x = 0;     c.vx =  Math.abs(c.vx); }
-        if (c.x > W - cw){ c.x = W - cw; c.vx = -Math.abs(c.vx); }
-        if (c.y < 0)     { c.y = 0;     c.vy =  Math.abs(c.vy); }
-        if (c.y > H - ch){ c.y = H - ch; c.vy = -Math.abs(c.vy); }
-
-        c.el.style.left = c.x + 'px';
-        c.el.style.top  = c.y + 'px';
+      // 칩 순서대로 페이드인
+      chipEls.forEach(function(el, i) {
+        if (!el._in) {
+          var p = Math.min(1, Math.max(0, (t - i * 20) / 120));
+          el.style.opacity = p;
+          if (p >= 1) el._in = true;
+        }
       });
 
-      WORD_DELAYS.forEach((delay, i) => {
-        if (!wordShown[i] && elapsed >= delay) {
+      // 단어 순차 등장
+      WORD_DELAYS.forEach(function(delay, i) {
+        if (!wordShown[i] && t >= delay) {
           words[i].classList.add('show');
           wordShown[i] = true;
         }
       });
 
-      if (elapsed >= INTRO_FADE) {
-        const p = Math.min(1, (elapsed - INTRO_FADE) / FADE_DUR);
-        intro.style.opacity = 1 - p;
-        if (p >= 1) {
-          cancelAnimationFrame(raf);
-          window.location.href = '/project';
-          return;
-        }
+      // 칩 페이드아웃 + 배경 → 흰색
+      if (t >= OUT_START && !done.out) {
+        done.out = true;
+        chipEls.forEach(function(el) { el.style.opacity = '0'; });
+        document.body.style.background = '#fff';
+      }
+
+      // 타이틀 확대
+      if (t >= SCALE_START && !done.scale) {
+        done.scale = true;
+        tagline.classList.add('scaled');
+      }
+
+      // 이동
+      if (!PREVIEW && t >= NAV_TIME && !done.nav) {
+        done.nav = true;
+        sessionStorage.setItem('fromIntro', '1');
+        window.location.href = '/project';
+        return;
       }
 
       raf = requestAnimationFrame(tick);

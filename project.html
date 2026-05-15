@@ -22,7 +22,7 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body { background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+    body { background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; position: relative; }
 
     /* ─── HEADER ─────────────────────────────── */
     .header {
@@ -206,6 +206,51 @@
       height: 100%;
       object-fit: cover;
       display: block;
+    }
+
+    /* ─── STICKY TAGLINE ─────────────────────── */
+    .tagline-sticky-wrap {
+      position: absolute;
+      top: calc(var(--vw) * 45.521); /* 874px */
+      bottom: 0;
+      left: 50%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .tagline-sticky {
+      position: sticky;
+      top: 0;
+      display: flex;
+      gap: calc(var(--vw) * 0.833);
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 6.458);
+      font-weight: 400;
+      color: #fff;
+      mix-blend-mode: difference;
+      letter-spacing: calc(var(--vw) * -0.129);
+      white-space: nowrap;
+      transform: translateX(-50%);
+    }
+
+    /* from-intro 전환 오버레이 */
+    #intro-overlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      gap: calc(var(--vw) * 0.833);
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 6.458);
+      font-weight: 400;
+      color: #fff;
+      mix-blend-mode: difference;
+      letter-spacing: calc(var(--vw) * -0.129);
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 200;
+      transition: opacity 0.35s ease;
     }
 
     /* ─── SCROLL REVEAL ──────────────────────── */
@@ -440,6 +485,12 @@
     </div>
   </div>
 
+  <div class="tagline-sticky-wrap">
+    <div class="tagline-sticky">
+      <span>Move</span><span>Forward</span><span>like a</span><span>Warp</span>
+    </div>
+  </div>
+
   <script>
     function updateVW() {
       var w = Math.min(window.innerWidth, 1920);
@@ -456,6 +507,37 @@
     });
     function lenisRaf(time) { lenis.raf(time); requestAnimationFrame(lenisRaf); }
     requestAnimationFrame(lenisRaf);
+
+    // From-intro 전환
+    (function() {
+      if (!sessionStorage.getItem('fromIntro')) return;
+      sessionStorage.removeItem('fromIntro');
+
+      var header   = document.querySelector('.header');
+      var pageBody = document.querySelector('.page-body');
+
+      header.style.opacity   = '0';
+      pageBody.style.opacity = '0';
+
+      var overlay = document.createElement('div');
+      overlay.id = 'intro-overlay';
+      overlay.innerHTML = '<span>Move</span><span>Forward</span><span>like a</span><span>Warp</span>';
+      document.body.appendChild(overlay);
+
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          header.style.transition   = 'opacity 0.5s ease';
+          pageBody.style.transition = 'opacity 0.5s ease';
+          header.style.opacity      = '1';
+          pageBody.style.opacity    = '1';
+        });
+      });
+
+      setTimeout(function() {
+        overlay.style.opacity = '0';
+        setTimeout(function() { overlay.remove(); }, 350);
+      }, 300);
+    })();
 
     // Scroll reveal
     (function() {
