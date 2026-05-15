@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FOWARP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
   <style>
     @font-face {
       font-family: 'Karlsbader Grotesk';
@@ -16,16 +18,43 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: #000;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+      background: #fff;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      transition: background 0.3s ease;
+      position: relative;
     }
 
-    .chip {
+    /* ─── INTRO OVERLAY ───────────────────────── */
+    #intro {
       position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: #fff;   /* white base — #intro-bg covers it */
+      isolation: isolate;
+      transition: opacity 0.5s ease;
+    }
+
+    #intro-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, #000000, #282828);
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    /* CSS noise via SVG filter — lightweight, no asset needed */
+    #intro-noise {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      mix-blend-mode: soft-light;
+      opacity: 0.35;
+      filter: url(#noise-filter);
+      background: #888;
+    }
+
+    .intro-chip {
+      position: absolute;
       padding: calc(var(--vw) * 0.521) calc(var(--vw) * 1.042);
       border-radius: calc(var(--vw) * 0.313);
       font-family: 'Karlsbader Grotesk', sans-serif;
@@ -40,9 +69,9 @@
       transition: opacity 0.2s ease;
     }
 
-    #tagline {
-      position: fixed;
-      top: 50%;
+    #intro-tagline {
+      position: absolute;
+      top: 46.481%;   /* 502px / 1080px — Figma 지정 위치 */
       left: 50%;
       transform: translate(-50%, -50%);
       display: flex;
@@ -55,38 +84,497 @@
       letter-spacing: calc(var(--vw) * -0.067);
       white-space: nowrap;
       pointer-events: none;
-      z-index: 10;
     }
 
-    .word {
+    .intro-word {
       opacity: 0;
       transform: translateY(calc(var(--vw) * 0.8));
       transition: opacity 0.22s cubic-bezier(0.25, 0, 0.25, 1),
                   transform 0.22s cubic-bezier(0.25, 0, 0.25, 1);
     }
 
-    .word.show {
+    .intro-word.show {
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* ─── HEADER ─────────────────────────────── */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 100;
+      background: rgba(255,255,255,0.9);
+    }
+
+    .marquee-section {
+      width: 100%;
+      padding: calc(var(--vw) * 1.042) calc(var(--vw) * 4.167) 0;
+      background: rgba(255,255,255,0.9);
+    }
+
+    .marquee-bar { width: 100%; overflow-x: hidden; }
+
+    .marquee-bar-inner {
+      background: #000;
+      width: 100%;
+      height: calc(var(--vw) * 2.083);
+      border-radius: calc(var(--vw) * 0.417);
+      display: flex;
+      align-items: center;
+    }
+
+    .marquee-track {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      will-change: transform;
+    }
+
+    .marquee-set {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--vw) * 5.208);
+      padding-right: calc(var(--vw) * 5.208);
+      flex-shrink: 0;
+    }
+
+    .marquee-text {
+      font-family: Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.729);
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .marquee-logo {
+      height: calc(var(--vw) * 0.852);
+      width: auto;
+      display: block;
+      filter: invert(1);
+    }
+
+    .header-main {
+      width: 100%;
+      height: calc(var(--vw) * 5.208);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 calc(var(--vw) * 4.167);
+      position: relative;
+    }
+
+    .header-logo-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: block;
+      line-height: 0;
+    }
+
+    .header-logo-center img {
+      height: calc(var(--vw) * 1.4);
+      width: auto;
+      display: block;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: calc(var(--vw) * 4.167);
+      align-items: center;
+    }
+
+    .header-nav a {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.729);
+      text-decoration: none;
+      color: #999796;
+      text-transform: capitalize;
+    }
+
+    .header-nav a.active { color: #000; }
+
+    .header-cta {
+      background: #000;
+      color: #fff;
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.729);
+      padding: calc(var(--vw) * 0.625) calc(var(--vw) * 0.729);
+      border-radius: calc(var(--vw) * 0.417);
+      text-decoration: none;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    /* ─── PAGE BODY ───────────────────────────── */
+    .page-body {
+      padding-top: calc(var(--vw) * 13.854);
+      padding-left: calc(var(--vw) * 4.167);
+      padding-right: calc(var(--vw) * 4.167);
+      padding-bottom: calc(var(--vw) * 4.167);
+    }
+
+    /* ─── GALLERY ─────────────────────────────── */
+    .project-gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      column-gap: calc(var(--vw) * 1.224);
+      row-gap: calc(var(--vw) * 0.625);
+    }
+
+    .gallery-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: calc(var(--vw) * 41.719);
+    }
+
+    .gallery-label {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--vw) * 0.521);
+      flex-shrink: 0;
+    }
+
+    .gallery-label-line { width: 100%; height: 1px; background: #000; }
+
+    .gallery-label span {
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 0.833);
+      font-weight: 400;
+      color: #000;
+      text-transform: uppercase;
+    }
+
+    .gallery-item:not(:nth-child(3n))::after {
+      content: '';
+      position: absolute;
+      right: calc(var(--vw) * -0.612);
+      top: 0;
+      height: 100%;
+      width: 1px;
+      background: #000;
+    }
+
+    .gallery-media {
+      width: 100%;
+      margin-top: calc(var(--vw) * 3.125);
+      flex: 1;
+      overflow: hidden;
+      background: #080808;
+    }
+
+    .gallery-media video,
+    .gallery-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ─── STICKY TAGLINE ─────────────────────── */
+    .tagline-sticky-wrap {
+      position: absolute;
+      top: calc(var(--vw) * 45.521);
+      bottom: 0;
+      left: 50%;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .tagline-sticky {
+      position: sticky;
+      top: 0;
+      display: flex;
+      gap: calc(var(--vw) * 0.833);
+      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
+      font-size: calc(var(--vw) * 6.458);
+      font-weight: 400;
+      color: #fff;
+      mix-blend-mode: difference;
+      letter-spacing: calc(var(--vw) * -0.129);
+      white-space: nowrap;
+      transform: translateX(-50%);
+    }
+
+    /* ─── SCROLL REVEAL ──────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.9s ease,
+                  transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
   </style>
+
+  <!-- SVG noise filter definition (lightweight, no external asset) -->
+  <svg width="0" height="0" style="position:absolute">
+    <filter id="noise-filter" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="grayNoise"/>
+      <feComposite in="grayNoise" in2="SourceGraphic" operator="in"/>
+    </filter>
+  </svg>
 </head>
 <body>
-  <div id="tagline">
-    <span class="word">Move</span>
-    <span class="word">Forward</span>
-    <span class="word">like a</span>
-    <span class="word">Warp</span>
+
+  <!-- ── INTRO OVERLAY ─────────────────────────── -->
+  <div id="intro">
+    <div id="intro-bg"></div>
+    <div id="intro-noise"></div>
+    <div id="intro-tagline">
+      <span class="intro-word">Move</span>
+      <span class="intro-word">Forward</span>
+      <span class="intro-word">like a</span>
+      <span class="intro-word">Warp</span>
+    </div>
+  </div>
+
+  <!-- ── PROJECT PAGE ──────────────────────────── -->
+  <header class="header" id="project-header" style="opacity:0">
+    <div class="marquee-section">
+      <div class="marquee-bar">
+        <div class="marquee-bar-inner">
+          <div class="marquee-track" id="marqueeTrack">
+            <div class="marquee-set">
+              <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text">브랜드 전략 &amp; 디자인 에이전시</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text">브랜드 전략 &amp; 디자인 에이전시</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header-main">
+      <nav class="header-nav">
+        <a href="/" class="active">Project</a>
+        <a href="/about">About</a>
+        <a href="/social">Social</a>
+      </nav>
+      <a href="/" class="header-logo-center"><img src="/media/fowarp-logo-center.svg" alt="FOWARP"></a>
+      <a href="/contact" class="header-cta">Get in Touch</a>
+    </div>
+  </header>
+
+  <div class="page-body" id="project-body" style="opacity:0">
+    <div class="project-gallery">
+
+      <!-- Row 1 -->
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>GoVenture Forum</span>
+        </div>
+        <div class="gallery-media">
+          <video autoplay muted loop playsinline>
+            <source src="/media/B01/goventure.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>Starbucks®</span>
+        </div>
+        <div class="gallery-media">
+          <video autoplay muted loop playsinline>
+            <source src="/media/B01/starbucks.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>NO SUGAR ADDED</span>
+        </div>
+        <div class="gallery-media" style="margin-top:auto;flex:none;height:calc(var(--vw)*19.323)">
+          <video autoplay muted loop playsinline>
+            <source src="/media/gallery/nosugar.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <!-- Row 2 -->
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>RETURNITY</span>
+        </div>
+        <div class="gallery-media" style="position:relative">
+          <img src="/media/gallery/returnity.jpg" alt="RETURNITY">
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:calc(var(--vw)*1.302)">
+            <div style="text-align:center;color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*0.536);line-height:1.4;text-transform:uppercase;letter-spacing:0.05em">
+              MORE THAN SKIN DEEP, LIFE ROUTINE CARE<br>© RETURNITY
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end">
+              <div style="color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*1.011);line-height:1.1;text-transform:uppercase">
+                SKIN HEALER<br>PLASMA DEVICE
+              </div>
+              <div style="color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*0.536);line-height:1.4;text-transform:uppercase;max-width:calc(var(--vw)*13);text-align:left">
+                A HOME CARE DEVICE ENGINEERED TO DELIVER ION PLASMA DIRECTLY THROUGH A VACUUM TUBE FOR EFFECTIVE SKINCARE.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>KOHONJIN</span>
+        </div>
+        <div class="gallery-media" style="margin-top:auto;flex:none;height:calc(var(--vw)*20.677)">
+          <video autoplay muted loop playsinline>
+            <source src="/media/gallery/kohonjin.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>황후궁 삼계탕</span>
+        </div>
+        <div class="gallery-media">
+          <video autoplay muted loop playsinline>
+            <source src="/media/gallery/hwanghugung.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <!-- Row 3 -->
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>An Túr Solais</span>
+        </div>
+        <div class="gallery-media" style="position:relative">
+          <img src="/media/gallery/antursolais.jpg" alt="An Túr Solais">
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:calc(var(--vw)*1.302)">
+            <div style="text-align:center;color:#fff;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*0.469);line-height:1.6;text-transform:uppercase;letter-spacing:0.05em;max-width:calc(var(--vw)*22);margin:0 auto">
+              AN TÚR SOLAIS IS A PREMIUM KOREAN GRILLING CHEESE BRAND CRAFTED WITH 100% NATURAL IRISH MILK. KNOWN FOR ITS SIGNATURE CHEWY, BUTTERY TEXTURE, IT HAS BECOME THE #1 GRILLING CHEESE BRAND IN KOREA, SURPASSING ONE MILLION BOXES SOLD. THE BRAND BLENDS AUTHENTIC IRISH DAIRY TRADITION WITH MODERN KOREAN FOOD CULTURE.
+            </div>
+            <div style="text-align:center;color:#fff;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*0.469);line-height:1.4;text-transform:uppercase;letter-spacing:0.05em">
+              ©AN TÚR SOLAIS
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>단백질 곤약젤리</span>
+        </div>
+        <div class="gallery-media">
+          <img src="/media/gallery/protein-konjac.jpg" alt="Protein Konjac Jelly">
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>SOUP TOPPOKKI</span>
+        </div>
+        <div class="gallery-media">
+          <video autoplay muted loop playsinline>
+            <source src="/media/gallery/souptoppokki.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <!-- Row 4 -->
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>구움쿠킷</span>
+        </div>
+        <div class="gallery-media">
+          <img src="/media/gallery/goumcookit.jpg" alt="구움쿠킷">
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>Unknot</span>
+        </div>
+        <div class="gallery-media">
+          <video autoplay muted loop playsinline>
+            <source src="/media/gallery/unknot.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>쫀징어</span>
+        </div>
+        <div class="gallery-media" style="margin-top:auto;flex:none;height:calc(var(--vw)*24.948)">
+          <img src="/media/gallery/jjonjingeo.jpg" alt="쫀징어">
+        </div>
+      </div>
+
+      <!-- Row 5 -->
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>단백킹</span>
+        </div>
+        <div class="gallery-media">
+          <img src="/media/gallery/danbaekking-1.jpg" alt="단백킹">
+        </div>
+      </div>
+
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+          <span>꼭꼬칩</span>
+        </div>
+        <div class="gallery-media" style="margin-top:auto;flex:none;height:calc(var(--vw)*20.990)">
+          <img src="/media/gallery/kkokkozip.jpg" alt="꼭꼬칩">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="tagline-sticky-wrap">
+    <div class="tagline-sticky" id="sticky-tagline" style="opacity:0">
+      <span>Move</span><span>Forward</span><span>like a</span><span>Warp</span>
+    </div>
   </div>
 
   <script>
-    function setVW() {
-      var vw = Math.min(window.innerWidth, 1920) / 100;
-      document.documentElement.style.setProperty('--vw', vw + 'px');
+    function updateVW() {
+      document.documentElement.style.setProperty('--vw', (Math.min(window.innerWidth, 1920) / 100) + 'px');
     }
-    setVW();
-    window.addEventListener('resize', setVW);
+    updateVW();
+    window.addEventListener('resize', updateVW);
 
+    // Smooth scroll
+    var lenis = new Lenis({ duration: 0.9, easing: function(t) { return 1 - Math.pow(1 - t, 4); }, smoothWheel: true });
+    (function lenisLoop(t) { lenis.raf(t); requestAnimationFrame(lenisLoop); })(0);
+
+    // Elements
+    var intro        = document.getElementById('intro');
+    var introBg      = document.getElementById('intro-bg');
+    var introTagline = document.getElementById('intro-tagline');
+    var introWords   = introTagline.querySelectorAll('.intro-word');
+    var projHeader   = document.getElementById('project-header');
+    var projBody     = document.getElementById('project-body');
+    var stickyTag    = document.getElementById('sticky-tagline');
+
+    // Chip data — Figma node 41:1705, 1920×1080 기준 vw/vh %
     var CHIPS = [
       { text: 'BRAND IDENTITY', color: '#a600ce', x: 14.84, y: 23.89 },
       { text: 'PACKAGE',        color: '#009da0', x: 24.69, y: 30.65 },
@@ -102,31 +590,24 @@
       { text: 'website',        color: '#e0256c', x: 11.93, y: 66.30 },
     ];
 
-    var WORD_DELAYS = [200, 380, 560, 740];
-    var OUT_START   = 850;  // 칩 아웃 + 배경 → 흰색
-    var NAV_TIME    = 900;  // 즉시 이동 (50ms 후)
-    var PREVIEW     = location.search.includes('preview');
-
-    var tagline = document.getElementById('tagline');
-    var words   = tagline.querySelectorAll('.word');
-
     var chipEls = CHIPS.map(function(c) {
       var el = document.createElement('div');
-      el.className = 'chip';
+      el.className = 'intro-chip';
       el.textContent = c.text;
       el.style.background = c.color;
       el.style.left = c.x + 'vw';
       el.style.top  = c.y + 'vh';
-      document.body.appendChild(el);
+      intro.appendChild(el);
       return el;
     });
 
-    var startTs  = null;
-    var shown    = [false, false, false, false];
-    var done     = { out: false, nav: false };
-    var raf;
+    var WORD_DELAYS = [200, 380, 560, 740];
+    var OUT_START   = 850;
+    var startTs = null;
+    var shown   = [false, false, false, false];
+    var outDone = false;
 
-    function tick(ts) {
+    function introTick(ts) {
       if (!startTs) startTs = ts;
       var t = ts - startTs;
 
@@ -140,29 +621,140 @@
 
       WORD_DELAYS.forEach(function(delay, i) {
         if (!shown[i] && t >= delay) {
-          words[i].classList.add('show');
+          introWords[i].classList.add('show');
           shown[i] = true;
         }
       });
 
-      if (t >= OUT_START && !done.out) {
-        done.out = true;
-        chipEls.forEach(function(el) { el.style.opacity = '0'; });
-        document.body.style.background = '#fff';
-      }
-
-      // 흰 배경 전환 시작 직후 이동 — project.html에서 FLIP 이어받음
-      if (!PREVIEW && t >= NAV_TIME && !done.nav) {
-        done.nav = true;
-        sessionStorage.setItem('fromIntro', '1');
-        window.location.href = '/project';
+      if (t >= OUT_START && !outDone) {
+        outDone = true;
+        doOutro();
         return;
       }
 
-      raf = requestAnimationFrame(tick);
+      requestAnimationFrame(introTick);
     }
 
-    raf = requestAnimationFrame(tick);
+    function doOutro() {
+      var vw = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--vw'));
+
+      // Chips out + dark bg fades to white
+      chipEls.forEach(function(el) { el.style.opacity = '0'; });
+      introBg.style.opacity = '0';
+
+      // Expanding overlay — exact same position/size as intro-tagline at this moment
+      var ov = document.createElement('div');
+      ov.style.cssText = [
+        'position:fixed',
+        'top:46.481%',
+        'left:50%',
+        'transform:translate(-50%,-50%)',
+        'display:flex',
+        'gap:'            + (vw * 0.833) + 'px',
+        'font-family:Karlsbader Grotesk,Arial,sans-serif',
+        'font-size:'      + (vw * 3.333) + 'px',
+        'font-weight:400',
+        'color:#fff',
+        'mix-blend-mode:difference',
+        'letter-spacing:' + (-vw * 0.067) + 'px',
+        'white-space:nowrap',
+        'pointer-events:none',
+        'z-index:300'
+      ].join(';');
+      ov.innerHTML = '<span>Move</span><span>Forward</span><span>like a</span><span>Warp</span>';
+      document.body.appendChild(ov);
+
+      // Hide intro tagline immediately — overlay takes its place seamlessly
+      introTagline.style.transition = 'none';
+      introTagline.style.opacity = '0';
+
+      // Fade out intro overlay (reveals project content behind it)
+      intro.style.opacity = '0';
+      intro.style.pointerEvents = 'none';
+      setTimeout(function() { intro.style.display = 'none'; }, 500);
+
+      // Fade in project content
+      projHeader.style.transition = 'opacity 2.5s ease';
+      projBody.style.transition   = 'opacity 2.5s ease';
+      projHeader.style.opacity    = '1';
+      projBody.style.opacity      = '1';
+
+      // Two frames: let overlay paint at start size, then animate
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          var ease = 'cubic-bezier(0.25, 0, 0.25, 1)';
+          ov.style.transition = [
+            'font-size 0.7s '     + ease,
+            'letter-spacing 0.7s' + ease,
+            'opacity 0.35s ease'
+          ].join(',');
+
+          // Grow in place — no position change
+          ov.style.fontSize      = (vw * 6.458) + 'px';
+          ov.style.letterSpacing = (-vw * 0.129) + 'px';
+
+          // Fade out overlay after expansion, reveal sticky tagline
+          setTimeout(function() {
+            ov.style.opacity = '0';
+            setTimeout(function() {
+              ov.remove();
+              stickyTag.style.opacity = '';
+            }, 350);
+          }, 700);
+        });
+      });
+    }
+
+    requestAnimationFrame(introTick);
+
+    // Scroll reveal
+    (function() {
+      var obs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.gallery-item').forEach(function(el, i) {
+        el.classList.add('reveal');
+        el.style.transitionDelay = (i * 0.08) + 's';
+        obs.observe(el);
+      });
+    })();
+
+    // Seamless marquee
+    (function() {
+      var track = document.getElementById('marqueeTrack');
+      var set   = track.querySelector('.marquee-set');
+      var pos = 0, PX_PER_SEC = 60, setWidth = 0, lastTime = null, raf;
+
+      function fillClones() {
+        while (track.children.length > 1) track.removeChild(track.lastChild);
+        setWidth = set.offsetWidth;
+        for (var i = 0, n = Math.ceil(window.innerWidth / setWidth) + 1; i < n; i++)
+          track.appendChild(set.cloneNode(true));
+      }
+
+      function tick(now) {
+        var delta = lastTime !== null ? now - lastTime : 0;
+        lastTime = now;
+        pos -= PX_PER_SEC * (delta / 1000);
+        if (pos <= -setWidth) pos += setWidth;
+        track.style.transform = 'translateX(' + pos + 'px)';
+        raf = requestAnimationFrame(tick);
+      }
+
+      fillClones();
+      raf = requestAnimationFrame(tick);
+
+      window.addEventListener('load', function() {
+        cancelAnimationFrame(raf); lastTime = null; fillClones(); raf = requestAnimationFrame(tick);
+      });
+      window.addEventListener('resize', function() {
+        cancelAnimationFrame(raf); updateVW();
+        setTimeout(function() { lastTime = null; fillClones(); raf = requestAnimationFrame(tick); }, 50);
+      });
+    })();
   </script>
 </body>
 </html>
