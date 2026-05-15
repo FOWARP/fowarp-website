@@ -44,14 +44,15 @@
       pointer-events: none;
     }
 
-    /* Halftone dot grid — matches Figma design */
+    /* Halftone dot grid — matches Figma design (mix-blend-soft-light) */
     #intro-noise {
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.22) 1.5px, transparent 1.5px);
-      background-size: 14px 14px;
-      background-position: 7px 7px;
+      mix-blend-mode: soft-light;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.55) 1.2px, transparent 1.2px);
+      background-size: 8px 8px;
+      background-position: 4px 4px;
     }
 
     .intro-chip {
@@ -277,31 +278,6 @@
       height: 100%;
       object-fit: cover;
       display: block;
-    }
-
-    /* ─── STICKY TAGLINE ─────────────────────── */
-    .tagline-sticky-wrap {
-      position: absolute;
-      top: calc(var(--vw) * 45.521);
-      bottom: 0;
-      left: 50%;
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    .tagline-sticky {
-      position: sticky;
-      top: 0;
-      display: flex;
-      gap: calc(var(--vw) * 0.833);
-      font-family: 'Karlsbader Grotesk', Arial, sans-serif;
-      font-size: calc(var(--vw) * 6.458);
-      font-weight: 400;
-      color: #fff;
-      mix-blend-mode: difference;
-      letter-spacing: calc(var(--vw) * -0.129);
-      white-space: nowrap;
-      transform: translateX(-50%);
     }
 
     /* ─── SCROLL REVEAL ──────────────────────── */
@@ -546,12 +522,6 @@
     </div>
   </div>
 
-  <div class="tagline-sticky-wrap">
-    <div class="tagline-sticky" id="sticky-tagline" style="opacity:0">
-      <span>Move</span><span>Forward</span><span>like a</span><span>Warp</span>
-    </div>
-  </div>
-
   <script>
     function updateVW() {
       document.documentElement.style.setProperty('--vw', (Math.min(window.innerWidth, 1920) / 100) + 'px');
@@ -570,8 +540,6 @@
     var introWords   = introTagline.querySelectorAll('.intro-word');
     var projHeader   = document.getElementById('project-header');
     var projBody     = document.getElementById('project-body');
-    var stickyTag    = document.getElementById('sticky-tagline');
-
     // Chip data — Figma node 41:1705, 1920×1080 기준 vw/vh %
     var CHIPS = [
       { text: 'BRAND IDENTITY', color: '#a600ce', x: 14.84, y: 23.89 },
@@ -691,13 +659,9 @@
           ov.style.fontSize      = (vw * 6.458) + 'px';
           ov.style.letterSpacing = (-vw * 0.129) + 'px';
 
-          // Fade out overlay after expansion, reveal sticky tagline
           setTimeout(function() {
             ov.style.opacity = '0';
-            setTimeout(function() {
-              ov.remove();
-              stickyTag.style.opacity = '';
-            }, 350);
+            setTimeout(function() { ov.remove(); }, 350);
           }, 700);
         });
       });
