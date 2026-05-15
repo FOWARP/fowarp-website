@@ -33,7 +33,7 @@
       z-index: 200;
       background: #fff;   /* white base — #intro-bg covers it */
       isolation: isolate;
-      transition: opacity 0.5s ease;
+      transition: clip-path 0.8s cubic-bezier(0.77, 0, 0.175, 1);
     }
 
     #intro-bg {
@@ -602,16 +602,24 @@
     }
 
     function doOutro() {
+      // 1. 칩·배경·타이틀 페이드아웃
       chipEls.forEach(function(el) { el.classList.remove('show'); });
-      introBg.style.opacity    = '0';
+      introBg.style.opacity      = '0';
       introTagline.style.opacity = '0';
-      intro.style.opacity      = '0';
-      intro.style.pointerEvents = 'none';
-      setTimeout(function() { intro.style.display = 'none'; }, 500);
-      projHeader.style.transition = 'opacity 2.5s ease';
-      projBody.style.transition   = 'opacity 2.5s ease';
-      projHeader.style.opacity    = '1';
-      projBody.style.opacity      = '1';
+      intro.style.pointerEvents  = 'none';
+
+      // 2. 프로젝트 콘텐츠 즉시 노출 (패널에 가려져 있어서 보이지 않음)
+      projHeader.style.opacity = '1';
+      projBody.style.opacity   = '1';
+      document.querySelectorAll('.gallery-item.reveal').forEach(function(el) {
+        el.classList.add('is-visible');
+      });
+
+      // 3. 콘텐츠 페이드 후 패널을 위로 클립 → 헤더부터 갤러리 순 노출
+      setTimeout(function() {
+        intro.style.clipPath = 'inset(100% 0 0 0)';
+        setTimeout(function() { intro.style.display = 'none'; }, 850);
+      }, 320);
     }
 
     requestAnimationFrame(introTick);
