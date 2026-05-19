@@ -529,38 +529,160 @@
       setTimeout(function() { intro.style.display = 'none'; }, 850);
     }
 
-    // GSAP 인트로 애니메이션
+    // 인트로 애니메이션 (Phase 1: 픽셀 스폰 → Phase 2: 워드마크 전개)
     (function() {
       var vw   = Math.min(window.innerWidth, 1920) / 100;
-      var svgW = vw * 50; // 워드마크 렌더 너비
+      var svgW = vw * 50;
 
-      // 초기 상태
-      gsap.set('#logo-symbol',  { opacity: 0, y: 16 });
+      // 워드마크 글자 숨김 준비
       gsap.set(['#letter-f','#letter-o','#letter-w','#letter-a','#letter-r','#letter-p'], { opacity: 0 });
+      // logo-symbol SVG는 캔버스로 대체하므로 숨김
+      document.getElementById('logo-symbol').style.opacity = '0';
 
-      var tl = gsap.timeline({ onComplete: doOutro });
+      // ── Phase 2: 워드마크 전개 ──────────────────────
+      function startPhase2(pixelCanvas) {
+        pixelCanvas.style.transition = 'opacity 0.3s ease';
+        pixelCanvas.style.opacity    = '0';
 
-      tl.to('#logo-symbol', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' })
-        .to('#logo-symbol', { opacity: 0, duration: 0.3, ease: 'power2.in' }, '+=0.45')
-        .fromTo('#letter-a',
-          { opacity: 0 },
-          { opacity: 1, duration: 0.35, ease: 'power2.out' }, '-=0.1')
-        .fromTo('#letter-f',
-          { opacity: 0, x:  svgW * 0.555 },
-          { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
-        .fromTo('#letter-o',
-          { opacity: 0, x:  svgW * 0.399 },
-          { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
-        .fromTo('#letter-w',
-          { opacity: 0, x:  svgW * 0.214 },
-          { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
-        .fromTo('#letter-r',
-          { opacity: 0, x: -svgW * 0.150 },
-          { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
-        .fromTo('#letter-p',
-          { opacity: 0, x: -svgW * 0.311 },
-          { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
-        .to({}, { duration: 0.35 });
+        var tl = gsap.timeline({ onComplete: doOutro });
+        tl.fromTo('#letter-a',
+            { opacity: 0 },
+            { opacity: 1, duration: 0.35, ease: 'power2.out' })
+          .fromTo('#letter-f',
+            { opacity: 0, x:  svgW * 0.555 },
+            { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
+          .fromTo('#letter-o',
+            { opacity: 0, x:  svgW * 0.399 },
+            { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
+          .fromTo('#letter-w',
+            { opacity: 0, x:  svgW * 0.214 },
+            { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
+          .fromTo('#letter-r',
+            { opacity: 0, x: -svgW * 0.150 },
+            { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
+          .fromTo('#letter-p',
+            { opacity: 0, x: -svgW * 0.311 },
+            { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
+          .to({}, { duration: 0.35 });
+      }
+
+      // ── Phase 1: 픽셀 스폰 ──────────────────────────
+      var NATIVE_W = 366, NATIVE_H = 219;  // SVG viewBox 기준
+      var GRID     = 10;                    // 샘플링 격자 크기 (native px)
+      var COLS     = Math.ceil(NATIVE_W / GRID);
+      var ROWS     = Math.ceil(NATIVE_H / GRID);
+
+      var displayW = Math.round(vw * 19.06);
+      var displayH = Math.round(displayW * NATIVE_H / NATIVE_W);
+      var cellW    = displayW / COLS;
+      var cellH    = displayH / ROWS;
+
+      // Retina 대응
+      var dpr = window.devicePixelRatio || 1;
+
+      // 표시용 캔버스
+      var pixelCanvas          = document.createElement('canvas');
+      pixelCanvas.width        = Math.round(displayW * dpr);
+      pixelCanvas.height       = Math.round(displayH * dpr);
+      pixelCanvas.style.cssText = [
+        'position:absolute',
+        'top:50%',
+        'left:50%',
+        'transform:translate(-50%,-50%)',
+        'width:'  + displayW + 'px',
+        'height:' + displayH + 'px',
+        'image-rendering:pixelated',
+        'image-rendering:crisp-edges',
+      ].join(';');
+      document.getElementById('intro').appendChild(pixelCanvas);
+
+      var ctx = pixelCanvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+
+      // 할튼 도트 배경 (픽셀 격자 교점마다 점 하나)
+      function drawDots() {
+        var dotR = Math.max(0.8, cellW * 0.13);
+        ctx.fillStyle = '#c8c8c8';
+        for (var r = 0; r <= ROWS; r++) {
+          for (var c = 0; c <= COLS; c++) {
+            ctx.beginPath();
+            ctx.arc(c * cellW, r * cellH, dotR, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+
+      // SVG → 임시 캔버스에서 픽셀 데이터 추출
+      var tmpCanvas   = document.createElement('canvas');
+      tmpCanvas.width  = NATIVE_W;
+      tmpCanvas.height = NATIVE_H;
+      var tmpCtx = tmpCanvas.getContext('2d');
+
+      var svgEl  = document.querySelector('#logo-symbol svg');
+      var svgStr = new XMLSerializer().serializeToString(svgEl);
+      // 명시적 fill 설정 (직렬화 시 fill 속성 누락 방지)
+      svgStr = svgStr.replace(/<path /g,    '<path fill="#111111" ');
+      svgStr = svgStr.replace(/<polygon /g, '<polygon fill="#111111" ');
+      var blob    = new Blob([svgStr], { type: 'image/svg+xml' });
+      var blobUrl = URL.createObjectURL(blob);
+
+      var img = new Image();
+      img.onerror = function() { URL.revokeObjectURL(blobUrl); startPhase2(pixelCanvas); };
+      img.onload  = function() {
+        tmpCtx.drawImage(img, 0, 0, NATIVE_W, NATIVE_H);
+        URL.revokeObjectURL(blobUrl);
+
+        var data    = tmpCtx.getImageData(0, 0, NATIVE_W, NATIVE_H).data;
+        var cellMap = {};
+        var filled  = [];
+
+        // 전체 픽셀 스캔 → 어두운 픽셀이 속한 격자 셀 수집
+        for (var py = 0; py < NATIVE_H; py++) {
+          for (var px2 = 0; px2 < NATIVE_W; px2++) {
+            var pi = (py * NATIVE_W + px2) * 4;
+            if (data[pi + 3] > 100 && data[pi] < 80) {
+              var col = Math.floor(px2 / GRID);
+              var row = Math.floor(py  / GRID);
+              var key = col + ',' + row;
+              if (!cellMap[key]) {
+                cellMap[key] = true;
+                filled.push({ col: col, row: row });
+              }
+            }
+          }
+        }
+
+        // 무작위 순서
+        filled.sort(function() { return Math.random() - 0.5; });
+
+        drawDots();
+
+        // 픽셀 스폰: setTimeout 기반 → 총 ~900ms (실 브라우저·헤드리스 동일)
+        var TICK_MS = 16;  // ~60fps
+        var TICKS   = Math.ceil(900 / TICK_MS);          // 56 ticks
+        var BATCH   = Math.max(1, Math.ceil(filled.length / TICKS));
+        var i = 0;
+        function tick() {
+          if (i >= filled.length) {
+            setTimeout(function() { startPhase2(pixelCanvas); }, 250);
+            return;
+          }
+          var end = Math.min(i + BATCH, filled.length);
+          ctx.fillStyle = '#111';
+          for (; i < end; i++) {
+            var b = filled[i];
+            ctx.fillRect(
+              Math.round(b.col * cellW),
+              Math.round(b.row * cellH),
+              Math.ceil(cellW),
+              Math.ceil(cellH)
+            );
+          }
+          setTimeout(tick, TICK_MS);
+        }
+        setTimeout(tick, 0);
+      };
+      img.src = blobUrl;
     })();
 
     // Scroll reveal
