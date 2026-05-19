@@ -6,6 +6,7 @@
   <title>FOWARP</title>
   <link rel="preload" href="/fonts/KarlsbaderGrotesk-400.otf" as="font" type="font/otf" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="/js/lenis.min.js"></script>
   <style>
     @font-face {
@@ -31,78 +32,41 @@
       position: fixed;
       inset: 0;
       z-index: 200;
-      background: #fff;   /* white base — #intro-bg covers it */
-      isolation: isolate;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: clip-path 0.8s cubic-bezier(0.77, 0, 0.175, 1);
     }
 
-    #intro-bg {
+    #logo-symbol {
       position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, #000000, #282828);
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-
-    /* Halftone dot grid — matches Figma design (mix-blend-soft-light) */
-    #intro-noise {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      mix-blend-mode: soft-light;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.55) 1.2px, transparent 1.2px);
-      background-size: 8px 8px;
-      background-position: 4px 4px;
-    }
-
-    .intro-chip {
-      position: absolute;
-      padding: calc(var(--vw) * 0.521) calc(var(--vw) * 1.042);
-      border-radius: calc(var(--vw) * 0.313);
-      font-family: 'Karlsbader Grotesk', sans-serif;
-      font-size: calc(var(--vw) * 0.9375);
-      font-weight: 400;
-      color: #fff;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25, 0, 0.25, 1);
-    }
-    .intro-chip.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    #intro-tagline {
-      position: absolute;
-      top: 46.481%;   /* 502px / 1080px — Figma 지정 위치 */
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      display: flex;
-      gap: calc(var(--vw) * 0.833);
-      font-family: 'Karlsbader Grotesk', sans-serif;
-      font-size: calc(var(--vw) * 3.333);
-      font-weight: 400;
-      color: #fff;
-      mix-blend-mode: difference;
-      letter-spacing: calc(var(--vw) * -0.067);
-      white-space: nowrap;
-      pointer-events: none;
+      width: calc(var(--vw) * 19.06);
     }
 
-    .intro-word {
-      opacity: 0;
-      transform: translateY(calc(var(--vw) * 0.8));
-      transition: opacity 0.22s cubic-bezier(0.25, 0, 0.25, 1),
-                  transform 0.22s cubic-bezier(0.25, 0, 0.25, 1);
+    #logo-symbol svg {
+      width: 100%;
+      height: auto;
+      display: block;
     }
 
-    .intro-word.show {
-      opacity: 1;
-      transform: translateY(0);
+    #logo-wordmark {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      /* -50% 센터링 + A 위치 보정 (A가 워드마크 62.4% 지점 → -12.4% 오프셋) */
+      transform: translate(calc(-50% + calc(var(--vw) * -6.24)), -50%);
+      width: calc(var(--vw) * 50);
+    }
+
+    #logo-wordmark svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      overflow: visible;
     }
 
     /* ─── HEADER ─────────────────────────────── */
@@ -296,13 +260,22 @@
 
   <!-- ── INTRO OVERLAY ─────────────────────────── -->
   <div id="intro">
-    <div id="intro-bg"></div>
-    <div id="intro-noise"></div>
-    <div id="intro-tagline">
-      <span class="intro-word">Move</span>
-      <span class="intro-word">Forward</span>
-      <span class="intro-word">like a</span>
-      <span class="intro-word">Warp</span>
+    <!-- A 심볼 (Asset 2) -->
+    <div id="logo-symbol">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 365.7 219.42">
+        <path d="M292.56,177.63v10.45h-20.9v-31.35h10.45v-10.45h31.35v-10.45h20.9v-20.9h10.45v-10.45h-20.9v10.45h-10.45v10.45h-10.45v-20.9h10.45v-10.45h10.45v-10.45h10.45v-20.9h10.45v-10.45h10.45v-7.47h7.47V7.47h-7.47V0h-44.81v7.47h-7.47v7.47h-14.94v7.47h-7.47v7.47h-7.47v7.47h-7.47v7.47h-7.47v7.47h-7.47v7.47h-7.47v7.47h-22.41v-7.47h-89.62v7.47h-14.94v7.47h-7.47v14.94h-7.47v44.81h7.47v7.47h7.47v7.47h59.75v-7.47h14.94v-7.47h14.94v-7.47h7.47v-7.47h7.47v-7.47h7.47v-7.47h7.47v-7.47h14.94v7.47h22.41v7.47h-7.47v37.34h7.47v7.47h29.87v-7.47h7.47v-7.47h7.47v-7.47h7.47v-7.47h-14.94ZM146.28,135.83v10.45h-10.45v10.45h-10.45v10.45h-20.9v10.45h-20.9v10.45H31.35v-10.45h-10.45v-41.79h10.45v-10.45h10.45v-10.45h10.45v-10.45h83.59v10.45h10.45v10.45h10.45v10.45h-10.45ZM240.32,94.04v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h20.9v10.45h-10.45v10.45h-10.45v10.45h-10.45v20.9h-10.45v10.45h-10.45v10.45h-31.35v-10.45h10.45Z"/>
+      </svg>
+    </div>
+    <!-- FOWARP 워드마크 (Asset 1) — 각 글자 그룹 분리 -->
+    <div id="logo-wordmark">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1016.86 156.84">
+        <g id="letter-a"><path d="M690.58,126.96v7.47h-14.94v-22.41h7.47v-7.47h22.41v-7.47h14.94v-14.94h7.47v-7.47h-14.94v7.47h-7.47v7.47h-7.47v-14.94h7.47v-7.47h7.47v-7.47h7.47v-14.94h7.47v-7.47h7.47v-7.47h7.47V7.47h-7.47V0h-44.81v7.47h-7.47v7.47h-14.94v7.47h-7.47v7.47h-7.47v7.47h-7.47v7.47h-7.47v7.47h-7.47v7.47h-7.47v7.47h-22.41v-7.47h-89.62v7.47h-14.94v7.47h-7.47v14.94h-7.47v44.81h7.47v7.47h7.47v7.47h59.75v-7.47h14.94v-7.47h14.94v-7.47h7.47v-7.47h7.47v-7.47h7.47v-7.47h7.47v-7.47h14.94v7.47h22.41v7.47h-7.47v37.34h7.47v7.47h29.87v-7.47h7.47v-7.47h7.47v-7.47h7.47v-7.47h-14.94ZM586.02,97.09v7.47h-7.47v7.47h-7.47v7.47h-14.94v7.47h-14.94v7.47h-37.34v-7.47h-7.47v-29.87h7.47v-7.47h7.47v-7.47h7.47v-7.47h59.75v7.47h7.47v7.47h7.47v7.47h-7.47ZM653.24,67.22v-7.47h7.47v-7.47h7.47v-7.47h7.47v-7.47h7.47v-7.47h7.47v-7.47h14.94v7.47h-7.47v7.47h-7.47v7.47h-7.47v14.94h-7.47v7.47h-7.47v7.47h-22.41v-7.47h7.47Z"/></g>
+        <g id="letter-f"><polygon points="0 148.7 49.58 148.83 49.66 119.5 132.95 119.72 133.03 89.94 49.73 89.72 49.77 74.15 137.6 74.38 137.69 41.13 .28 40.77 0 148.7"/></g>
+        <g id="letter-o"><path d="M292.91,51.43c-13.98-9.46-35.64-14.23-64.96-14.3-29.33-.07-51.01,4.58-65.04,13.97-14.03,9.39-21.07,24.06-21.13,44.01-.05,19.95,6.91,34.66,20.9,44.12,13.98,9.46,35.64,14.23,64.96,14.3,29.33.08,51-4.58,65.04-13.97,14.03-9.39,21.07-24.06,21.13-44.01.05-19.95-6.92-34.66-20.9-44.12ZM251.41,112.99c-5.4,4.07-13.29,6.09-23.67,6.06-10.38-.03-18.26-2.09-23.64-6.18-5.38-4.1-8.06-9.97-8.04-17.63.02-7.66,2.73-13.52,8.13-17.59,5.4-4.07,13.29-6.09,23.67-6.06,10.38.03,18.26,2.09,23.64,6.18,5.38,4.1,8.06,9.97,8.04,17.63-.02,7.66-2.73,13.52-8.13,17.59Z"/></g>
+        <g id="letter-w"><polygon points="488.09 58.9 495.55 58.9 503.02 58.9 503.02 51.43 510.49 51.43 517.96 51.43 521.07 51.43 523.91 42.12 472.52 41.99 458 101.51 456.79 101.51 442.43 41.91 391.79 41.78 377.28 101.3 376.07 101.3 362.02 41.7 310.47 41.57 341.93 149.58 401.64 149.74 416.46 91.12 417.67 91.13 432.33 149.82 480.62 149.94 480.62 142.75 473.15 142.75 473.15 135.28 473.15 127.81 473.15 120.34 473.15 118.64 473.15 112.87 473.15 111.18 473.15 105.41 473.15 103.71 473.15 96.24 473.15 88.77 473.15 81.3 480.62 81.3 480.62 73.84 480.62 66.37 488.09 66.37 488.09 58.9"/></g>
+        <g id="letter-r"><path d="M833.12,110.15c7.36-1.79,13.06-5.11,17.11-9.93,4.04-4.83,6.08-11.87,6.1-21.15.03-12.7-3.49-22.15-10.58-28.37-7.09-6.22-18.95-9.34-35.57-9.39l-66.46-.17v4.51h-7.47v7.47h-7.47v13.24h7.47v24.1h-7.47v14.94h-14.94v7.47h-14.2v5.77s6.73,0,6.73,0h7.47v24.1h-7.47v6.23l42.76.11.07-27.51,34.92.09,17.46,27.56,57.29.15-25.75-37.71v-1.51ZM790.39,93.11l-41.12-.11.05-17.84,41.12.11c7.05.02,10.57,3,10.56,8.95-.01,5.95-3.55,8.91-10.6,8.89Z"/></g>
+        <g id="letter-p"><path d="M1012.23,59.37c-3.11-5.85-8.16-10.25-15.16-13.19-7-2.94-16.39-4.43-28.18-4.46l-105.21-.27-.28,107.93,49.58.13.07-28.12,55.63.14c11.79.03,21.19-1.38,28.2-4.24,7.01-2.85,12.09-7.17,15.22-12.96,3.14-5.79,4.72-13.21,4.74-22.28.02-9.27-1.52-16.83-4.63-22.69ZM959.55,90c-2.02,1.66-5,2.48-8.93,2.47l-37.49-.1.05-19.95,37.49.1c7.96.02,11.93,3.36,11.92,10.01,0,3.33-1.02,5.82-3.04,7.47Z"/></g>
+      </svg>
     </div>
   </div>
 
@@ -520,6 +493,12 @@
         </div>
       </div>
 
+      <div class="gallery-item">
+        <div class="gallery-label">
+          <div class="gallery-label-line"></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -535,95 +514,54 @@
     (function lenisLoop(t) { lenis.raf(t); requestAnimationFrame(lenisLoop); })(0);
 
     // Elements
-    var intro        = document.getElementById('intro');
-    var introBg      = document.getElementById('intro-bg');
-    var introTagline = document.getElementById('intro-tagline');
-    var introWords   = introTagline.querySelectorAll('.intro-word');
-    var projHeader   = document.getElementById('project-header');
-    var projBody     = document.getElementById('project-body');
-    // Chip data — Figma node 41:1705, 1920×1080 기준 vw/vh %
-    var CHIPS = [
-      { text: 'BRAND IDENTITY', color: '#a600ce', x: 16.97, y: 23.89 },
-      { text: 'PACKAGE',        color: '#009da0', x: 26.82, y: 30.65 },
-      { text: 'UI/UX',          color: '#15a000', x: 43.96, y: 66.30 },
-      { text: 'DETAIL PAGE',    color: '#606060', x: 37.29, y: 13.61 },
-      { text: 'BROCHURE',       color: '#8da600', x: 52.14, y: 84.91 },
-      { text: '3D VISUAL',      color: '#3355ff', x: 64.42, y: 19.35 },
-      { text: 'Motion Graphic', color: '#e65010', x: 32.76, y: 73.52 },
-      { text: 'Generative AI',  color: '#9d33ff', x: 55.52, y: 26.11 },
-      { text: 'POSTER',         color: '#f416c1', x: 73.59, y: 74.44 },
-      { text: 'BRAND STRATEGY', color: '#bb2c2e', x: 74.48, y: 66.30 },
-      { text: 'BRAND GUIDE',    color: '#005f50', x: 77.24, y: 36.76 },
-      { text: 'website',        color: '#e0256c', x: 14.06, y: 66.30 },
-    ];
-
-    var chipEls = CHIPS.map(function(c) {
-      var el = document.createElement('div');
-      el.className = 'intro-chip';
-      el.textContent = c.text;
-      el.style.background = c.color;
-      el.style.left = c.x + 'vw';
-      el.style.top  = c.y + 'vh';
-      intro.appendChild(el);
-      return el;
-    });
-
-    var CHIP_STAGGER = 80;   /* 칩 간격 ms */
-    var WORD_DELAYS = [200, 380, 560, 740];
-    var OUT_START   = 2350;
-    var startTs = null;
-    var shown   = [false, false, false, false];
-    var outDone = false;
-
-    function introTick(ts) {
-      if (!startTs) startTs = ts;
-      var t = ts - startTs;
-
-      chipEls.forEach(function(el, i) {
-        if (!el._in && t >= i * CHIP_STAGGER) {
-          el.classList.add('show');
-          el._in = true;
-        }
-      });
-
-      WORD_DELAYS.forEach(function(delay, i) {
-        if (!shown[i] && t >= delay) {
-          introWords[i].classList.add('show');
-          shown[i] = true;
-        }
-      });
-
-      if (t >= OUT_START && !outDone) {
-        outDone = true;
-        doOutro();
-        return;
-      }
-
-      requestAnimationFrame(introTick);
-    }
+    var intro      = document.getElementById('intro');
+    var projHeader = document.getElementById('project-header');
+    var projBody   = document.getElementById('project-body');
 
     function doOutro() {
-      // 1. 칩·배경·타이틀 페이드아웃
-      chipEls.forEach(function(el) { el.classList.remove('show'); });
-      introBg.style.opacity      = '0';
-      introTagline.style.opacity = '0';
-      intro.style.pointerEvents  = 'none';
-
-      // 2. 프로젝트 콘텐츠 즉시 노출 (패널에 가려져 있어서 보이지 않음)
-      projHeader.style.opacity = '1';
-      projBody.style.opacity   = '1';
+      intro.style.pointerEvents = 'none';
+      projHeader.style.opacity  = '1';
+      projBody.style.opacity    = '1';
       document.querySelectorAll('.gallery-item.reveal').forEach(function(el) {
         el.classList.add('is-visible');
       });
-
-      // 3. 콘텐츠 페이드 후 패널을 위로 클립 → 헤더부터 갤러리 순 노출
-      setTimeout(function() {
-        intro.style.clipPath = 'inset(100% 0 0 0)';
-        setTimeout(function() { intro.style.display = 'none'; }, 850);
-      }, 320);
+      intro.style.clipPath = 'inset(100% 0 0 0)';
+      setTimeout(function() { intro.style.display = 'none'; }, 850);
     }
 
-    requestAnimationFrame(introTick);
+    // GSAP 인트로 애니메이션
+    (function() {
+      var vw   = Math.min(window.innerWidth, 1920) / 100;
+      var svgW = vw * 50; // 워드마크 렌더 너비
+
+      // 초기 상태
+      gsap.set('#logo-symbol',  { opacity: 0, y: 16 });
+      gsap.set(['#letter-f','#letter-o','#letter-w','#letter-a','#letter-r','#letter-p'], { opacity: 0 });
+
+      var tl = gsap.timeline({ onComplete: doOutro });
+
+      tl.to('#logo-symbol', { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' })
+        .to('#logo-symbol', { opacity: 0, duration: 0.3, ease: 'power2.in' }, '+=0.45')
+        .fromTo('#letter-a',
+          { opacity: 0 },
+          { opacity: 1, duration: 0.35, ease: 'power2.out' }, '-=0.1')
+        .fromTo('#letter-f',
+          { opacity: 0, x:  svgW * 0.555 },
+          { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
+        .fromTo('#letter-o',
+          { opacity: 0, x:  svgW * 0.399 },
+          { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
+        .fromTo('#letter-w',
+          { opacity: 0, x:  svgW * 0.214 },
+          { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
+        .fromTo('#letter-r',
+          { opacity: 0, x: -svgW * 0.150 },
+          { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
+        .fromTo('#letter-p',
+          { opacity: 0, x: -svgW * 0.311 },
+          { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, '<0.04')
+        .to({}, { duration: 0.35 });
+    })();
 
     // Scroll reveal
     (function() {
