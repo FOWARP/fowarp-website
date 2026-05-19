@@ -567,23 +567,17 @@
       }
 
       // ── Phase 1: 픽셀 스폰 ──────────────────────────
-      var NATIVE_W = 366, NATIVE_H = 219;  // SVG viewBox 기준
-      var GRID     = 10;                    // 샘플링 격자 크기 (native px)
-      var COLS     = Math.ceil(NATIVE_W / GRID);
-      var ROWS     = Math.ceil(NATIVE_H / GRID);
+      // fowarp-03.png 기준: 정사각형 원본, 픽셀 격자 크기 결정
+      var GRID     = 8;    // 픽셀 격자 크기 (SAMPLE px 기준)
+      var dpr      = window.devicePixelRatio || 1;
 
-      var displayW = Math.round(vw * 19.06);
-      var displayH = Math.round(displayW * NATIVE_H / NATIVE_W);
-      var cellW    = displayW / COLS;
-      var cellH    = displayH / ROWS;
+      // 표시 캔버스 — 화면 중앙, 뷰포트 기준 크기
+      var displayW = Math.round(vw * 20);
+      var displayH = displayW; // 원본이 정사각형
 
-      // Retina 대응
-      var dpr = window.devicePixelRatio || 1;
-
-      // 표시용 캔버스
-      var pixelCanvas          = document.createElement('canvas');
-      pixelCanvas.width        = Math.round(displayW * dpr);
-      pixelCanvas.height       = Math.round(displayH * dpr);
+      var pixelCanvas = document.createElement('canvas');
+      pixelCanvas.width  = Math.round(displayW * dpr);
+      pixelCanvas.height = Math.round(displayH * dpr);
       pixelCanvas.style.cssText = [
         'position:absolute',
         'top:50%',
@@ -599,47 +593,25 @@
       var ctx = pixelCanvas.getContext('2d');
       ctx.scale(dpr, dpr);
 
-      // 할튼 도트 배경 (픽셀 격자 교점마다 점 하나)
-      function drawDots() {
-        var dotR = Math.max(0.8, cellW * 0.13);
-        ctx.fillStyle = '#c8c8c8';
-        for (var r = 0; r <= ROWS; r++) {
-          for (var c = 0; c <= COLS; c++) {
-            ctx.beginPath();
-            ctx.arc(c * cellW, r * cellH, dotR, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        }
-      }
-
-      // SVG → 임시 캔버스에서 픽셀 데이터 추출
-      var tmpCanvas   = document.createElement('canvas');
-      tmpCanvas.width  = NATIVE_W;
-      tmpCanvas.height = NATIVE_H;
+      // fowarp-03.png → 다운샘플 캔버스에서 픽셀 추출
+      var SAMPLE = 300; // 다운샘플 해상도 (정사각형)
+      var tmpCanvas = document.createElement('canvas');
+      tmpCanvas.width = tmpCanvas.height = SAMPLE;
       var tmpCtx = tmpCanvas.getContext('2d');
 
-      var svgEl  = document.querySelector('#logo-symbol svg');
-      var svgStr = new XMLSerializer().serializeToString(svgEl);
-      // 명시적 fill 설정 (직렬화 시 fill 속성 누락 방지)
-      svgStr = svgStr.replace(/<path /g,    '<path fill="#111111" ');
-      svgStr = svgStr.replace(/<polygon /g, '<polygon fill="#111111" ');
-      var blob    = new Blob([svgStr], { type: 'image/svg+xml' });
-      var blobUrl = URL.createObjectURL(blob);
-
       var img = new Image();
-      img.onerror = function() { URL.revokeObjectURL(blobUrl); startPhase2(pixelCanvas); };
+      img.onerror = function() { startPhase2(pixelCanvas); };
       img.onload  = function() {
-        tmpCtx.drawImage(img, 0, 0, NATIVE_W, NATIVE_H);
-        URL.revokeObjectURL(blobUrl);
-
-        var data    = tmpCtx.getImageData(0, 0, NATIVE_W, NATIVE_H).data;
+        tmpCtx.drawImage(img, 0, 0, SAMPLE, SAMPLE);
+        var data    = tmpCtx.getImageData(0, 0, SAMPLE, SAMPLE).data;
         var cellMap = {};
         var filled  = [];
+        var COLS    = Math.ceil(SAMPLE / GRID);
 
         // 전체 픽셀 스캔 → 어두운 픽셀이 속한 격자 셀 수집
-        for (var py = 0; py < NATIVE_H; py++) {
-          for (var px2 = 0; px2 < NATIVE_W; px2++) {
-            var pi = (py * NATIVE_W + px2) * 4;
+        for (var py = 0; py < SAMPLE; py++) {
+          for (var px2 = 0; px2 < SAMPLE; px2++) {
+            var pi = (py * SAMPLE + px2) * 4;
             if (data[pi + 3] > 100 && data[pi] < 80) {
               var col = Math.floor(px2 / GRID);
               var row = Math.floor(py  / GRID);
@@ -652,19 +624,21 @@
           }
         }
 
+        // 화면 셀 크기
+        var cellW = displayW / COLS;
+        var cellH = displayH / COLS;
+
         // 무작위 순서
         filled.sort(function() { return Math.random() - 0.5; });
 
-        drawDots();
-
-        // 픽셀 스폰: setTimeout 기반 → 총 ~900ms (실 브라우저·헤드리스 동일)
-        var TICK_MS = 16;  // ~60fps
-        var TICKS   = Math.ceil(900 / TICK_MS);          // 56 ticks
+        // 픽셀 스폰: 총 1~1.5s
+        var TICK_MS = 16;
+        var TICKS   = Math.ceil(1200 / TICK_MS);
         var BATCH   = Math.max(1, Math.ceil(filled.length / TICKS));
         var i = 0;
         function tick() {
           if (i >= filled.length) {
-            setTimeout(function() { startPhase2(pixelCanvas); }, 250);
+            setTimeout(function() { startPhase2(pixelCanvas); }, 300);
             return;
           }
           var end = Math.min(i + BATCH, filled.length);
@@ -682,7 +656,8 @@
         }
         setTimeout(tick, 0);
       };
-      img.src = blobUrl;
+      img.crossOrigin = 'anonymous';
+      img.src = '/media/fowarp-03.png';
     })();
 
     // Scroll reveal
