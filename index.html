@@ -200,14 +200,29 @@
       object-fit: cover;
       object-position: top;
       display: block;
-      transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transition: transform 0.12s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
-    .gallery-item {
-      transition: background 0.25s ease;
+    /* hover bg — ::before가 column-gap 안쪽까지 채움 */
+    .gallery-item::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; left: 0; right: 0;
+      background: transparent;
+      transition: background 0.12s ease;
+      z-index: -1;
+      pointer-events: none;
+    }
+    /* col2, col3: 왼쪽 gap 절반 채움 */
+    .gallery-item:not(:nth-child(3n+1))::before {
+      left: calc(var(--vw) * -0.612);
+    }
+    /* col1, col2: 오른쪽 gap 절반 채움 */
+    .gallery-item:not(:nth-child(3n))::before {
+      right: calc(var(--vw) * -0.612);
     }
 
-    .gallery-item:hover {
+    .gallery-item:hover::before {
       background: #EDEDED;
     }
 
@@ -221,8 +236,7 @@
       opacity: 0;
       transform: translateY(32px);
       transition: opacity 0.9s ease,
-                  transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
-                  background 0.25s ease;
+                  transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .reveal.is-visible { opacity: 1; transform: translateY(0); }
   </style>
