@@ -411,10 +411,17 @@
         });
       }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-      var targets = document.querySelectorAll('.project-info, .project-media > .media-block, .project-media > .media-row-2col');
-      targets.forEach(function(el, i) {
+      // 프로젝트 정보: 좌→우 순차 등장
+      document.querySelectorAll('.project-info > *').forEach(function(el, i) {
         el.classList.add('reveal');
-        el.style.transitionDelay = (i * 0.06) + 's';
+        el.style.transitionDelay = (i * 0.1) + 's';
+        obs.observe(el);
+      });
+
+      // 미디어 블록: 뷰포트 진입 시 개별 등장
+      document.querySelectorAll('.project-media > .media-block, .project-media > .media-row-2col').forEach(function(el) {
+        el.classList.add('reveal');
+        el.style.transitionDelay = '0s';
         obs.observe(el);
       });
     })();
