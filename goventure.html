@@ -405,11 +405,11 @@
 
     // Scroll reveal
     (function() {
-      // 프로젝트 정보: 페이지 로드 후 좌→우 순차 등장
+      // 프로젝트 정보: 첫 프레임 직후 좌→우 순차 등장
       var infoEls = document.querySelectorAll('.project-info > .reveal');
-      window.addEventListener('load', function() {
+      requestAnimationFrame(function() {
         infoEls.forEach(function(el, i) {
-          setTimeout(function() { el.classList.add('is-visible'); }, 80 + i * 110);
+          setTimeout(function() { el.classList.add('is-visible'); }, i * 80);
         });
       });
 
