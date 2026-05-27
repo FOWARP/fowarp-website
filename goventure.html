@@ -268,9 +268,9 @@
     /* ─── SCROLL REVEAL ─────────────────────── */
     .reveal {
       opacity: 0;
-      transform: translateY(32px);
-      transition: opacity 0.9s ease,
-                  transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: translateY(20px);
+      transition: opacity 0.45s ease,
+                  transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .reveal.is-visible { opacity: 1; transform: translateY(0); }
@@ -405,23 +405,24 @@
 
     // Scroll reveal
     (function() {
+      // 프로젝트 정보: 페이지 로드 후 좌→우 순차 등장 (viewport에 처음부터 있어서 setTimeout 사용)
+      var infoEls = document.querySelectorAll('.project-info > *');
+      infoEls.forEach(function(el) { el.classList.add('reveal'); });
+      window.addEventListener('load', function() {
+        infoEls.forEach(function(el, i) {
+          setTimeout(function() { el.classList.add('is-visible'); }, 80 + i * 110);
+        });
+      });
+
+      // 미디어 블록: 스크롤 시 뷰포트 진입하면 등장
       var obs = new IntersectionObserver(function(entries) {
         entries.forEach(function(e) {
           if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); }
         });
       }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-      // 프로젝트 정보: 좌→우 순차 등장
-      document.querySelectorAll('.project-info > *').forEach(function(el, i) {
-        el.classList.add('reveal');
-        el.style.transitionDelay = (i * 0.1) + 's';
-        obs.observe(el);
-      });
-
-      // 미디어 블록: 뷰포트 진입 시 개별 등장
       document.querySelectorAll('.project-media > .media-block, .project-media > .media-row-2col').forEach(function(el) {
         el.classList.add('reveal');
-        el.style.transitionDelay = '0s';
         obs.observe(el);
       });
     })();
