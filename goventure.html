@@ -269,8 +269,8 @@
     .reveal {
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity 0.2s ease,
-                  transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: opacity 0.4s ease,
+                  transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .reveal.is-visible { opacity: 1; transform: translateY(0); }
@@ -405,11 +405,15 @@
 
     // Scroll reveal
     (function() {
-      // 프로젝트 정보: 첫 프레임 직후 좌→우 순차 등장
+      // 프로젝트 정보: 좌→우 순차 등장
+      // CSS transition-delay로 스태거, 이중 rAF로 opacity:0 first paint 보장
       var infoEls = document.querySelectorAll('.project-info > .reveal');
+      infoEls.forEach(function(el, i) {
+        el.style.transitionDelay = (i * 0.08) + 's';
+      });
       requestAnimationFrame(function() {
-        infoEls.forEach(function(el, i) {
-          setTimeout(function() { el.classList.add('is-visible'); }, i * 80);
+        requestAnimationFrame(function() {
+          infoEls.forEach(function(el) { el.classList.add('is-visible'); });
         });
       });
 
