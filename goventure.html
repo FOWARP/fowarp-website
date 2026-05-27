@@ -223,13 +223,97 @@
       display: block;
     }
 
+    /* banner: parallax crop */
     .media-block.media-banner img {
       position: absolute;
       width: 100%;
       height: 133.27%;
-      top: -16.64%;
+      top: -19.56%;
       left: 0;
       object-fit: cover;
+    }
+
+    .banner-gradient {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: calc(var(--vw) * 6.042);
+      background: linear-gradient(to bottom, transparent, #000);
+      pointer-events: none;
+    }
+
+    /* 2-column row */
+    .media-row-2col {
+      display: flex;
+      gap: calc(var(--vw) * 0.521);
+    }
+
+    .media-row-2col .media-block {
+      flex: 1;
+      width: auto;
+    }
+
+    /* id-card: centered in black panel */
+    .media-idcard img {
+      position: absolute;
+      width: calc(var(--vw) * 38.073);
+      height: calc(var(--vw) * 49.740);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+    }
+
+    /* DSC09411: bottom-aligned, centered */
+    .media-dsc09411-wrap {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(var(--vw) * 100.990);
+      height: calc(var(--vw) * 67.344);
+    }
+
+    .media-dsc09411-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* DSC09423: bottom-aligned, centered */
+    .media-dsc09423-wrap {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(var(--vw) * 128.854);
+      height: calc(var(--vw) * 85.885);
+    }
+
+    .media-dsc09423-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* DSC09390: complex offset */
+    .media-dsc09390-wrap {
+      position: absolute;
+      left: calc(50% + calc(var(--vw) * 20.521));
+      top: calc(var(--vw) * -110.885);
+      transform: translateX(-50%);
+      width: calc(var(--vw) * 136.875);
+      height: calc(var(--vw) * 205.313);
+    }
+
+    .media-dsc09390-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
   </style>
 </head>
@@ -294,20 +378,59 @@
 
     <!-- 미디어 -->
     <div class="project-media">
+
+      <!-- 1: 3D 모션 영상 -->
       <div class="media-block">
         <video autoplay muted loop playsinline>
           <source src="/media/B01/goventure.mp4" type="video/mp4">
         </video>
       </div>
+
+      <!-- 2: 목업 1 -->
       <div class="media-block">
         <img src="/media/goventure/mockup-1.jpg" alt="GoVenture Forum Mockup">
       </div>
+
+      <!-- 3: 목업 2 -->
       <div class="media-block">
         <img src="/media/goventure/mockup-2.jpg" alt="GoVenture Forum Mockup 2">
       </div>
+
+      <!-- 4: 배너 (parallax + gradient) -->
       <div class="media-block media-banner">
         <img src="/media/goventure/banner.jpg" alt="GoVenture Forum Banner">
+        <div class="banner-gradient"></div>
       </div>
+
+      <!-- 5: 2단 — 로고모션(흑) | 사원증 목업 -->
+      <div class="media-row-2col">
+        <div class="media-block"></div>
+        <div class="media-block media-idcard">
+          <img src="/media/goventure/id-card.jpg" alt="GoVenture Forum ID Card">
+        </div>
+      </div>
+
+      <!-- 6: DSC09411 — bottom-aligned photo -->
+      <div class="media-block">
+        <div class="media-dsc09411-wrap">
+          <img src="/media/goventure/dsc09411.jpg" alt="GoVenture Forum Event">
+        </div>
+      </div>
+
+      <!-- 7: 2단 — DSC09423 | DSC09390 -->
+      <div class="media-row-2col">
+        <div class="media-block">
+          <div class="media-dsc09423-wrap">
+            <img src="/media/goventure/dsc09423.jpg" alt="GoVenture Forum Event">
+          </div>
+        </div>
+        <div class="media-block">
+          <div class="media-dsc09390-wrap">
+            <img src="/media/goventure/dsc09390.jpg" alt="GoVenture Forum Event">
+          </div>
+        </div>
+      </div>
+
     </div>
 
   </div>
