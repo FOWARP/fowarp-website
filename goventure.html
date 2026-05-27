@@ -265,56 +265,6 @@
       object-fit: cover;
     }
 
-    /* DSC09411: bottom-aligned, centered */
-    .media-dsc09411-wrap {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(var(--vw) * 100.990);
-      height: calc(var(--vw) * 67.344);
-    }
-
-    .media-dsc09411-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    /* DSC09423: bottom-aligned, centered */
-    .media-dsc09423-wrap {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(var(--vw) * 128.854);
-      height: calc(var(--vw) * 85.885);
-    }
-
-    .media-dsc09423-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    /* DSC09390: complex offset */
-    .media-dsc09390-wrap {
-      position: absolute;
-      left: calc(50% + calc(var(--vw) * 20.521));
-      top: calc(var(--vw) * -110.885);
-      transform: translateX(-50%);
-      width: calc(var(--vw) * 136.875);
-      height: calc(var(--vw) * 205.313);
-    }
-
-    .media-dsc09390-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
   </style>
 </head>
 <body>
@@ -402,32 +352,30 @@
         <div class="banner-gradient"></div>
       </div>
 
-      <!-- 5: 2단 — 로고모션(흑) | 사원증 목업 -->
+      <!-- 5: 2단 — 로고모션 | 사원증 목업 -->
       <div class="media-row-2col">
-        <div class="media-block"></div>
+        <div class="media-block">
+          <video autoplay muted loop playsinline>
+            <source src="/media/goventure/logo_motion_GVF.mp4" type="video/mp4">
+          </video>
+        </div>
         <div class="media-block media-idcard">
           <img src="/media/goventure/id-card.jpg" alt="GoVenture Forum ID Card">
         </div>
       </div>
 
-      <!-- 6: DSC09411 — bottom-aligned photo -->
+      <!-- 6: DSC09411 풀위드 -->
       <div class="media-block">
-        <div class="media-dsc09411-wrap">
-          <img src="/media/goventure/dsc09411.jpg" alt="GoVenture Forum Event">
-        </div>
+        <img src="/media/goventure/dsc09411.jpg" alt="GoVenture Forum Event">
       </div>
 
       <!-- 7: 2단 — DSC09423 | DSC09390 -->
       <div class="media-row-2col">
         <div class="media-block">
-          <div class="media-dsc09423-wrap">
-            <img src="/media/goventure/dsc09423.jpg" alt="GoVenture Forum Event">
-          </div>
+          <img src="/media/goventure/dsc09423.jpg" alt="GoVenture Forum Event">
         </div>
         <div class="media-block">
-          <div class="media-dsc09390-wrap">
-            <img src="/media/goventure/dsc09390.jpg" alt="GoVenture Forum Event">
-          </div>
+          <img src="/media/goventure/dsc09390.jpg" alt="GoVenture Forum Event">
         </div>
       </div>
 
