@@ -24,14 +24,18 @@
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
       position: relative;
+      max-width: 1920px;
+      margin: 0 auto;
     }
 
     /* ─── HEADER ─────────────────────────────── */
     .header {
       position: fixed;
       top: 0;
-      left: 0;
+      left: 50%;
+      transform: translateX(-50%);
       width: 100%;
+      max-width: 1920px;
       z-index: 100;
       background: rgba(255,255,255,0.9);
     }
