@@ -36,13 +36,15 @@
       width: 100%;
       max-width: 1920px;
       z-index: 100;
-      background: rgba(255,255,255,0.9);
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(calc(var(--vw) * 0.52));
+      -webkit-backdrop-filter: blur(calc(var(--vw) * 0.52));
     }
 
     .marquee-section {
       width: 100%;
-      padding: calc(var(--vw) * 1.042) calc(var(--vw) * 1.042) 0;
-      background: rgba(255,255,255,0.9);
+      padding: 0;
+      background: transparent;
     }
 
     .marquee-bar { width: 100%; overflow-x: hidden; }
@@ -51,7 +53,7 @@
       background: #000;
       width: 100%;
       height: calc(var(--vw) * 2.083);
-      border-radius: calc(var(--vw) * 0.417);
+      border-radius: 0;
       display: flex;
       align-items: center;
     }
@@ -87,7 +89,7 @@
 
     .header-main {
       width: 100%;
-      height: calc(var(--vw) * 5.208);
+      height: 50px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -494,7 +496,7 @@
     (function() {
       var track = document.getElementById('marqueeTrack');
       var set   = track.querySelector('.marquee-set');
-      var pos = 0, PX_PER_SEC = 60, setWidth = 0, lastTime = null, raf;
+      var pos = 0, PX_PER_SEC = 30, setWidth = 0, lastTime = null, raf;
 
       function fillClones() {
         while (track.children.length > 1) track.removeChild(track.lastChild);

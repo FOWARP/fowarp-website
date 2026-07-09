@@ -33,14 +33,16 @@
       width: 100%;
       max-width: 1920px;
       z-index: 100;
-      background: rgba(255,255,255,0.9);
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(calc(var(--vw) * 0.52));
+      -webkit-backdrop-filter: blur(calc(var(--vw) * 0.52));
     }
 
     /* 마키 섹션: 흰 배경 + 상단 패딩 */
     .marquee-section {
       width: 100%;
-      padding: calc(var(--vw) * 1.042) calc(var(--vw) * 1.042) 0; /* top:20px, 좌우:20px */
-      background: rgba(255,255,255,0.9);
+      padding: 0;
+      background: transparent;
     }
 
     .marquee-bar {
@@ -52,7 +54,7 @@
       background: #000;
       width: 100%;
       height: calc(var(--vw) * 2.083); /* 40px */
-      border-radius: calc(var(--vw) * 0.417); /* 8px */
+      border-radius: 0;
       display: flex;
       align-items: center;
     }
@@ -89,7 +91,7 @@
     /* 메인 헤더 바 */
     .header-main {
       width: 100%;
-      height: calc(var(--vw) * 5.208); /* 100px */
+      height: 50px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -558,7 +560,7 @@
       var set   = track.querySelector('.marquee-set');
 
       var pos      = 0;
-      var PX_PER_SEC = 60; /* 화면 크기와 무관하게 초당 60px 고정 */
+      var PX_PER_SEC = 30; /* 화면 크기와 무관하게 초당 60px 고정 */
       var setWidth = 0;
       var raf;
       var lastTime = null;
