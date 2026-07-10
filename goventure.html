@@ -535,6 +535,25 @@
       window.addEventListener('scroll', checkMedia, { passive: true });
       window.addEventListener('resize', checkMedia);
       if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkMedia);
+
+      // 레티나 서브픽셀 흐림 방지: 선 애니 완료 후 물리픽셀 라인에 스냅
+      function snapLine(el) {
+        var dpr = window.devicePixelRatio || 1;
+        el.style.transform = 'none';
+        var r = el.getBoundingClientRect();
+        if (el.classList.contains('info-hline')) {
+          var p = r.top * dpr;
+          el.style.transform = 'translateY(' + ((Math.round(p) - p) / dpr) + 'px)';
+        } else {
+          var px = r.left * dpr;
+          el.style.transform = 'translateX(' + ((Math.round(px) - px) / dpr) + 'px)';
+        }
+      }
+      var lineEls = document.querySelectorAll('.info-hline, .info-vline');
+      lineEls.forEach(function(el) {
+        el.addEventListener('animationend', function() { el.style.animation = 'none'; snapLine(el); });
+      });
+      window.addEventListener('resize', function() { lineEls.forEach(snapLine); });
     })();
 
     (function() {
