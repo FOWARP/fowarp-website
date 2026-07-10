@@ -132,6 +132,8 @@
     .header-nav a.active { color: #000; }
 
     .header-cta {
+      position: relative;
+      overflow: hidden;
       background: #000;
       color: #fff;
       font-family: 'Karlsbader Grotesk', Arial, sans-serif;
@@ -141,6 +143,21 @@
       text-decoration: none;
       text-transform: capitalize;
       white-space: nowrap;
+    }
+
+    @keyframes ctaSheen {
+      0% { transform: translateX(-130%) skewX(-18deg); }
+      55%, 100% { transform: translateX(360%) skewX(-18deg); }
+    }
+    .header-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+      animation: ctaSheen 3s ease-in-out infinite;
     }
 
     /* ─── PAGE BODY ───────────────────────────── */
