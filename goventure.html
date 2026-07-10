@@ -282,6 +282,41 @@
 
     .reveal.is-visible { opacity: 1; transform: translateY(0); }
 
+    /* 미디어 블록: 아래→위 슬라이드업 + 페이드 (강화, 텐션 easing) */
+    @keyframes revMediaUp { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: translateY(0); } }
+    .project-media > .reveal { opacity: 0; transform: translateY(48px); }
+    .project-media > .reveal.is-visible {
+      animation: revMediaUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    /* 1번 사진만 텍스트 시퀀스 뒤 이어서(1s), 2번부터는 진입 즉시 */
+    .project-media > .reveal:first-child.is-visible { animation-delay: 1s; }
+
+    /* project-info: 갤러리와 동일 시퀀스 (가로선→세로선→텍스트 페이드) */
+    @keyframes revLineX  { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @keyframes revLineY  { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    @keyframes revContent { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 컨테이너 fade-up 무효화 (자식이 개별 애니) */
+    .info-title.reveal,
+    .info-text.reveal { opacity: 1; transform: none; transition: none; }
+    /* 초기(숨김) 상태 */
+    .info-hline { transform: scaleX(0); transform-origin: left center; }
+    .info-vline.reveal { transform: scaleY(0); transform-origin: top center; opacity: 1; transition: none; }
+    .info-title-text,
+    .info-text p { opacity: 0; }
+    /* 시퀀스: 1)가로선 좌→우 2)세로선 위→아래 3)텍스트 페이드 */
+    .info-title.is-visible .info-hline,
+    .info-text.is-visible .info-hline {
+      animation: revLineX 0.7s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+    }
+    .info-vline.reveal.is-visible {
+      animation: revLineY 0.5s cubic-bezier(0.7, 0, 0.84, 0) 0.3s forwards;
+    }
+    .info-title.is-visible .info-title-text,
+    .info-text.is-visible p {
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+    }
+
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
       .marquee-section { padding: 10px 10px 0; }
@@ -473,25 +508,33 @@
       // 프로젝트 정보: 좌→우 순차 등장
       // CSS transition-delay로 스태거, 이중 rAF로 opacity:0 first paint 보장
       var infoEls = document.querySelectorAll('.project-info > .reveal');
-      infoEls.forEach(function(el, i) {
-        el.style.transitionDelay = (i * 0.08) + 's';
-      });
-      requestAnimationFrame(function() {
-        requestAnimationFrame(function() {
-          infoEls.forEach(function(el) { el.classList.add('is-visible'); });
+      function checkInfo() {
+        var vh = window.innerHeight;
+        infoEls.forEach(function(el) {
+          if (el.classList.contains('is-visible')) return;
+          var r = el.getBoundingClientRect();
+          if (r.top < vh * 0.95 && r.bottom > 0) el.classList.add('is-visible');
         });
-      });
+      }
+      checkInfo();
+      window.addEventListener('scroll', checkInfo, { passive: true });
+      window.addEventListener('resize', checkInfo);
+      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkInfo);
 
-      // 미디어 블록: 스크롤 시 뷰포트 진입하면 등장
-      var obs = new IntersectionObserver(function(entries) {
-        entries.forEach(function(e) {
-          if (e.isIntersecting) { e.target.classList.add('is-visible'); obs.unobserve(e.target); }
+      // 미디어 블록: rect 기반 (body가 스크롤 컨테이너라 IO 대신 사용)
+      var mediaEls = document.querySelectorAll('.project-media > .reveal');
+      function checkMedia() {
+        var vh = window.innerHeight;
+        mediaEls.forEach(function(el) {
+          if (el.classList.contains('is-visible')) return;
+          var r = el.getBoundingClientRect();
+          if (r.top < vh * 0.92 && r.bottom > 0) el.classList.add('is-visible');
         });
-      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-
-      document.querySelectorAll('.project-media > .reveal').forEach(function(el) {
-        obs.observe(el);
-      });
+      }
+      checkMedia();
+      window.addEventListener('scroll', checkMedia, { passive: true });
+      window.addEventListener('resize', checkMedia);
+      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkMedia);
     })();
 
     (function() {
