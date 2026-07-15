@@ -22,7 +22,7 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body { background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; position: relative; max-width: 1920px; margin: 0 auto; }
+    body { background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; position: relative; max-width: 2560px; margin: 0 auto; }
 
     /* ─── HEADER ─────────────────────────────── */
     .header {
@@ -90,7 +90,7 @@
     /* 메인 헤더 바 */
     .header-main {
       width: 100%;
-      max-width: 1920px;
+      max-width: 2560px;
       margin: 0 auto;
       height: 60px;
       display: flex;
@@ -563,7 +563,7 @@
 
   <script>
     function updateVW() {
-      var w = Math.min(window.innerWidth, 1920);
+      var w = Math.min(window.innerWidth, 2560);
       document.documentElement.style.setProperty('--vw', (w / 100) + 'px');
     }
     updateVW();
