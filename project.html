@@ -18,11 +18,11 @@
       font-style: normal;
     }
 
-    :root { --vw: 19.2px; }
+    :root { --vw: 19.2px; --vwFont: 19.2px; }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body { background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; position: relative; max-width: 1920px; margin: 0 auto; }
+    body { background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; position: relative; max-width: 2560px; margin: 0 auto; }
 
     /* ─── HEADER ─────────────────────────────── */
     .header {
@@ -75,7 +75,7 @@
 
     .marquee-text {
       font-family: Arial, sans-serif;
-      font-size: calc(var(--vw) * 0.729);
+      font-size: calc(var(--vwFont) * 0.729);
       color: #fff;
       white-space: nowrap;
     }
@@ -90,7 +90,7 @@
     /* 메인 헤더 바 */
     .header-main {
       width: 100%;
-      max-width: 1920px;
+      max-width: 2560px;
       margin: 0 auto;
       height: 60px;
       display: flex;
@@ -123,7 +123,7 @@
 
     .header-nav a {
       font-family: 'Karlsbader Grotesk', Arial, sans-serif;
-      font-size: calc(var(--vw) * 0.729);
+      font-size: calc(var(--vwFont) * 0.729);
       text-decoration: none;
       color: #999796;
       text-transform: capitalize;
@@ -137,7 +137,7 @@
       background: #000;
       color: #fff;
       font-family: 'Karlsbader Grotesk', Arial, sans-serif;
-      font-size: calc(var(--vw) * 0.729);
+      font-size: calc(var(--vwFont) * 0.729);
       padding: calc(var(--vw) * 0.625) calc(var(--vw) * 0.729);
       border-radius: calc(var(--vw) * 0.417);
       text-decoration: none;
@@ -198,7 +198,7 @@
 
     .gallery-label span {
       font-family: 'Karlsbader Grotesk', Arial, sans-serif;
-      font-size: calc(var(--vw) * 0.833); /* 16px */
+      font-size: calc(var(--vwFont) * 0.833); /* 16px */
       font-weight: 400;
       color: #000;
       text-transform: uppercase;
@@ -277,6 +277,7 @@
     /* ─── PC (1920px 이상): 4열 ──────────────────── */
     @media (min-width: 1920px) {
       .project-gallery { grid-template-columns: repeat(4, 1fr); }
+      .gallery-item { height: calc(var(--vw) * 32.6); }
       .gallery-item::after { display: none; }
       .gallery-item:not(:nth-child(4n))::after { display: block; }
       .gallery-item.is-visible:not(:nth-child(4n))::after {
@@ -399,14 +400,14 @@
         <div class="gallery-media" style="position: relative; overflow:hidden;">
           <img src="/media/gallery/returnity.jpg" alt="RETURNITY" style="position:absolute; width:126.03%; height:auto; left:-13.02%; top:-19.67%;">
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:calc(var(--vw)*1.302) calc(var(--vw)*1.302);">
-            <div class="overlay-top" style="text-align:center;color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*0.536);line-height:1.4;text-transform:uppercase;letter-spacing:0.05em;">
+            <div class="overlay-top" style="text-align:center;color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*0.536);line-height:1.4;text-transform:uppercase;letter-spacing:0.05em;">
               MORE THAN SKIN DEEP, LIFE ROUTINE CARE<br>© RETURNITY
             </div>
             <div style="display:flex;justify-content:space-between;align-items:flex-end;">
-              <div class="overlay-big" style="color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*1.011);line-height:1.1;text-transform:uppercase;">
+              <div class="overlay-big" style="color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*1.011);line-height:1.1;text-transform:uppercase;">
                 SKIN HEALER<br>PLASMA DEVICE
               </div>
-              <div class="overlay-small" style="color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*0.536);line-height:1.4;text-transform:uppercase;max-width:calc(var(--vw)*13);text-align:left;">
+              <div class="overlay-small" style="color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*0.536);line-height:1.4;text-transform:uppercase;max-width:calc(var(--vw)*13);text-align:left;">
                 A HOME CARE DEVICE ENGINEERED TO DELIVER ION PLASMA DIRECTLY THROUGH A VACUUM TUBE FOR EFFECTIVE SKINCARE.
               </div>
             </div>
@@ -472,10 +473,10 @@
         <div class="gallery-media" style="position: relative;">
           <img src="/media/gallery/antursolais.jpg" alt="An Túr Solais">
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:calc(var(--vw)*1.302) calc(var(--vw)*1.302);">
-            <div class="overlay-body" style="text-align:center;color:#fff;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*0.469);line-height:1.6;text-transform:uppercase;letter-spacing:0.05em;max-width:calc(var(--vw)*22);margin:0 auto;">
+            <div class="overlay-body" style="text-align:center;color:#fff;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*0.469);line-height:1.6;text-transform:uppercase;letter-spacing:0.05em;max-width:calc(var(--vw)*22);margin:0 auto;">
               AN TÚR SOLAIS IS A PREMIUM KOREAN GRILLING CHEESE BRAND CRAFTED WITH 100% NATURAL IRISH MILK. KNOWN FOR ITS SIGNATURE CHEWY, BUTTERY TEXTURE, IT HAS BECOME THE #1 GRILLING CHEESE BRAND IN KOREA, SURPASSING ONE MILLION BOXES SOLD. THE BRAND BLENDS AUTHENTIC IRISH DAIRY TRADITION WITH MODERN KOREAN FOOD CULTURE.
             </div>
-            <div class="overlay-top" style="text-align:center;color:#fff;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vw)*0.469);line-height:1.4;text-transform:uppercase;letter-spacing:0.05em;">
+            <div class="overlay-top" style="text-align:center;color:#fff;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*0.469);line-height:1.4;text-transform:uppercase;letter-spacing:0.05em;">
               ©AN TÚR SOLAIS
             </div>
           </div>
@@ -563,8 +564,9 @@
 
   <script>
     function updateVW() {
-      var w = Math.min(window.innerWidth, 1920);
-      document.documentElement.style.setProperty('--vw', (w / 100) + 'px');
+      var iw = window.innerWidth;
+      document.documentElement.style.setProperty('--vw', (Math.min(iw, 2560) / 100) + 'px');
+      document.documentElement.style.setProperty('--vwFont', (Math.min(iw, 1920) / 100) + 'px');
     }
     updateVW();
     window.addEventListener('resize', updateVW);

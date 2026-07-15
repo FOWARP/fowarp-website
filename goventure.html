@@ -16,14 +16,14 @@
       font-display: swap;
     }
 
-    :root { --vw: 19.2px; }
+    :root { --vw: 19.2px; --vwFont: 19.2px; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background: #fff;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      max-width: 1920px;
+      max-width: 2560px;
       margin: 0 auto;
     }
 
@@ -74,7 +74,7 @@
 
     .marquee-text {
       font-family: Arial, sans-serif;
-      font-size: calc(var(--vw) * 0.729);
+      font-size: calc(var(--vwFont) * 0.729);
       color: #fff;
       white-space: nowrap;
     }
@@ -88,7 +88,7 @@
 
     .header-main {
       width: 100%;
-      max-width: 1920px;
+      max-width: 2560px;
       margin: 0 auto;
       height: 60px;
       display: flex;
@@ -121,7 +121,7 @@
 
     .header-nav a {
       font-family: 'Karlsbader Grotesk', Arial, sans-serif;
-      font-size: calc(var(--vw) * 0.729);
+      font-size: calc(var(--vwFont) * 0.729);
       text-decoration: none;
       color: #999796;
       text-transform: capitalize;
@@ -135,7 +135,7 @@
       background: #000;
       color: #fff;
       font-family: 'Karlsbader Grotesk', Arial, sans-serif;
-      font-size: calc(var(--vw) * 0.729);
+      font-size: calc(var(--vwFont) * 0.729);
       padding: calc(var(--vw) * 0.625) calc(var(--vw) * 0.729);
       border-radius: calc(var(--vw) * 0.417);
       text-decoration: none;
@@ -191,7 +191,7 @@
 
     .info-title-text {
       font-family: 'Karlsbader Grotesk', Arial, sans-serif;
-      font-size: calc(var(--vw) * 0.833);
+      font-size: calc(var(--vwFont) * 0.833);
       font-weight: 400;
       color: #000;
       line-height: 1.5;
@@ -216,7 +216,7 @@
 
     .info-text p {
       font-family: 'Karlsbader Grotesk', Arial, sans-serif;
-      font-size: calc(var(--vw) * 0.938);
+      font-size: calc(var(--vwFont) * 0.938);
       font-weight: 400;
       color: #000;
       line-height: 1.5;
@@ -512,7 +512,9 @@
 
   <script>
     function updateVW() {
-      document.documentElement.style.setProperty('--vw', (Math.min(window.innerWidth, 1920) / 100) + 'px');
+      var w = window.innerWidth;
+      document.documentElement.style.setProperty('--vw', (Math.min(w, 2560) / 100) + 'px');
+      document.documentElement.style.setProperty('--vwFont', (Math.min(w, 1920) / 100) + 'px');
     }
     updateVW();
     window.addEventListener('resize', updateVW);
