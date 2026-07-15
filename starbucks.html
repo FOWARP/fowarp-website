@@ -23,7 +23,7 @@
       background: #fff;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      max-width: 2560px;
+      max-width: 1920px;
       margin: 0 auto;
     }
 
@@ -88,7 +88,7 @@
 
     .header-main {
       width: 100%;
-      max-width: 2560px;
+      max-width: 1920px;
       margin: 0 auto;
       height: 60px;
       display: flex;
@@ -414,7 +414,7 @@
 
   <script>
     function updateVW() {
-      document.documentElement.style.setProperty('--vw', (Math.min(window.innerWidth, 2560) / 100) + 'px');
+      document.documentElement.style.setProperty('--vw', (Math.min(window.innerWidth, 1920) / 100) + 'px');
     }
     updateVW();
     window.addEventListener('resize', updateVW);
