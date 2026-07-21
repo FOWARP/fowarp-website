@@ -281,7 +281,7 @@
     .gallery-media::after {
       content: '';
       position: absolute;
-      right: 0;
+      right: calc(var(--vw) * -0.612);
       top: 6px;
       bottom: 6px;
       width: 1px;
@@ -390,7 +390,7 @@
       }
 
       .gallery-item { height: auto; }
-      .gallery-item:nth-child(odd) .gallery-media::after  { display: block !important; right: 0 !important; }
+      .gallery-item:nth-child(odd) .gallery-media::after  { display: block !important; right: -6px !important; }
       .gallery-item:nth-child(even) .gallery-media::after { display: none !important; }
 
       .gallery-label { gap: 8px; }
