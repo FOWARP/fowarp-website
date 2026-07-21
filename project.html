@@ -314,7 +314,7 @@
 
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
-      .marquee-section { padding: 10px 10px 0; }
+      .marquee-section { padding: 0; }
       .marquee-bar-inner { height: 24px; border-radius: 6px; }
       .marquee-text { font-size: 11px; }
       .marquee-logo { height: 13px; }
@@ -333,15 +333,16 @@
       }
 
       .project-gallery {
-        grid-template-columns: 1fr;
-        row-gap: 40px;
+        grid-template-columns: repeat(2, 1fr);
+        column-gap: 12px;
+        row-gap: 24px;
       }
 
       .gallery-item { height: auto; }
       .gallery-item::after { display: none; }
 
       .gallery-label { gap: 8px; }
-      .gallery-label span { font-size: 14px; }
+      .gallery-label span { font-size: 13px; }
 
       .gallery-media {
         margin-top: 12px;
@@ -350,9 +351,10 @@
         aspect-ratio: 4 / 5;
       }
 
-      .overlay-top    { font-size: 10px !important; }
-      .overlay-big    { font-size: 20px !important; }
-      .overlay-small  { font-size: 10px !important; max-width: 200px !important; }
+      .overlay-row    { flex-direction: column; align-items: flex-start !important; gap: 6px; }
+      .overlay-top    { font-size: 9px !important; }
+      .overlay-big    { font-size: 15px !important; }
+      .overlay-small  { font-size: 9px !important; max-width: 100% !important; }
       .overlay-body   { font-size: 9px !important; max-width: 100% !important; }
     }
   </style>
@@ -429,7 +431,7 @@
             <div class="overlay-top" style="text-align:center;color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*0.536);line-height:1.4;text-transform:uppercase;letter-spacing:0.05em;">
               MORE THAN SKIN DEEP, LIFE ROUTINE CARE<br>© RETURNITY
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+            <div class="overlay-row" style="display:flex;justify-content:space-between;align-items:flex-end;">
               <div class="overlay-big" style="color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*1.011);line-height:1.1;text-transform:uppercase;">
                 SKIN HEALER<br>PLASMA DEVICE
               </div>
