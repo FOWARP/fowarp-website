@@ -248,13 +248,14 @@
       position: relative;
     }
 
-    /* 그리드 하단 마감 가로선 — 세로선 끝(bottom:0)과 만나 그리드가 닫힌다 */
-    .project-gallery::after {
+    /* 각 열 마지막 아이템 하단 마감 가로선 — 행 간격과 동일한 마진(0.625vw) 아래 배치.
+       3열: 마지막 3개(13~15)가 각 열의 끝 */
+    .gallery-item:nth-last-child(-n+3)::before {
       content: '';
       position: absolute;
       left: 0;
       right: 0;
-      bottom: -1px;
+      bottom: calc(var(--vw) * -0.625 - 1px);
       height: 1px;
       background: #000;
     }
@@ -368,6 +369,16 @@
       /* 3열 규칙 해제 후 4열 행 끝(4n)만 숨김 — 순서상 12번(3n∩4n)은 none이 이김 */
       .gallery-item:nth-child(3n)::after { display: block; }
       .gallery-item:nth-child(4n)::after { display: none; }
+      /* 4열(15개): 각 열의 끝 = 12~15번 → 하단 마감선 확장 */
+      .gallery-item:nth-last-child(-n+4)::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: calc(var(--vw) * -0.625 - 1px);
+        height: 1px;
+        background: #000;
+      }
     }
 
     /* ─── MOBILE ──────────────────────────────── */
@@ -401,6 +412,10 @@
       .gallery-item { height: auto; }
       .gallery-item:nth-child(odd)::after  { display: block !important; right: -6px !important; }
       .gallery-item:nth-child(even)::after { display: none !important; }
+
+      /* 2열(15개): 각 열의 끝 = 14(우)·15(좌)번만 하단 마감선, 간격은 행 간격과 동일한 12px */
+      .gallery-item:nth-last-child(3)::before { display: none; }
+      .gallery-item:nth-last-child(-n+2)::before { bottom: -13px; }
 
       .gallery-label { gap: 8px; }
       .gallery-label span { font-size: 11px; line-height: 13px; }
