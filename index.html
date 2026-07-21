@@ -273,12 +273,14 @@
 
     /* 세로선은 모든 아이템에 정의하고, 열 수에 따라 행 끝만 숨긴다
        (:not(:nth-child(3n))에만 content를 두면 3n 아이템은 4열에서 되살릴 수 없음) */
+    /* KIOSK 방식: 셀(아이템) 기준 고정 인셋 — 모든 아이템 높이가 같으므로
+       선 길이·여백·정렬이 항상 일정. 아이템별 계산 금지 */
     .gallery-item::after {
       content: '';
       position: absolute;
       right: calc(var(--vw) * -0.612);
-      top: var(--div-top, 6px);
-      bottom: var(--div-bottom, 6px);
+      top: 6px;
+      bottom: 6px;
       width: 1px;
       background: #000;
     }
@@ -653,36 +655,6 @@
     }
     updateVW();
     window.addEventListener('resize', updateVW);
-
-    // 세로 구분선: 라벨 높이가 가변이라 .gallery-item 기준 top/bottom(6px/6px)이
-    // 실제 이미지(.gallery-media) 기준으로는 비대칭이 됨 → 실측해서 이미지 기준으로 보정
-    function alignGalleryDividers() {
-      document.querySelectorAll('.gallery-item').forEach(function(item) {
-        var media = item.querySelector('.gallery-media');
-        if (!media) return;
-        var itemRect = item.getBoundingClientRect();
-        var mediaRect = media.getBoundingClientRect();
-        item.style.setProperty('--div-top', (mediaRect.top - itemRect.top + 6) + 'px');
-        item.style.setProperty('--div-bottom', (itemRect.bottom - mediaRect.bottom + 6) + 'px');
-      });
-    }
-    window.alignGalleryDividers = alignGalleryDividers;
-    alignGalleryDividers();
-    window.addEventListener('load', alignGalleryDividers);
-    window.addEventListener('resize', alignGalleryDividers);
-    // 웹폰트(swap) 로드 후 라벨 높이가 바뀌면 fonts.ready가 리플로우보다 먼저 끝날 수 있어
-    // ResizeObserver로 실제 레이아웃 변화를 감지해 재정렬 (첫 media만 관찰해도 충분)
-    if (window.ResizeObserver) {
-      var firstMedia = document.querySelector('.gallery-media');
-      if (firstMedia) {
-        var ro = new ResizeObserver(function() { alignGalleryDividers(); });
-        ro.observe(firstMedia);
-        document.querySelectorAll('.gallery-label').forEach(function(l) { ro.observe(l); });
-      }
-    }
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function() {
-      requestAnimationFrame(function() { requestAnimationFrame(alignGalleryDividers); });
-    });
 
     // Smooth scroll
     var lenis = new Lenis({ duration: 0.9, easing: function(t) { return 1 - Math.pow(1 - t, 4); }, smoothWheel: true });
