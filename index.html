@@ -432,6 +432,12 @@
       .overlay-big    { font-size: 15px !important; }
       .overlay-small  { font-size: 9px !important; max-width: 100% !important; display: -webkit-box !important; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
       .overlay-body   { font-size: 9px !important; max-width: 100% !important; display: -webkit-box !important; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+      /* RETURNITY / An Túr Solais: 모바일에서 크롭·텍스트 줄바꿈이 깨져
+         텍스트가 미리 합성된 전용 썸네일로 교체 (HTML 오버레이는 숨김) */
+      .media-desktop-only { display: none !important; }
+      .media-mobile-only  { display: block !important; width: 100%; height: 100%; object-fit: cover; }
+      .returnity-overlay, .antursolais-overlay { display: none !important; }
     }
   </style>
 
@@ -511,8 +517,9 @@
           <span>RETURNITY</span>
         </div>
         <div class="gallery-media" style="position:relative; overflow:hidden;">
-          <img src="/media/gallery/returnity.jpg" alt="RETURNITY" style="position:absolute; width:126.03%; height:auto; left:-13.02%; top:-19.67%;">
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:max(12px, calc(var(--vw)*1.302))">
+          <img class="media-desktop-only" src="/media/gallery/returnity.jpg" alt="RETURNITY" style="position:absolute; width:126.03%; height:auto; left:-13.02%; top:-19.67%;">
+          <img class="media-mobile-only" src="/media/gallery/returnity-mobile.jpg" alt="RETURNITY" style="display:none;">
+          <div class="returnity-overlay" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:max(12px, calc(var(--vw)*1.302))">
             <div class="overlay-top" style="text-align:center;color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*0.536);line-height:1.4;text-transform:uppercase;letter-spacing:0.05em">
               MORE THAN SKIN DEEP, LIFE ROUTINE CARE<br>© RETURNITY
             </div>
@@ -584,8 +591,9 @@
           <span>An Túr Solais</span>
         </div>
         <div class="gallery-media" style="position:relative">
-          <img src="/media/gallery/antursolais.jpg" alt="An Túr Solais">
-          <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:max(12px, calc(var(--vw)*1.302))">
+          <img class="media-desktop-only" src="/media/gallery/antursolais.jpg" alt="An Túr Solais">
+          <img class="media-mobile-only" src="/media/gallery/antursolais-mobile.jpg" alt="An Túr Solais" style="display:none;">
+          <div class="antursolais-overlay" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:max(12px, calc(var(--vw)*1.302))">
             <div class="overlay-body" style="text-align:center;color:#fff;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*0.469);line-height:1.6;text-transform:uppercase;letter-spacing:0.05em;max-width:calc(var(--vw)*22);margin:0 auto">
               AN TÚR SOLAIS IS A PREMIUM KOREAN GRILLING CHEESE BRAND CRAFTED WITH 100% NATURAL IRISH MILK. KNOWN FOR ITS SIGNATURE CHEWY, BUTTERY TEXTURE, IT HAS BECOME THE #1 GRILLING CHEESE BRAND IN KOREA, SURPASSING ONE MILLION BOXES SOLD. THE BRAND BLENDS AUTHENTIC IRISH DAIRY TRADITION WITH MODERN KOREAN FOOD CULTURE.
             </div>
