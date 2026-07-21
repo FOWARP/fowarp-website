@@ -262,9 +262,9 @@
       margin-right: auto;
     }
 
-    /* 960/1920 폭으로 중앙정렬 (상세페이지 세로 스택용). project-media 안에 중첩되는 별도 래퍼 */
+    /* 640/1920 폭으로 중앙정렬 (상세페이지 세로 스택용, starbucks narrow와 동일 비율). project-media 안에 중첩되는 별도 래퍼 */
     .narrow-960 {
-      width: calc(var(--vw) * 50);
+      width: calc(var(--vw) * 33.333);
       margin-left: auto;
       margin-right: auto;
       display: flex;
@@ -450,14 +450,26 @@
       </div>
     </div>
 
-    <!-- 2. 2열 제품 사진 (Figma) -->
+    <!-- 2. 2열 제품 사진 (Figma) — 원본은 텍스트가 별도 레이어로 이미지 위에 얹혀있었음 -->
     <div class="project-media">
       <div class="media-row-2col reveal">
         <div class="media-block">
           <img src="/media/returnity/product-01-web.jpg" alt="RETURNITY Skin Healer Plasma">
+          <div style="position:absolute;top:3%;left:0;right:0;text-align:center;color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*0.877);line-height:1.32;text-transform:uppercase">
+            MORE THAN SKIN DEEP, LIFE ROUTINE CARE<br>© RETURNITY
+          </div>
+          <div style="position:absolute;left:8%;top:45%;color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*1.458);line-height:1.1;text-transform:uppercase">
+            SKIN HEALER<br>PLASMA DEVICE
+          </div>
         </div>
         <div class="media-block">
           <img src="/media/returnity/product-02-web.jpg" alt="RETURNITY Skin Healer Plasma">
+          <div style="position:absolute;top:3%;left:0;right:0;text-align:center;color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*0.877);line-height:1.32;text-transform:uppercase">
+            MORE THAN SKIN DEEP, LIFE ROUTINE CARE<br>© RETURNITY
+          </div>
+          <div style="position:absolute;left:10%;bottom:8%;width:45%;color:#c7c8c7;font-family:'Karlsbader Grotesk',Arial,sans-serif;font-size:calc(var(--vwFont)*0.833);line-height:1.4;text-transform:uppercase">
+            A home care device engineered to deliver ion plasma directly through a vacuum tube for effective skincare.
+          </div>
         </div>
       </div>
     </div>
