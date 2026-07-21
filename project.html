@@ -282,8 +282,8 @@
       content: '';
       position: absolute;
       right: calc(var(--vw) * -0.612);
-      top: 0;
-      height: 100%;
+      top: 6px;
+      bottom: 6px;
       width: 1px;
       background: #000;
     }
@@ -363,7 +363,7 @@
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
       .marquee-section { padding: 0; }
-      .marquee-bar-inner { height: 24px; border-radius: 6px; }
+      .marquee-bar-inner { height: 28px; border-radius: 6px; }
       .marquee-text { font-size: 11px; }
       .marquee-logo { height: 13px; }
 
@@ -393,7 +393,7 @@
       .gallery-item:nth-child(even)::after { display: none !important; }
 
       .gallery-label { gap: 8px; }
-      .gallery-label span { font-size: 13px; }
+      .gallery-label span { font-size: 11px; }
 
       .gallery-media {
         margin-top: 12px;
@@ -405,8 +405,8 @@
       .overlay-row    { flex-direction: column; align-items: flex-start !important; gap: 6px; }
       .overlay-top    { font-size: 9px !important; }
       .overlay-big    { font-size: 15px !important; }
-      .overlay-small  { font-size: 9px !important; max-width: 100% !important; }
-      .overlay-body   { font-size: 9px !important; max-width: 100% !important; }
+      .overlay-small  { font-size: 9px !important; max-width: 100% !important; display: -webkit-box !important; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+      .overlay-body   { font-size: 9px !important; max-width: 100% !important; display: -webkit-box !important; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     }
   </style>
 </head>
