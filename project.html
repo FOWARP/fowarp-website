@@ -389,7 +389,8 @@
       }
 
       .gallery-item { height: auto; }
-      .gallery-item::after { display: none; }
+      .gallery-item:nth-child(odd)::after  { display: block !important; right: -6px !important; }
+      .gallery-item:nth-child(even)::after { display: none !important; }
 
       .gallery-label { gap: 8px; }
       .gallery-label span { font-size: 13px; }
