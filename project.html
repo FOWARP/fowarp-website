@@ -670,10 +670,23 @@
         item.style.setProperty('--div-bottom', (itemRect.bottom - mediaRect.bottom + 6) + 'px');
       });
     }
+    window.alignGalleryDividers = alignGalleryDividers;
     alignGalleryDividers();
     window.addEventListener('load', alignGalleryDividers);
     window.addEventListener('resize', alignGalleryDividers);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(alignGalleryDividers);
+    // 웹폰트(swap) 로드 후 라벨 높이가 바뀌면 fonts.ready가 리플로우보다 먼저 끝날 수 있어
+    // ResizeObserver로 실제 레이아웃 변화를 감지해 재정렬 (첫 media만 관찰해도 충분)
+    if (window.ResizeObserver) {
+      var firstMedia = document.querySelector('.gallery-media');
+      if (firstMedia) {
+        var ro = new ResizeObserver(function() { alignGalleryDividers(); });
+        ro.observe(firstMedia);
+        document.querySelectorAll('.gallery-label').forEach(function(l) { ro.observe(l); });
+      }
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function() {
+      requestAnimationFrame(function() { requestAnimationFrame(alignGalleryDividers); });
+    });
 
     // Smooth scroll (Lenis)
     var lenis = new Lenis({
