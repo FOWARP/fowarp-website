@@ -278,7 +278,7 @@
 
     /* 세로선은 모든 아이템에 정의하고, 열 수에 따라 행 끝만 숨긴다
        (:not(:nth-child(3n))에만 content를 두면 3n 아이템은 4열에서 되살릴 수 없음) */
-    .gallery-media::after {
+    .gallery-item::after {
       content: '';
       position: absolute;
       right: calc(var(--vw) * -0.612);
@@ -289,7 +289,7 @@
     }
 
     /* 3열: 행 끝(3n)은 선 없음 */
-    .gallery-item:nth-child(3n) .gallery-media::after { display: none; }
+    .gallery-item:nth-child(3n)::after { display: none; }
 
     .gallery-media {
       width: 100%;
@@ -297,7 +297,6 @@
       flex: 1;
       overflow: hidden;
       background: #080808;
-      position: relative;
     }
 
     .gallery-media video,
@@ -334,7 +333,7 @@
 
     /* 초기(숨김) 상태 */
     .gallery-label-line { transform: scaleX(0); transform-origin: left center; }
-    .gallery-media::after { transform: scaleY(0); transform-origin: top center; }
+    .gallery-item::after { transform: scaleY(0); transform-origin: top center; }
     .gallery-label span,
     .gallery-media { opacity: 0; }
 
@@ -342,7 +341,7 @@
     .gallery-item.is-visible .gallery-label-line {
       animation: revLineX 0.7s cubic-bezier(0.7, 0, 0.84, 0) forwards;
     }
-    .gallery-item.is-visible .gallery-media::after {
+    .gallery-item.is-visible::after {
       animation: revLineY 0.5s cubic-bezier(0.7, 0, 0.84, 0) 0.3s forwards;
     }
     .gallery-item.is-visible .gallery-label span {
@@ -357,8 +356,8 @@
       .project-gallery { grid-template-columns: repeat(4, 1fr); }
       .gallery-item { height: calc(var(--vw) * 32.6); }
       /* 3열 규칙 해제 후 4열 행 끝(4n)만 숨김 — 순서상 12번(3n∩4n)은 none이 이김 */
-      .gallery-item:nth-child(3n) .gallery-media::after { display: block; }
-      .gallery-item:nth-child(4n) .gallery-media::after { display: none; }
+      .gallery-item:nth-child(3n)::after { display: block; }
+      .gallery-item:nth-child(4n)::after { display: none; }
     }
 
     /* ─── MOBILE ──────────────────────────────── */
@@ -390,8 +389,8 @@
       }
 
       .gallery-item { height: auto; }
-      .gallery-item:nth-child(odd) .gallery-media::after  { display: block !important; right: -6px !important; }
-      .gallery-item:nth-child(even) .gallery-media::after { display: none !important; }
+      .gallery-item:nth-child(odd)::after  { display: block !important; right: -6px !important; }
+      .gallery-item:nth-child(even)::after { display: none !important; }
 
       .gallery-label { gap: 8px; }
       .gallery-label span { font-size: 11px; }
