@@ -266,6 +266,7 @@
     .gallery-label span {
       font-family: 'Karlsbader Grotesk', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.833);
+      line-height: calc(var(--vwFont) * 1.0); /* 세로선 top 계산을 위해 고정 (라벨 높이 상수화) */
       font-weight: 400;
       color: #000;
       text-transform: uppercase;
@@ -273,13 +274,14 @@
 
     /* 세로선은 모든 아이템에 정의하고, 열 수에 따라 행 끝만 숨긴다
        (:not(:nth-child(3n))에만 content를 두면 3n 아이템은 4열에서 되살릴 수 없음) */
-    /* KIOSK 방식: 셀(아이템) 기준 고정 인셋 — 모든 아이템 높이가 같으므로
-       선 길이·여백·정렬이 항상 일정. 아이템별 계산 금지 */
+    /* 세로선은 이미지 구간만 커버, 위/아래 6px 인셋 대칭.
+       top = 라벨(rule 1px + gap 0.521vw + 텍스트 1vwFont) + media margin 3.125vw + 6px
+       라벨 line-height를 고정했으므로 순수 CSS 상수 — 아이템별 JS 계산 금지 */
     .gallery-item::after {
       content: '';
       position: absolute;
       right: calc(var(--vw) * -0.612);
-      top: 6px;
+      top: calc(7px + var(--vw) * 3.646 + var(--vwFont) * 1.0);
       bottom: 6px;
       width: 1px;
       background: #000;
@@ -386,11 +388,12 @@
       }
 
       .gallery-item { height: auto; }
-      .gallery-item:nth-child(odd)::after  { display: block !important; right: -6px !important; }
+      /* top = 라벨(1px + 8px + 13px) + media margin 12px + 6px = 40px */
+      .gallery-item:nth-child(odd)::after  { display: block !important; right: -6px !important; top: 40px; }
       .gallery-item:nth-child(even)::after { display: none !important; }
 
       .gallery-label { gap: 8px; }
-      .gallery-label span { font-size: 11px; }
+      .gallery-label span { font-size: 11px; line-height: 13px; }
 
       .gallery-media {
         margin-top: 12px;
