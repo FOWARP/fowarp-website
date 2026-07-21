@@ -262,6 +262,31 @@
       margin-right: auto;
     }
 
+    /* 960/1920 폭으로 중앙정렬 (상세페이지 세로 스택용). project-media 안에 중첩되는 별도 래퍼 */
+    .narrow-960 {
+      width: calc(var(--vw) * 50);
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .frame-img {
+      width: 100%;
+      display: block;
+    }
+
+    /* 2열 사진 행 */
+    .media-row-2col {
+      display: flex;
+      gap: calc(var(--vw) * 0.521);
+    }
+
+    .media-row-2col .media-block {
+      flex: 1;
+      width: auto;
+    }
+
     .media-block {
       width: 100%;
       overflow: hidden;
@@ -279,6 +304,7 @@
 
     .media-block.ar-4-5 { aspect-ratio: 4 / 5; }
     .media-block.ar-9-16 { aspect-ratio: 9 / 16; }
+    .media-block.ar-16-9 { aspect-ratio: 16 / 9; }
 
     /* ─── SCROLL REVEAL ─────────────────────── */
     .reveal {
@@ -415,11 +441,65 @@
       </div>
     </div>
 
-    <!-- 미디어 (사이즈 확인용 샘플: Figma에서 뽑힌 2단 제품 이미지) -->
-    <!-- plasma_device 섹션은 Figma 760px 폭(=1920 기준 39.583%) narrow 중앙정렬 -->
-    <div class="project-media narrow" style="width:calc(var(--vw) * 39.583)">
-      <img src="/media/returnity/product-01-web.jpg" style="width:100%;display:block" alt="RETURNITY Skin Healer Plasma">
-      <img src="/media/returnity/product-02-web.jpg" style="width:100%;display:block" alt="RETURNITY Skin Healer Plasma">
+    <!-- 1. 히어로 영상 (사용가이드 클린본) -->
+    <div class="project-media">
+      <div class="media-block ar-16-9 reveal">
+        <video autoplay muted loop playsinline>
+          <source src="/media/returnity/hero.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+    <!-- 2. 2열 제품 사진 (Figma) -->
+    <div class="project-media">
+      <div class="media-row-2col reveal">
+        <div class="media-block">
+          <img src="/media/returnity/product-01-web.jpg" alt="RETURNITY Skin Healer Plasma">
+        </div>
+        <div class="media-block">
+          <img src="/media/returnity/product-02-web.jpg" alt="RETURNITY Skin Healer Plasma">
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 상세페이지 세로 스택 (960/1920 폭, 01~34) -->
+    <div class="project-media">
+      <div class="narrow-960 reveal">
+      <img class="frame-img" src="/media/returnity/frames/f01.jpg" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f02.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f03.jpg" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f04.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f05.jpg" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f06.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f07.jpg" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f08.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f09.jpg" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f10.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f11.png" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f12.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f13.jpg" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f14.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f15.jpg" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f16.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f17.jpg" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f18.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f19.png" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f20.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f21.png" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f22.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f23.jpg" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f24.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f25.png" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f26.mp4" type="video/mp4"></video>
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f27.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f28.jpg" alt="RETURNITY Skin Healer Plasma">
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f29.mp4" type="video/mp4"></video>
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f30.mp4" type="video/mp4"></video>
+      <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f31.mp4" type="video/mp4"></video>
+      <img class="frame-img" src="/media/returnity/frames/f32.jpg" alt="RETURNITY Skin Healer Plasma">
+      <img class="frame-img" src="/media/returnity/frames/f33.jpg" alt="RETURNITY Skin Healer Plasma">
+      <img class="frame-img" src="/media/returnity/frames/f34.jpg" alt="RETURNITY Skin Healer Plasma">
+      </div>
     </div>
 
   </div>
