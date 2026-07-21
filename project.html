@@ -246,6 +246,18 @@
       grid-template-columns: repeat(3, 1fr);
       column-gap: calc(var(--vw) * 1.224); /* 23.5px */
       row-gap: calc(var(--vw) * 0.625);    /* 12px */
+      position: relative;
+    }
+
+    /* 그리드 하단 마감 가로선 — 세로선 끝(bottom:0)과 만나 그리드가 닫힌다 */
+    .project-gallery::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 1px;
+      background: #000;
     }
 
     .gallery-item {
@@ -388,7 +400,7 @@
       .project-gallery {
         grid-template-columns: repeat(2, 1fr);
         column-gap: 12px;
-        row-gap: 0; /* PC와 동일하게 줄 사이 마진 제거 */
+        row-gap: 12px; /* PC(0.625vw@1920=12px)와 동일한 줄 간격 */
       }
 
       .gallery-item { height: auto; }
