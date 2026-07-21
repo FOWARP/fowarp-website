@@ -279,14 +279,14 @@
 
     /* 세로선은 모든 아이템에 정의하고, 열 수에 따라 행 끝만 숨긴다
        (:not(:nth-child(3n))에만 content를 두면 3n 아이템은 4열에서 되살릴 수 없음) */
-    /* KIOSK 방식: 셀(아이템) 기준 고정 인셋 — 가로선 6px 아래에서 시작해
-       이미지 하단 6px 위에서 끝나는 풀 스팬. 모든 아이템 동일. JS 계산 금지 */
+    /* 셀 기준 고정 인셋 풀 스팬 — 위는 라벨 텍스트 상단(rule+6px)에 맞고,
+       아래는 이미지 하단과 정확히 일치(bottom:0). 모든 아이템 동일. JS 계산 금지 */
     .gallery-item::after {
       content: '';
       position: absolute;
       right: calc(var(--vw) * -0.612);
       top: 6px;
-      bottom: 6px;
+      bottom: 0;
       width: 1px;
       background: #000;
     }
