@@ -39,6 +39,13 @@
       font-style: normal;
       font-display: swap;
     }
+    @font-face {
+      font-family: 'Karlsbader Grotesk';
+      src: url('/fonts/KarlsbaderGrotesk-500.otf') format('opentype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
 
     :root { --vw: 19.2px; --vwFont: 19.2px; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -394,7 +401,7 @@
       .project-info { flex-direction: column; gap: 16px; }
       .info-title { width: 100%; }
       .info-vline { display: none; }
-      .info-title-text { font-size: 13px; margin-top: 8px; }
+      .info-title-text { font-size: 14px; margin-top: 8px; font-weight: 500; text-transform: uppercase; }
       .info-text p { font-size: 14px; }
       .info-hline { display: none; }
 
