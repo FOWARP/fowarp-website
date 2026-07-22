@@ -104,6 +104,10 @@
       white-space: nowrap;
     }
 
+    /* Pretendard가 Karlsbader Grotesk보다 획이 굵고 자폭이 넓어 같은 font-size에서
+       시각적으로 더 커 보임 — 한글 마퀴 텍스트만 90%로 보정 */
+    .marquee-text-ko { font-size: calc(var(--vwFont) * 0.729 * 0.9); }
+
     .marquee-logo {
       height: calc(var(--vwFont) * 0.852);
       width: auto;
@@ -377,6 +381,7 @@
       .marquee-section { padding: 0; }
       .marquee-bar-inner { height: 28px; border-radius: 0; }
       .marquee-text { font-size: 11px; }
+      .marquee-text-ko { font-size: 9.9px; }
       .marquee-logo { height: 13px; }
       .marquee-set { gap: calc(var(--vwFont) * 10.416); padding-right: calc(var(--vwFont) * 10.416); } /* 데스크탑 대비 2배 */
 
@@ -445,11 +450,11 @@
             <div class="marquee-set">
               <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
               <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
-              <span class="marquee-text">브랜드 전략 &amp; 디자인 에이전시</span>
+              <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
               <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
               <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
               <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
-              <span class="marquee-text">브랜드 전략 &amp; 디자인 에이전시</span>
+              <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
               <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
             </div>
           </div>
