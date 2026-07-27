@@ -691,10 +691,14 @@
     // 배경 전환: .dark-start 지점이 화면 하단 1/4까지 올라오면 흰색→검정 (되돌리면 흰색 복귀)
     (function() {
       var marker = document.querySelector('.dark-start');
-      if (!marker) return;
+      var intro = document.querySelector('.project-info');
+      if (!marker || !intro) return;
       function checkBg() {
         var top = marker.getBoundingClientRect().top;
-        document.body.classList.toggle('is-dark', top < window.innerHeight * 0.75);
+        // 모바일·태블릿처럼 뷰포트가 짧으면 marker 조건만으로는 페이지 최상단부터 참이 된다.
+        // 검정 배경에 본문 텍스트가 묻히지 않도록 인트로가 화면 위로 완전히 빠진 뒤에만 전환
+        var introGone = intro.getBoundingClientRect().bottom < -24;
+        document.body.classList.toggle('is-dark', introGone && top < window.innerHeight * 0.75);
       }
       checkBg();
       // 최초 판정 후에 transition을 붙여 로드 시점 색 깜빡임 방지
