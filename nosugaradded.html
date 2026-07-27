@@ -58,6 +58,11 @@
       margin: 0 auto;
     }
 
+    /* 스크롤이 .dark-start 지점에 닿으면 페이지 배경이 흰색→검정으로 전환.
+       .bg-anim은 최초 판정 직후에 붙는다(로드 시점 깜빡임 방지) */
+    body.bg-anim { transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+    body.is-dark { background: #000; }
+
     /* ─── HEADER ─────────────────────────────── */
     .header {
       position: fixed;
@@ -349,17 +354,10 @@
     .media-block.ar-7-5 { aspect-ratio: 7 / 5; }
     .media-block.ar-1-1 { aspect-ratio: 1 / 1; }
 
-    /* ─── DARK SECTION (7-ELEVEN 라인업 이후 전 구간 검정 배경) ─── */
-    .dark-section {
-      background: #000;
-      margin-left: -40px;
-      margin-right: -40px;
-      padding-left: 40px;
-      padding-right: 40px;
-      /* page-body의 흰 하단 여백을 상쇄하고 검정으로 대체 */
-      padding-bottom: calc(var(--vw) * 4.167);
-      margin-bottom: calc(var(--vw) * -4.167);
-    }
+    /* ─── DARK START (배경 전환 트리거 지점) ───────
+       배경색은 body가 담당하므로 이 래퍼는 위치 마커 역할만 한다.
+       margin 상쇄 없이 자기 박스를 갖도록 flow-root로 둔다 */
+    .dark-start { display: flow-root; }
 
     /* ─── SCROLL REVEAL ─────────────────────── */
     .reveal {
@@ -440,15 +438,6 @@
       .project-media { gap: 8px; margin-top: 24px; }
       .media-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
       .media-grid-2 { gap: 8px; }
-
-      .dark-section {
-        margin-left: -16px;
-        margin-right: -16px;
-        padding-left: 16px;
-        padding-right: 16px;
-        padding-bottom: 60px;
-        margin-bottom: -60px;
-      }
     }
   </style>
 </head>
@@ -526,8 +515,8 @@
       </div>
     </div>
 
-    <!-- ▼ 여기서부터 페이지 끝까지 검정 배경 -->
-    <div class="dark-section">
+    <!-- ▼ 이 지점에 스크롤이 닿으면 페이지 배경이 흰색→검정으로 전환 -->
+    <div class="dark-start">
 
     <!-- 2. 히어로 사진 (NO SUGAR x 7-ELEVEN 라인업) -->
     <div class="project-media">
@@ -670,7 +659,7 @@
     </div>
 
     </div>
-    <!-- ▲ dark-section 끝 -->
+    <!-- ▲ dark-start 끝 -->
 
   </div>
 
@@ -697,6 +686,22 @@
       window.addEventListener('load', resyncLenis);
       setTimeout(resyncLenis, 1500);
       setTimeout(resyncLenis, 4000);
+    })();
+
+    // 배경 전환: .dark-start 지점이 화면 하단 1/4까지 올라오면 흰색→검정 (되돌리면 흰색 복귀)
+    (function() {
+      var marker = document.querySelector('.dark-start');
+      if (!marker) return;
+      function checkBg() {
+        var top = marker.getBoundingClientRect().top;
+        document.body.classList.toggle('is-dark', top < window.innerHeight * 0.75);
+      }
+      checkBg();
+      // 최초 판정 후에 transition을 붙여 로드 시점 색 깜빡임 방지
+      requestAnimationFrame(function() { document.body.classList.add('bg-anim'); });
+      window.addEventListener('scroll', checkBg, { passive: true });
+      window.addEventListener('resize', checkBg);
+      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkBg);
     })();
 
     // Scroll reveal
