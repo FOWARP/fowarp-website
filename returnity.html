@@ -58,6 +58,11 @@
       margin: 0 auto;
     }
 
+    /* 스크롤이 .dark-start(상세페이지 세로 스택 f01) 지점에 닿으면 배경이 흰색→검정으로 전환.
+       .bg-anim은 최초 판정 직후에 붙는다(로드 시점 깜빡임 방지) */
+    body.bg-anim { transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+    body.is-dark { background: #000; }
+
     /* ─── HEADER ─────────────────────────────── */
     .header {
       position: fixed;
@@ -527,7 +532,8 @@
     <!-- 3. 상세페이지 세로 스택 (960/1920 폭, 01~34) -->
     <div class="project-media">
       <div class="narrow-960 reveal">
-      <img class="frame-img" src="/media/returnity/frames/f01.jpg" alt="RETURNITY Skin Healer Plasma">
+      <!-- ▼ 이 프레임이 등장하면 페이지 배경이 흰색→검정으로 전환 -->
+      <img class="frame-img dark-start" src="/media/returnity/frames/f01.jpg" alt="RETURNITY Skin Healer Plasma">
       <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f02.mp4" type="video/mp4"></video>
       <img class="frame-img" src="/media/returnity/frames/f03.jpg" alt="RETURNITY Skin Healer Plasma">
       <video class="frame-img" autoplay muted loop playsinline><source src="/media/returnity/frames/f04.mp4" type="video/mp4"></video>
@@ -589,6 +595,26 @@
       window.addEventListener('load', resyncLenis);
       setTimeout(resyncLenis, 1500);
       setTimeout(resyncLenis, 4000);
+    })();
+
+    // 배경 전환: .dark-start(f01)가 화면 하단 1/4까지 올라오면 흰색→검정 (되돌리면 흰색 복귀)
+    (function() {
+      var marker = document.querySelector('.dark-start');
+      var intro = document.querySelector('.project-info');
+      if (!marker || !intro) return;
+      function checkBg() {
+        var top = marker.getBoundingClientRect().top;
+        // 뷰포트가 짧으면 marker 조건만으로는 페이지 최상단부터 참이 될 수 있다.
+        // 검정 배경에 본문 텍스트가 묻히지 않도록 인트로가 화면 위로 완전히 빠진 뒤에만 전환
+        var introGone = intro.getBoundingClientRect().bottom < -24;
+        document.body.classList.toggle('is-dark', introGone && top < window.innerHeight * 0.75);
+      }
+      checkBg();
+      // 최초 판정 후에 transition을 붙여 로드 시점 색 깜빡임 방지
+      requestAnimationFrame(function() { document.body.classList.add('bg-anim'); });
+      window.addEventListener('scroll', checkBg, { passive: true });
+      window.addEventListener('resize', checkBg);
+      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkBg);
     })();
 
     // Scroll reveal
