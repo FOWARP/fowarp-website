@@ -578,6 +578,19 @@
     var lenis = new Lenis({ duration: 0.9, easing: function(t) { return 1 - Math.pow(1 - t, 4); }, smoothWheel: true });
     (function lenisLoop(t) { lenis.raf(t); requestAnimationFrame(lenisLoop); })(0);
 
+    // 영상이 뒤늦게 레이아웃에 반영되면서 Lenis가 예전 문서 높이로 스크롤
+    // 한계를 잡아버리는 문제 방지 — 매 영상 로드마다 재계산
+    (function() {
+      function resyncLenis() { if (lenis && lenis.resize) lenis.resize(); }
+      document.querySelectorAll('video').forEach(function(v) {
+        v.addEventListener('loadedmetadata', resyncLenis);
+        v.addEventListener('loadeddata', resyncLenis);
+      });
+      window.addEventListener('load', resyncLenis);
+      setTimeout(resyncLenis, 1500);
+      setTimeout(resyncLenis, 4000);
+    })();
+
     // Scroll reveal
     (function() {
       // 프로젝트 정보: 좌→우 순차 등장
