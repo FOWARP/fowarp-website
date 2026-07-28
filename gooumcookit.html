@@ -389,12 +389,15 @@
       display: block;
     }
 
-    /* ─── 원본이 검정 배경 페이지 — 배경·텍스트·구분선 반전 ───────── */
-    body { background: #000; }
-    .info-title-text,
-    .info-text p { color: #fff; }
-    .info-hline,
-    .info-vline { background: #fff; }
+    /* ─── 스크롤 배경 전환 ─────────────────────────────────────
+       본문 미디어 구간은 검정 배경이지만 페이지 진입부터 검정이 아니라,
+       .dark-start 블록이 다가오면 흰색→검정으로 자연스럽게 전환된다
+       (RETURNITY·NO SUGAR ADDED와 동일 패턴).
+       .bg-anim 은 최초 판정 직후에 붙인다 — 로드 시점 색 깜빡임 방지 */
+    body.bg-anim { transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+    body.is-dark { background: #000; }
+
+    /* 누끼컷이 페이지 배경 위에 그대로 얹히도록 미디어 블록 자체 배경은 제거 */
     .media-block { background: transparent; }
 
     /* 블록 간 여백은 원본 실측값을 블록마다 margin-top 으로 직접 지정한다
@@ -601,7 +604,7 @@
         <img src="/media/gooumcookit/12-product.png" alt="Gooumcookit" loading="lazy">
       </div>
 
-      <div class="media-row reveal" style="margin-top:-2.305%;width:96.830%;gap:0.000%;">
+      <div class="media-row reveal dark-start" style="margin-top:-2.305%;width:96.830%;gap:0.000%;">
         <div class="media-block" style="flex:672 1 0; aspect-ratio:672 / 936">
           <img src="/media/gooumcookit/14-product.png" alt="Gooumcookit" loading="lazy">
         </div>
@@ -751,6 +754,26 @@
         cancelAnimationFrame(raf); updateVW();
         setTimeout(function() { lastTime = null; fillClones(); raf = requestAnimationFrame(tick); }, 50);
       });
+    })();
+
+    // 배경 전환: .dark-start 블록이 다가오면 흰색→검정 (스크롤 되돌리면 흰색 복귀)
+    (function() {
+      var marker = document.querySelector('.dark-start');
+      var intro = document.querySelector('.project-info');
+      if (!marker || !intro) return;
+      function checkBg() {
+        var top = marker.getBoundingClientRect().top;
+        // 뷰포트가 짧은 기기에서 최상단부터 조건이 참이 되는 것 방지 —
+        // 인트로가 화면 위로 완전히 빠진 뒤에만 전환한다
+        var introGone = intro.getBoundingClientRect().bottom < -24;
+        document.body.classList.toggle('is-dark', introGone && top < window.innerHeight * 1.5);
+      }
+      checkBg();
+      // 최초 판정 후에 transition을 붙여 로드 시점 색 깜빡임 방지
+      requestAnimationFrame(function() { document.body.classList.add('bg-anim'); });
+      window.addEventListener('scroll', checkBg, { passive: true });
+      window.addEventListener('resize', checkBg);
+      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkBg);
     })();
 
     // 모바일 햄버거 메뉴
