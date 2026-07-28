@@ -412,8 +412,8 @@
     .media-strip { display: flex; flex-direction: column; gap: 0; margin-left: auto; margin-right: auto; }
     .media-strip .media-block { width: 100%; }
 
-    /* 간격 0 2열 그리드 (Unknot 제품컷) */
-    .media-grid-2x { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    /* 2열 그리드 (Unknot 제품컷) — 원본은 간격 0 이지만 사진 사이를 10px 띄움 */
+    .media-grid-2x { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .media-grid-2x .media-block { width: 100%; }
 
     /* 자유 배치 컴포지션 — 좌우로 흘러넘치고 서로 겹치는 누끼컷 구간 */
@@ -511,6 +511,9 @@
       .media-canvas .canvas-item {
         position: static !important;
         left: auto !important; top: auto !important; width: 100% !important;
+        /* 세로 스택으로 바뀌므로 회전도 해제 — 안 풀면 회전한 모서리가
+           넘쳐서 가로 스크롤이 생긴다 */
+        transform: none !important;
       }
     }
   </style>
@@ -598,7 +601,7 @@
         </video>
       </div>
 
-      <div class="media-grid-2x reveal dark-start" style="margin-top:0.793%;">
+      <div class="media-grid-2x reveal dark-start" style="margin-top:10px;">
         <div class="media-block" style="aspect-ratio:694 / 694">
           <img src="/media/unknot/02.png" alt="Unknot" loading="lazy">
         </div>
@@ -643,7 +646,7 @@
         </div>
       </div>
 
-      <div class="media-block reveal" style="margin-top:0.793%;aspect-ratio:1388 / 766">
+      <div class="media-block reveal" style="margin-top:10px;aspect-ratio:1388 / 766">
         <video autoplay muted loop playsinline>
           <source src="/media/unknot/video-2.mp4" type="video/mp4">
         </video>
