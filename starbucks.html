@@ -182,13 +182,33 @@
       border: none;
       padding: 0;
       margin: 0;
-      cursor: pointer;
+      cursor: default;
     }
 
+    /* top:100% + padding-top로 트리거~드롭다운 사이 여백까지 hover 판정 영역에 포함시켜
+       마우스가 대각선으로 이동해도 중간에 hover가 끊겨 깜빡이지 않게 함 */
     .social-dropdown {
       position: absolute;
-      top: calc(100% + 12px);
+      top: 100%;
       left: 0;
+      padding-top: 12px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .social-menu:hover .social-dropdown,
+    .social-menu:focus-within .social-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .social-dropdown-inner {
       display: flex;
       flex-direction: column;
       min-width: 140px;
@@ -199,17 +219,6 @@
       border: 1px solid rgba(0,0,0,0.08);
       border-radius: 8px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-6px);
-      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
-      z-index: 50;
-    }
-
-    .social-dropdown.is-open {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
     }
 
     .social-dropdown a {
@@ -499,10 +508,12 @@
         <a href="/">Project</a>
         <a href="/about">About</a>
         <div class="social-menu">
-          <button class="social-trigger" type="button" aria-haspopup="true" aria-expanded="false">Social</button>
+          <button class="social-trigger" type="button" aria-haspopup="true">Social</button>
           <div class="social-dropdown">
-            <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
-            <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
+            <div class="social-dropdown-inner">
+              <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
+              <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
+            </div>
           </div>
         </div>
       </nav>
@@ -696,27 +707,6 @@
       });
     })();
 
-    // Social 드롭다운 (Behance/Instagram)
-    (function() {
-      var menu = document.querySelector('.social-menu');
-      if (!menu) return;
-      var trigger = menu.querySelector('.social-trigger');
-      var dropdown = menu.querySelector('.social-dropdown');
-      function setOpen(open) {
-        dropdown.classList.toggle('is-open', open);
-        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-      }
-      trigger.addEventListener('click', function(e) {
-        e.stopPropagation();
-        setOpen(!dropdown.classList.contains('is-open'));
-      });
-      document.addEventListener('click', function(e) {
-        if (!menu.contains(e.target)) setOpen(false);
-      });
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') setOpen(false);
-      });
-    })();
 </script>
 </body>
 </html>
