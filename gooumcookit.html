@@ -389,29 +389,34 @@
       display: block;
     }
 
-    /* 원본(fowarp.com/menu/portfolio) 미디어 네이티브 비율 그대로 사용 — 블록마다 인라인 aspect-ratio */
+    /* ─── 원본이 검정 배경 페이지 — 배경·텍스트·구분선 반전 ───────── */
+    body { background: #000; }
+    .info-title-text,
+    .info-text p { color: #fff; }
+    .info-hline,
+    .info-vline { background: #fff; }
+    .media-block { background: transparent; }
 
-    /* 2-column / N-column row (원본 미디어 나열 크롭 대신 네이티브 비율 유지) */
-    .media-row-2col,
-    .media-row {
-      display: flex;
-      gap: calc(var(--vw) * 0.521);
-    }
+    /* 블록 간 여백은 원본 실측값을 블록마다 margin-top 으로 직접 지정한다
+       (원본은 간격이 균일하지 않고 일부 구간은 음수로 겹침) */
+    .project-media { gap: 0; }
 
-    .media-row-2col .media-block,
-    .media-row .media-block {
-      flex: 1;
-      width: auto;
-      min-width: 0;
-    }
+    /* 가로 나열 로우 — 폭·간격 모두 원본 실측 */
+    .media-row { display: flex; }
+    .media-row .media-block { min-width: 0; }
 
-    /* 정사각형류 다수 이미지 자동 그리드 */
-    .media-grid-auto {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: calc(var(--vw) * 0.521);
-    }
+    /* 세로 연속 스트립 — 원본에서 간격 0으로 이어붙은 세로 이미지 묶음, 중앙 정렬 */
+    .media-strip { display: flex; flex-direction: column; gap: 0; margin-left: auto; margin-right: auto; }
+    .media-strip .media-block { width: 100%; }
 
+    /* 간격 0 2열 그리드 (Unknot 제품컷) */
+    .media-grid-2x { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .media-grid-2x .media-block { width: 100%; }
+
+    /* 자유 배치 컴포지션 — 좌우로 흘러넘치고 서로 겹치는 누끼컷 구간 */
+    .media-canvas { position: relative; width: 100%; }
+    .media-canvas .canvas-item { position: absolute; }
+    .media-canvas .canvas-item img { width: 100%; height: 100%; display: block; object-fit: cover; }
 
     /* ─── SCROLL REVEAL ─────────────────────── */
     .reveal {
@@ -491,9 +496,19 @@
 
       .project-media { gap: 8px; margin-top: 24px; }
 
-      .media-row-2col,
-      .media-row { flex-direction: column; }
-      .media-grid-auto { grid-template-columns: repeat(3, 1fr); }
+      /* 모바일에서는 원본의 음수 여백·자유 배치를 해제하고 균일한 세로 스택으로 */
+      .project-media > * { margin-top: 8px !important; width: 100% !important; }
+      .project-media > *:first-child { margin-top: 0 !important; }
+      .media-row { flex-direction: column; gap: 8px; }
+      /* 세로 방향에선 flex-basis:0 이 '높이'에 걸려 aspect-ratio 가 무시되고
+         높이가 0으로 무너지므로 flex 를 해제해야 함 */
+      .media-row .media-block { flex: none !important; width: 100% !important; }
+      .media-grid-2x { grid-template-columns: 1fr 1fr; }
+      .media-canvas { aspect-ratio: auto !important; display: flex; flex-direction: column; gap: 8px; }
+      .media-canvas .canvas-item {
+        position: static !important;
+        left: auto !important; top: auto !important; width: 100% !important;
+      }
     }
   </style>
 </head>
@@ -574,54 +589,54 @@
     <!-- 미디어 -->
     <div class="project-media">
 
-      <div class="media-block reveal" style="aspect-ratio:4096 / 2730">
-        <img src="/media/gooumcookit/01.jpg" alt="Gooumcookit Packaging" loading="lazy">
+      <div class="media-block reveal" style="aspect-ratio:1388 / 887">
+        <img src="/media/gooumcookit/01.jpg" alt="Gooumcookit" loading="lazy">
       </div>
 
-      <div class="media-block reveal" style="aspect-ratio:3750 / 2500">
-        <img src="/media/gooumcookit/02.jpg" alt="Gooumcookit Packaging" loading="lazy">
+      <div class="media-block reveal" style="margin-top:1.009%;aspect-ratio:1388 / 780">
+        <img src="/media/gooumcookit/02.jpg" alt="Gooumcookit" loading="lazy">
       </div>
 
-      <div class="media-row reveal">
-        <div class="media-block" style="aspect-ratio:850 / 3743">
-          <img src="/media/gooumcookit/03.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
+      <div class="media-block reveal" style="margin-top:1.081%;aspect-ratio:1388 / 780">
+        <img src="/media/gooumcookit/12-product.png" alt="Gooumcookit" loading="lazy">
+      </div>
+
+      <div class="media-row reveal" style="margin-top:-2.305%;width:96.830%;gap:0.000%;">
+        <div class="media-block" style="flex:672 1 0; aspect-ratio:672 / 936">
+          <img src="/media/gooumcookit/14-product.png" alt="Gooumcookit" loading="lazy">
         </div>
-        <div class="media-block" style="aspect-ratio:850 / 3742">
-          <img src="/media/gooumcookit/04.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
-        </div>
-        <div class="media-block" style="aspect-ratio:850 / 3742">
-          <img src="/media/gooumcookit/05.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
-        </div>
-        <div class="media-block" style="aspect-ratio:850 / 3742">
-          <img src="/media/gooumcookit/06.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
-        </div>
-        <div class="media-block" style="aspect-ratio:850 / 3742">
-          <img src="/media/gooumcookit/07.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
-        </div>
-        <div class="media-block" style="aspect-ratio:850 / 3742">
-          <img src="/media/gooumcookit/08.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
-        </div>
-        <div class="media-block" style="aspect-ratio:850 / 3742">
-          <img src="/media/gooumcookit/09.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
-        </div>
-        <div class="media-block" style="aspect-ratio:850 / 3742">
-          <img src="/media/gooumcookit/10.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
-        </div>
-        <div class="media-block" style="aspect-ratio:850 / 3742">
-          <img src="/media/gooumcookit/11.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
+        <div class="media-block" style="flex:672 1 0; aspect-ratio:672 / 936">
+          <img src="/media/gooumcookit/13-product.png" alt="Gooumcookit" loading="lazy">
         </div>
       </div>
 
-      <div class="media-block reveal" style="aspect-ratio:4096 / 2304">
-        <img src="/media/gooumcookit/12-product.png" alt="Gooumcookit Product" loading="lazy">
-      </div>
-
-      <div class="media-row reveal">
-        <div class="media-block" style="aspect-ratio:1920 / 1920">
-          <img src="/media/gooumcookit/13-product.png" alt="Gooumcookit Product" loading="lazy">
+      <div class="media-strip reveal" style="margin-top:-2.378%;width:36.527%;">
+        <div class="media-block" style="aspect-ratio:507 / 2232">
+          <img src="/media/gooumcookit/11.jpg" alt="Gooumcookit" loading="lazy">
         </div>
-        <div class="media-block" style="aspect-ratio:1920 / 1920">
-          <img src="/media/gooumcookit/14-product.png" alt="Gooumcookit Product" loading="lazy">
+        <div class="media-block" style="aspect-ratio:507 / 2232">
+          <img src="/media/gooumcookit/10.jpg" alt="Gooumcookit" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:507 / 2232">
+          <img src="/media/gooumcookit/09.jpg" alt="Gooumcookit" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:507 / 2232">
+          <img src="/media/gooumcookit/08.jpg" alt="Gooumcookit" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:507 / 2232">
+          <img src="/media/gooumcookit/07.jpg" alt="Gooumcookit" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:507 / 2232">
+          <img src="/media/gooumcookit/06.jpg" alt="Gooumcookit" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:507 / 2232">
+          <img src="/media/gooumcookit/05.jpg" alt="Gooumcookit" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:507 / 2232">
+          <img src="/media/gooumcookit/04.jpg" alt="Gooumcookit" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:507 / 2233">
+          <img src="/media/gooumcookit/03.jpg" alt="Gooumcookit" loading="lazy">
         </div>
       </div>
     </div>

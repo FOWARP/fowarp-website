@@ -389,29 +389,34 @@
       display: block;
     }
 
-    /* 원본(fowarp.com/menu/portfolio) 미디어 네이티브 비율 그대로 사용 — 블록마다 인라인 aspect-ratio */
+    /* ─── 원본이 검정 배경 페이지 — 배경·텍스트·구분선 반전 ───────── */
+    body { background: #000; }
+    .info-title-text,
+    .info-text p { color: #fff; }
+    .info-hline,
+    .info-vline { background: #fff; }
+    .media-block { background: transparent; }
 
-    /* 2-column / N-column row (원본 미디어 나열 크롭 대신 네이티브 비율 유지) */
-    .media-row-2col,
-    .media-row {
-      display: flex;
-      gap: calc(var(--vw) * 0.521);
-    }
+    /* 블록 간 여백은 원본 실측값을 블록마다 margin-top 으로 직접 지정한다
+       (원본은 간격이 균일하지 않고 일부 구간은 음수로 겹침) */
+    .project-media { gap: 0; }
 
-    .media-row-2col .media-block,
-    .media-row .media-block {
-      flex: 1;
-      width: auto;
-      min-width: 0;
-    }
+    /* 가로 나열 로우 — 폭·간격 모두 원본 실측 */
+    .media-row { display: flex; }
+    .media-row .media-block { min-width: 0; }
 
-    /* 정사각형류 다수 이미지 자동 그리드 */
-    .media-grid-auto {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: calc(var(--vw) * 0.521);
-    }
+    /* 세로 연속 스트립 — 원본에서 간격 0으로 이어붙은 세로 이미지 묶음, 중앙 정렬 */
+    .media-strip { display: flex; flex-direction: column; gap: 0; margin-left: auto; margin-right: auto; }
+    .media-strip .media-block { width: 100%; }
 
+    /* 간격 0 2열 그리드 (Unknot 제품컷) */
+    .media-grid-2x { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .media-grid-2x .media-block { width: 100%; }
+
+    /* 자유 배치 컴포지션 — 좌우로 흘러넘치고 서로 겹치는 누끼컷 구간 */
+    .media-canvas { position: relative; width: 100%; }
+    .media-canvas .canvas-item { position: absolute; }
+    .media-canvas .canvas-item img { width: 100%; height: 100%; display: block; object-fit: cover; }
 
     /* ─── SCROLL REVEAL ─────────────────────── */
     .reveal {
@@ -491,9 +496,19 @@
 
       .project-media { gap: 8px; margin-top: 24px; }
 
-      .media-row-2col,
-      .media-row { flex-direction: column; }
-      .media-grid-auto { grid-template-columns: repeat(3, 1fr); }
+      /* 모바일에서는 원본의 음수 여백·자유 배치를 해제하고 균일한 세로 스택으로 */
+      .project-media > * { margin-top: 8px !important; width: 100% !important; }
+      .project-media > *:first-child { margin-top: 0 !important; }
+      .media-row { flex-direction: column; gap: 8px; }
+      /* 세로 방향에선 flex-basis:0 이 '높이'에 걸려 aspect-ratio 가 무시되고
+         높이가 0으로 무너지므로 flex 를 해제해야 함 */
+      .media-row .media-block { flex: none !important; width: 100% !important; }
+      .media-grid-2x { grid-template-columns: 1fr 1fr; }
+      .media-canvas { aspect-ratio: auto !important; display: flex; flex-direction: column; gap: 8px; }
+      .media-canvas .canvas-item {
+        position: static !important;
+        left: auto !important; top: auto !important; width: 100% !important;
+      }
     }
   </style>
 </head>
@@ -574,62 +589,61 @@
     <!-- 미디어 -->
     <div class="project-media">
 
-      <div class="media-block reveal" style="aspect-ratio:1920 / 1440">
-        <img src="/media/gonyakjelly/01-hero.jpg" alt="Protein Konjac Jelly Hero" loading="lazy">
+      <div class="media-block reveal" style="aspect-ratio:1388 / 780">
+        <img src="/media/gonyakjelly/01-hero.jpg" alt="Protein Konjac Jelly" loading="lazy">
       </div>
 
-      <div class="media-row reveal">
-        <div class="media-block" style="aspect-ratio:4096 / 2722">
-          <img src="/media/gonyakjelly/02.jpg" alt="Protein Konjac Jelly Packaging" loading="lazy">
+      <div class="media-row reveal" style="margin-top:0.648%;gap:0.720%;">
+        <div class="media-block" style="flex:688 1 0; aspect-ratio:688 / 512">
+          <img src="/media/gonyakjelly/02.jpg" alt="Protein Konjac Jelly" loading="lazy">
         </div>
-        <div class="media-block" style="aspect-ratio:4096 / 2720">
-          <img src="/media/gonyakjelly/03.jpg" alt="Protein Konjac Jelly Packaging" loading="lazy">
-        </div>
-      </div>
-
-      <div class="media-row reveal">
-        <div class="media-block" style="aspect-ratio:4096 / 2725">
-          <img src="/media/gonyakjelly/04.jpg" alt="Protein Konjac Jelly Packaging" loading="lazy">
-        </div>
-        <div class="media-block" style="aspect-ratio:4096 / 2725">
-          <img src="/media/gonyakjelly/05.jpg" alt="Protein Konjac Jelly Packaging" loading="lazy">
+        <div class="media-block" style="flex:688 1 0; aspect-ratio:688 / 512">
+          <img src="/media/gonyakjelly/03.jpg" alt="Protein Konjac Jelly" loading="lazy">
         </div>
       </div>
 
-      <div class="media-block reveal" style="aspect-ratio:2171 / 1209">
-        <img src="/media/gonyakjelly/06-pudding.png" alt="Protein Konjac Jelly Illustration" loading="lazy">
+      <div class="media-row reveal" style="margin-top:0.576%;gap:0.576%;">
+        <div class="media-block" style="flex:690 1 0; aspect-ratio:690 / 452">
+          <img src="/media/gonyakjelly/04.jpg" alt="Protein Konjac Jelly" loading="lazy">
+        </div>
+        <div class="media-block" style="flex:690 1 0; aspect-ratio:690 / 452">
+          <img src="/media/gonyakjelly/05.jpg" alt="Protein Konjac Jelly" loading="lazy">
+        </div>
       </div>
 
-      <div class="media-block reveal" style="aspect-ratio:2285 / 2963">
-        <img src="/media/gonyakjelly/07-hand.png" alt="Protein Konjac Jelly Illustration" loading="lazy">
+      <div class="media-canvas reveal" style="margin-top:-9.870%;aspect-ratio:1388 / 3002">
+        <div class="canvas-item" style="left:-8.213%; top:0.000%; width:57.205%; aspect-ratio:794 / 442">
+          <img src="/media/gonyakjelly/06-pudding.png" alt="Protein Konjac Jelly" loading="lazy">
+        </div>
+        <div class="canvas-item" style="left:56.844%; top:7.195%; width:52.522%; aspect-ratio:729 / 945">
+          <img src="/media/gonyakjelly/07-hand.png" alt="Protein Konjac Jelly" loading="lazy">
+        </div>
+        <div class="canvas-item" style="left:-3.674%; top:32.845%; width:107.637%; aspect-ratio:1494 / 1121">
+          <img src="/media/gonyakjelly/08-cutline.png" alt="Protein Konjac Jelly" loading="lazy">
+        </div>
+        <div class="canvas-item" style="left:-5.836%; top:70.953%; width:111.599%; aspect-ratio:1549 / 872">
+          <img src="/media/gonyakjelly/09-phone.png" alt="Protein Konjac Jelly" loading="lazy">
+        </div>
       </div>
 
-      <div class="media-block reveal" style="aspect-ratio:4096 / 3072">
-        <img src="/media/gonyakjelly/08-cutline.png" alt="Protein Konjac Jelly Illustration" loading="lazy">
-      </div>
-
-      <div class="media-block reveal" style="aspect-ratio:4096 / 2304">
-        <img src="/media/gonyakjelly/09-phone.png" alt="Protein Konjac Jelly App Mockup" loading="lazy">
-      </div>
-
-      <div class="media-row reveal">
-        <div class="media-block" style="aspect-ratio:860 / 3985">
-          <img src="/media/gonyakjelly/10.jpg" alt="Protein Konjac Jelly Fruit Illustration" loading="lazy">
+      <div class="media-strip reveal" style="margin-top:12.392%;width:36.527%;">
+        <div class="media-block" style="aspect-ratio:507 / 2346">
+          <img src="/media/gonyakjelly/15.jpg" alt="Protein Konjac Jelly" loading="lazy">
         </div>
-        <div class="media-block" style="aspect-ratio:860 / 3980">
-          <img src="/media/gonyakjelly/11.jpg" alt="Protein Konjac Jelly Fruit Illustration" loading="lazy">
+        <div class="media-block" style="aspect-ratio:507 / 2346">
+          <img src="/media/gonyakjelly/14.jpg" alt="Protein Konjac Jelly" loading="lazy">
         </div>
-        <div class="media-block" style="aspect-ratio:860 / 3980">
-          <img src="/media/gonyakjelly/12.jpg" alt="Protein Konjac Jelly Fruit Illustration" loading="lazy">
+        <div class="media-block" style="aspect-ratio:507 / 2346">
+          <img src="/media/gonyakjelly/13.jpg" alt="Protein Konjac Jelly" loading="lazy">
         </div>
-        <div class="media-block" style="aspect-ratio:860 / 3980">
-          <img src="/media/gonyakjelly/13.jpg" alt="Protein Konjac Jelly Fruit Illustration" loading="lazy">
+        <div class="media-block" style="aspect-ratio:507 / 2346">
+          <img src="/media/gonyakjelly/12.jpg" alt="Protein Konjac Jelly" loading="lazy">
         </div>
-        <div class="media-block" style="aspect-ratio:860 / 3980">
-          <img src="/media/gonyakjelly/14.jpg" alt="Protein Konjac Jelly Fruit Illustration" loading="lazy">
+        <div class="media-block" style="aspect-ratio:507 / 2346">
+          <img src="/media/gonyakjelly/11.jpg" alt="Protein Konjac Jelly" loading="lazy">
         </div>
-        <div class="media-block" style="aspect-ratio:860 / 3980">
-          <img src="/media/gonyakjelly/15.jpg" alt="Protein Konjac Jelly Fruit Illustration" loading="lazy">
+        <div class="media-block" style="aspect-ratio:507 / 2349">
+          <img src="/media/gonyakjelly/10.jpg" alt="Protein Konjac Jelly" loading="lazy">
         </div>
       </div>
     </div>
