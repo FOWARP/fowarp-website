@@ -378,7 +378,6 @@
 
     .media-block {
       width: 100%;
-      height: calc(var(--vw) * 55.104);
       overflow: hidden;
       background: #080808;
       position: relative;
@@ -392,6 +391,15 @@
       display: block;
     }
 
+    /* 비율은 전부 Figma 프레임 실측값 (node 342:779 하위) */
+    .media-block.ar-hero    { aspect-ratio: 1880 / 1058; }    /* 341:764 */
+    .media-block.ar-half    { aspect-ratio: 940 / 1058; }     /* 342:774 · 342:776 */
+    .media-block.ar-mockup  { aspect-ratio: 1880 / 1851; }    /* 342:2228 · 342:2413 */
+    .media-block.ar-rec-1   { aspect-ratio: 454.5 / 673.03; } /* 342:2599 */
+    .media-block.ar-rec-2   { aspect-ratio: 456 / 884; }      /* 342:2607 */
+    .media-block.ar-rec-3   { aspect-ratio: 929.4 / 346.82; } /* 342:2602 */
+    .media-block.ar-rec-4   { aspect-ratio: 929.4 / 556.3; }  /* 342:2603 */
+
     /* 2-column row */
     .media-row-2col {
       display: flex;
@@ -401,6 +409,27 @@
     .media-row-2col .media-block {
       flex: 1;
       width: auto;
+    }
+
+    /* 화면 기록 3컬럼 행 (342:2598) — 컬럼 폭은 Figma 실측 비율,
+       세 번째 컬럼만 영상 2개 세로 스택 */
+    .media-row-rec {
+      display: flex;
+      align-items: flex-start;
+      gap: calc(var(--vw) * 0.521);
+    }
+
+    .media-row-rec > .media-block,
+    .media-row-rec > .media-stack { width: auto; }
+
+    .media-row-rec > .rec-col-1 { flex: 454.5 1 0; }
+    .media-row-rec > .rec-col-2 { flex: 456 1 0; }
+    .media-row-rec > .rec-col-3 { flex: 929.4 1 0; }
+
+    .media-stack {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--vw) * 1.064); /* Figma 20.427px @1920 */
     }
 
     /* ─── SCROLL REVEAL ─────────────────────── */
@@ -481,12 +510,14 @@
 
       .project-media { gap: 8px; margin-top: 24px; }
 
-      .media-block {
-        height: auto !important;
-        aspect-ratio: 16 / 9;
-      }
-
+      /* 모바일도 Figma 비율 그대로 유지 (16:9 강제 금지 — 목업·세로영상이 찌그러짐) */
       .media-row-2col { flex-direction: column; }
+
+      .media-row-rec { flex-direction: column; gap: 8px; }
+      .media-row-rec > .rec-col-1,
+      .media-row-rec > .rec-col-2,
+      .media-row-rec > .rec-col-3 { flex: none; width: 100%; }
+      .media-stack { gap: 8px; }
     }
   </style>
 </head>
@@ -568,7 +599,7 @@
     <div class="project-media">
 
       <!-- 1: 히어로 영상 -->
-      <div class="media-block reveal">
+      <div class="media-block ar-hero reveal">
         <video autoplay muted loop playsinline>
           <source src="/media/kohonjin/hero.mp4" type="video/mp4">
         </video>
@@ -576,59 +607,57 @@
 
       <!-- 2: 2단 — 마일드 선블록(해변) | 클렌저 라인(블랙) -->
       <div class="media-row-2col reveal">
-        <div class="media-block">
+        <div class="media-block ar-half">
           <img src="/media/kohonjin/sunblock-1.jpg" alt="KOHONJIN Mild Sun Block">
         </div>
-        <div class="media-block">
+        <div class="media-block ar-half">
           <img src="/media/kohonjin/noise.jpg" alt="KOHONJIN Product">
         </div>
       </div>
 
       <!-- 3: 2단 — 마일드 선블록(해변) 2 | 클렌저 라인(블랙) 2 -->
       <div class="media-row-2col reveal">
-        <div class="media-block">
+        <div class="media-block ar-half">
           <img src="/media/kohonjin/sunblock-2.jpg" alt="KOHONJIN Mild Sun Block">
         </div>
-        <div class="media-block">
+        <div class="media-block ar-half">
           <img src="/media/kohonjin/0412.jpg" alt="KOHONJIN Product">
         </div>
       </div>
 
       <!-- 4: 웹사이트 목업 — 홈 -->
-      <div class="media-block reveal">
+      <div class="media-block ar-mockup reveal">
         <img src="/media/kohonjin/mockup-1.jpg" alt="KOHONJIN Website Home">
       </div>
 
       <!-- 5: 웹사이트 목업 — 제품 페이지 -->
-      <div class="media-block reveal">
+      <div class="media-block ar-mockup reveal">
         <img src="/media/kohonjin/mockup-2.jpg" alt="KOHONJIN Website Product List">
       </div>
 
-      <!-- 6: 2단 — 화면 기록 (모바일 상세) -->
-      <div class="media-row-2col reveal">
-        <div class="media-block" style="height:auto;aspect-ratio:782/1158;">
+      <!-- 6: 화면 기록 3컬럼 (모바일 2 + 데스크탑 스택 1) -->
+      <div class="media-row-rec reveal">
+        <div class="media-block ar-rec-1 rec-col-1">
           <video autoplay muted loop playsinline>
             <source src="/media/kohonjin/screen-1.mp4" type="video/mp4">
           </video>
         </div>
-        <div class="media-block" style="height:auto;aspect-ratio:706/1382;">
+        <div class="media-block ar-rec-2 rec-col-2">
           <video autoplay muted loop playsinline>
             <source src="/media/kohonjin/screen-2.mp4" type="video/mp4">
           </video>
         </div>
-      </div>
-
-      <!-- 7: 2단 — 화면 기록 (데스크탑 카테고리/상세) -->
-      <div class="media-row-2col reveal">
-        <div class="media-block" style="height:auto;aspect-ratio:678/253;">
-          <video autoplay muted loop playsinline>
-            <source src="/media/kohonjin/screen-3.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="media-block" style="height:auto;aspect-ratio:929/556;">
-          <video autoplay muted loop playsinline>
-            <source src="/media/kohonjin/screen-4.mp4" type="video/mp4">
-          </video>
+        <div class="media-stack rec-col-3">
+          <div class="media-block ar-rec-3">
+            <video autoplay muted loop playsinline>
+              <source src="/media/kohonjin/screen-3.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="media-block ar-rec-4">
+            <video autoplay muted loop playsinline>
+              <source src="/media/kohonjin/screen-4.mp4" type="video/mp4">
+            </video>
+          </div>
         </div>
       </div>
 
