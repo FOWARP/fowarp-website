@@ -50,6 +50,14 @@
     :root { --vw: 19.2px; --vwFont: 19.2px; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    /* ─── 스크롤 배경 전환 ─────────────────────────────────────
+       원본은 페이지 전체가 검정 배경이지만, 진입 시점부터 검정이 아니라
+       .dark-start(손 목업) 블록이 다가오면 흰색→검정으로 자연스럽게 전환된다.
+       RETURNITY·NO SUGAR ADDED·곤약젤리 등과 동일 패턴.
+       .bg-anim 은 최초 판정 직후에 붙인다 — 로드 시점 색 깜빡임 방지 */
+    body.bg-anim { transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+    body.is-dark { background: #000; }
+
     body {
       background: #fff;
       overflow-x: hidden;
@@ -393,7 +401,14 @@
     .media-block.ar-hg-hero   { aspect-ratio: 747.7 / 409.1; }  /* 히어로 영상 */
     .media-block.ar-hg-wide   { aspect-ratio: 747.7 / 420.6; }  /* 히어로 사진 + 스트립 3장 */
     .media-block.ar-hg-square { aspect-ratio: 371 / 366; }      /* 2단 브랜드 월드 */
-    .media-block.ar-hg-mockup { aspect-ratio: 628.9 / 573.9; }  /* 제품 목업(투명) */
+    /* 목업(손) — 원본에서 컨텐츠 왼쪽 밖으로 삐져나오고 폭도 좁다.
+       실측(뷰포트 1440, 컨텐츠 1388 기준): left -24 = 컨텐츠 기준 -50, 1167x1065 */
+    .media-block.ar-hg-mockup {
+      aspect-ratio: 1167 / 1065;
+      width: 84.078%;          /* 1167 / 1388 */
+      margin-left: -3.602%;    /*  -50 / 1388 */
+      background: transparent; /* 투명 누끼라 페이지 배경이 그대로 비쳐야 함 */
+    }
     .media-block.ar-hg-scene  { aspect-ratio: 747.7 / 588.5; }  /* 3D 씬 */
     .media-block.ar-hg-banner { aspect-ratio: 747.7 / 155.6; }  /* 배너 2장 */
 
@@ -487,6 +502,8 @@
       .project-media { gap: 8px; margin-top: 24px; }
 
       .media-row-2col { flex-direction: column; }
+      /* 모바일에선 목업의 왼쪽 삐져나옴을 해제하고 다른 블록과 동일한 폭으로 */
+      .media-block.ar-hg-mockup { width: 100%; margin-left: 0; }
     }
   </style>
 </head>
@@ -589,8 +606,8 @@
         </div>
       </div>
 
-      <!-- 4: 제품 목업 -->
-      <div class="media-block ar-hg-mockup reveal">
+      <!-- 4: 제품 목업(손) — 여기부터 배경이 검정으로 전환된다 -->
+      <div class="media-block ar-hg-mockup reveal dark-start">
         <img src="/media/hwanghugung/mockup.png" alt="Hwanghugung Samgyetang Product Mockup" loading="lazy">
       </div>
 
@@ -730,6 +747,26 @@
         cancelAnimationFrame(raf); updateVW();
         setTimeout(function() { lastTime = null; fillClones(); raf = requestAnimationFrame(tick); }, 50);
       });
+    })();
+
+    // 배경 전환: .dark-start 블록이 다가오면 흰색→검정 (스크롤 되돌리면 흰색 복귀)
+    (function() {
+      var marker = document.querySelector('.dark-start');
+      var intro = document.querySelector('.project-info');
+      if (!marker || !intro) return;
+      function checkBg() {
+        var top = marker.getBoundingClientRect().top;
+        // 뷰포트가 짧은 기기에서 최상단부터 조건이 참이 되는 것 방지 —
+        // 인트로가 화면 위로 완전히 빠진 뒤에만 전환한다
+        var introGone = intro.getBoundingClientRect().bottom < -24;
+        document.body.classList.toggle('is-dark', introGone && top < window.innerHeight * 1.5);
+      }
+      checkBg();
+      // 최초 판정 후에 transition을 붙여 로드 시점 색 깜빡임 방지
+      requestAnimationFrame(function() { document.body.classList.add('bg-anim'); });
+      window.addEventListener('scroll', checkBg, { passive: true });
+      window.addEventListener('resize', checkBg);
+      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkBg);
     })();
 
     // 모바일 햄버거 메뉴
