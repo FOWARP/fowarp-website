@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gooumcookit by FOWARP</title>
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <meta name="description" content="Gooumcookit Design by FOWARP">
+  <link rel="canonical" href="https://fowarp.vercel.app/gooumcookit">
+
+  <!-- Open Graph (카카오톡·페이스북·슬랙) -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="FOWARP">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:title" content="Gooumcookit by FOWARP">
+  <meta property="og:description" content="Gooumcookit Design by FOWARP">
+  <meta property="og:url" content="https://fowarp.vercel.app/gooumcookit">
+  <meta property="og:image" content="https://fowarp.vercel.app/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="FOWARP">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Gooumcookit by FOWARP">
+  <meta name="twitter:description" content="Gooumcookit Design by FOWARP">
+  <meta name="twitter:image" content="https://fowarp.vercel.app/og-image.png">
+  <link rel="preload" href="/fonts/KarlsbaderGrotesk-400.otf" as="font" type="font/otf" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+  <script src="/js/lenis.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Karlsbader Grotesk';
+      src: url('/fonts/KarlsbaderGrotesk-400.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Karlsbader Grotesk';
+      src: url('/fonts/KarlsbaderGrotesk-500.otf') format('opentype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root { --vw: 19.2px; --vwFont: 19.2px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #fff;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      max-width: 2560px;
+      margin: 0 auto;
+    }
+
+    /* ─── HEADER ─────────────────────────────── */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(calc(var(--vwFont) * 0.52));
+      -webkit-backdrop-filter: blur(calc(var(--vwFont) * 0.52));
+    }
+
+    .marquee-section {
+      width: 100%;
+      padding: 0;
+      background: transparent;
+    }
+
+    .marquee-bar { width: 100%; overflow-x: hidden; }
+
+    .marquee-bar-inner {
+      background: #000;
+      width: 100%;
+      height: calc(var(--vwFont) * 2.083);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .marquee-track {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      will-change: transform;
+    }
+
+    .marquee-set {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--vwFont) * 5.208);
+      padding-right: calc(var(--vwFont) * 5.208);
+      flex-shrink: 0;
+    }
+
+    .marquee-text {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    /* 한글/영문 마퀴 텍스트 크기 개별 조정용 훅 (현재는 동일 크기) */
+    .marquee-text-ko { font-size: calc(var(--vwFont) * 0.729); }
+
+    .marquee-logo {
+      height: calc(var(--vwFont) * 0.852);
+      width: auto;
+      display: block;
+      filter: invert(1);
+    }
+
+    .header-main {
+      width: 100%;
+      max-width: 2560px;
+      margin: 0 auto;
+      height: calc(var(--vwFont) * 3.125); /* 1920px 기준 60px, 그 이하는 비례 축소 */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      position: relative;
+    }
+
+    .header-logo-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: block;
+      line-height: 0;
+    }
+
+    .header-logo-center img {
+      height: calc(var(--vwFont) * 1.4);
+      width: auto;
+      display: block;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: calc(var(--vwFont) * 4.167);
+      align-items: center;
+    }
+
+    .header-nav a {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      text-decoration: none;
+      color: #000;
+      text-transform: capitalize;
+    }
+
+    .header-nav a.active { color: #000; }
+
+    .social-menu {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .social-trigger {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      font-weight: 400;
+      text-decoration: none;
+      color: #000;
+      text-transform: capitalize;
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: default;
+    }
+
+    .social-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      padding-top: 12px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .social-menu:hover .social-dropdown,
+    .social-menu:focus-within .social-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .social-dropdown-inner {
+      display: flex;
+      flex-direction: column;
+      min-width: 140px;
+      padding: 8px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .social-dropdown a {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      text-decoration: none;
+      color: #000;
+      text-transform: capitalize;
+      padding: 8px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+      transition: background 0.15s ease;
+    }
+
+    .social-dropdown a:hover { background: rgba(0,0,0,0.05); }
+
+    .header-cta {
+      position: relative;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      padding: calc(var(--vwFont) * 0.625) calc(var(--vwFont) * 0.729);
+      border-radius: calc(var(--vwFont) * 0.417);
+      text-decoration: none;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    @keyframes ctaSheen {
+      0%, 100% { transform: translateX(-130%) skewX(-18deg); }
+      50% { transform: translateX(360%) skewX(-18deg); }
+    }
+    .header-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+      animation: ctaSheen 3s ease-in-out infinite;
+    }
+
+    /* ─── MOBILE MENU (텍스트 버튼) ──────────────────── */
+    .menu-toggle {
+      display: none;
+      align-items: center;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      z-index: 101;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      color: #000;
+      text-transform: capitalize;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-top: 1px solid #000;
+      flex-direction: column;
+      padding: 8px 16px 16px;
+    }
+    .mobile-menu.is-open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: 16px;
+      text-decoration: none;
+      color: #000;
+      text-transform: capitalize;
+      padding: 14px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+
+    /* ─── PAGE BODY ───────────────────────────── */
+    .page-body {
+      padding-top: calc(var(--vwFont) * 12);
+      padding-left: 40px;
+      padding-right: 40px;
+      padding-bottom: calc(var(--vw) * 4.167);
+    }
+
+    /* ─── PROJECT INFO ────────────────────────── */
+    .project-info {
+      display: flex;
+      align-items: stretch;
+      gap: calc(var(--vw) * 0.625);
+      width: 100%;
+    }
+
+    .info-title {
+      width: calc(var(--vw) * 12.917);
+      flex-shrink: 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-hline {
+      width: 100%;
+      height: 1px;
+      background: #000;
+      flex-shrink: 0;
+    }
+
+    .info-title-text {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.833);
+      font-weight: 400;
+      color: #000;
+      line-height: 1.5;
+      margin-top: calc(var(--vw) * 0.365);
+      flex: 1;
+    }
+
+    .info-vline {
+      width: 1px;
+      background: #000;
+      flex-shrink: 0;
+      align-self: stretch;
+    }
+
+    .info-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--vw) * 0.573);
+      min-width: 0;
+    }
+
+    .info-text p {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.938);
+      font-weight: 400;
+      color: #000;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    /* ─── PROJECT MEDIA ───────────────────────── */
+    .project-media {
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--vw) * 0.521);
+      margin-top: calc(var(--vw) * 1.563);
+    }
+
+    .media-block {
+      width: 100%;
+      overflow: hidden;
+      background: #080808;
+      position: relative;
+    }
+
+    .media-block video,
+    .media-block img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* 원본(fowarp.com/menu/portfolio) 미디어 네이티브 비율 그대로 사용 — 블록마다 인라인 aspect-ratio */
+
+    /* 2-column / N-column row (원본 미디어 나열 크롭 대신 네이티브 비율 유지) */
+    .media-row-2col,
+    .media-row {
+      display: flex;
+      gap: calc(var(--vw) * 0.521);
+    }
+
+    .media-row-2col .media-block,
+    .media-row .media-block {
+      flex: 1;
+      width: auto;
+      min-width: 0;
+    }
+
+    /* 정사각형류 다수 이미지 자동 그리드 */
+    .media-grid-auto {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: calc(var(--vw) * 0.521);
+    }
+
+
+    /* ─── SCROLL REVEAL ─────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease,
+                  transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+    /* 미디어 블록: 아래→위 슬라이드업 + 페이드 (강화, 텐션 easing) */
+    @keyframes revMediaUp { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: translateY(0); } }
+    .project-media > .reveal { opacity: 0; transform: translateY(48px); }
+    .project-media > .reveal.is-visible {
+      animation: revMediaUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    /* 1번 사진만 텍스트 시퀀스 뒤 이어서(1s), 2번부터는 진입 즉시 */
+    .project-media > .reveal:first-child.is-visible { animation-delay: 1s; }
+
+    /* project-info: 갤러리와 동일 시퀀스 (가로선→세로선→텍스트 페이드) */
+    @keyframes revLineX  { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @keyframes revLineY  { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    @keyframes revContent { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 컨테이너 fade-up 무효화 (자식이 개별 애니) */
+    .info-title.reveal,
+    .info-text.reveal { opacity: 1; transform: none; transition: none; }
+    /* 초기(숨김) 상태 */
+    .info-hline { transform: scaleX(0); transform-origin: left center; }
+    .info-vline.reveal { transform: scaleY(0); transform-origin: top center; opacity: 1; transition: none; }
+    .info-title-text,
+    .info-text p { opacity: 0; }
+    /* 시퀀스: 1)가로선 좌→우 2)세로선 위→아래 3)텍스트 페이드 */
+    .info-title.is-visible .info-hline,
+    .info-text.is-visible .info-hline {
+      animation: revLineX 0.7s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+    }
+    .info-vline.reveal.is-visible {
+      animation: revLineY 0.5s cubic-bezier(0.7, 0, 0.84, 0) 0.3s forwards;
+    }
+    .info-title.is-visible .info-title-text,
+    .info-text.is-visible p {
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+    }
+
+    /* ─── MOBILE ──────────────────────────────── */
+    @media (max-width: 767px) {
+      .marquee-section { padding: 0; }
+      .marquee-bar-inner { height: 28px; border-radius: 0; }
+      .marquee-text { font-size: 11px; }
+      .marquee-text-ko { font-size: 12px; }
+      .marquee-logo { height: 13px; }
+      .marquee-set { gap: calc(var(--vwFont) * 10.416); padding-right: calc(var(--vwFont) * 10.416); } /* 데스크탑 대비 2배 */
+
+      .header-main { height: 52px; padding: 0 16px; }
+      .header-logo-center img { height: 16px; }
+      .header-nav { display: none; }
+      .menu-toggle { display: flex; }
+      .header-nav { gap: 10px; }
+      .header-nav a { font-size: 11px; }
+      .header-cta { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; }
+
+      .page-body {
+        padding-top: 110px;
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-bottom: 60px;
+      }
+
+      .project-info { flex-direction: column; gap: 16px; }
+      .info-title { width: 100%; }
+      .info-vline { display: none; }
+      .info-title-text { font-size: 11px; margin-top: 8px; font-weight: 400; text-transform: uppercase; }
+      .info-text p { font-size: 11px; color: #686868; }
+      .info-hline { display: none; }
+
+      .project-media { gap: 8px; margin-top: 24px; }
+
+      .media-row-2col,
+      .media-row { flex-direction: column; }
+      .media-grid-auto { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="marquee-section">
+      <div class="marquee-bar">
+        <div class="marquee-bar-inner">
+          <div class="marquee-track" id="marqueeTrack">
+            <div class="marquee-set">
+              <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header-main">
+      <nav class="header-nav">
+        <a href="/" class="active">Project</a>
+        <a href="/about">About</a>
+        <div class="social-menu">
+          <button class="social-trigger" type="button" aria-haspopup="true">Social</button>
+          <div class="social-dropdown">
+            <div class="social-dropdown-inner">
+              <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
+              <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <button class="menu-toggle" aria-label="Menu" aria-expanded="false">Menu</button>
+      <a href="/" class="header-logo-center"><img src="/media/fowarp-logo-center.svg" alt="FOWARP"></a>
+      <a href="/contact" class="header-cta">Get in Touch</a>
+    </div>
+    <nav class="mobile-menu">
+        <a href="/" class="active">Project</a>
+        <a href="/about">About</a>
+        <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
+        <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+  </header>
+
+  <div class="page-body">
+
+    <!-- 프로젝트 정보 -->
+    <div class="project-info">
+      <div class="info-title reveal">
+        <div class="info-hline"></div>
+        <span class="info-title-text">구움쿠킷</span>
+        <div class="info-hline"></div>
+      </div>
+
+      <div class="info-vline reveal"></div>
+
+      <div class="info-text reveal">
+        <div class="info-hline"></div>
+        <p>We branded Gooumcookit, a protein chocolate chip baked cookie. So that &#39;protein cookies&#39; wouldn&#39;t feel intimidating or unfamiliar to consumers, we reinterpreted the shape of Gooumcookit&#39;s cookies through retro character design.</p>
+        <div class="info-hline"></div>
+      </div>
+
+      <div class="info-vline reveal"></div>
+
+      <div class="info-text reveal">
+        <div class="info-hline"></div>
+        <p>단백질 초코칩 구움과자, 구움쿠킷을 브랜딩 하였습니다. '단백질 과자' 가 소비자에게 부담스럽고 생소하게 느껴지지 않도록 구움쿠킷 과자의 모양을 레트로 캐릭터 디자인으로 재해석 하였습니다.</p>
+        <div class="info-hline"></div>
+      </div>
+    </div>
+
+    <!-- 미디어 -->
+    <div class="project-media">
+
+      <div class="media-block reveal" style="aspect-ratio:4096 / 2730">
+        <img src="/media/gooumcookit/01.jpg" alt="Gooumcookit Packaging" loading="lazy">
+      </div>
+
+      <div class="media-block reveal" style="aspect-ratio:3750 / 2500">
+        <img src="/media/gooumcookit/02.jpg" alt="Gooumcookit Packaging" loading="lazy">
+      </div>
+
+      <div class="media-row reveal">
+        <div class="media-block" style="aspect-ratio:850 / 3743">
+          <img src="/media/gooumcookit/03.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:850 / 3742">
+          <img src="/media/gooumcookit/04.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:850 / 3742">
+          <img src="/media/gooumcookit/05.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:850 / 3742">
+          <img src="/media/gooumcookit/06.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:850 / 3742">
+          <img src="/media/gooumcookit/07.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:850 / 3742">
+          <img src="/media/gooumcookit/08.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:850 / 3742">
+          <img src="/media/gooumcookit/09.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:850 / 3742">
+          <img src="/media/gooumcookit/10.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:850 / 3742">
+          <img src="/media/gooumcookit/11.jpg" alt="Gooumcookit Character Illustration" loading="lazy">
+        </div>
+      </div>
+
+      <div class="media-block reveal" style="aspect-ratio:4096 / 2304">
+        <img src="/media/gooumcookit/12-product.png" alt="Gooumcookit Product" loading="lazy">
+      </div>
+
+      <div class="media-row reveal">
+        <div class="media-block" style="aspect-ratio:1920 / 1920">
+          <img src="/media/gooumcookit/13-product.png" alt="Gooumcookit Product" loading="lazy">
+        </div>
+        <div class="media-block" style="aspect-ratio:1920 / 1920">
+          <img src="/media/gooumcookit/14-product.png" alt="Gooumcookit Product" loading="lazy">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function updateVW() {
+      var w = window.innerWidth;
+      document.documentElement.style.setProperty('--vw', (Math.min(w, 2560) / 100) + 'px');
+      document.documentElement.style.setProperty('--vwFont', (Math.min(w, 1920) / 100) + 'px');
+    }
+    updateVW();
+    window.addEventListener('resize', updateVW);
+
+    var lenis = new Lenis({ duration: 0.9, easing: function(t) { return 1 - Math.pow(1 - t, 4); }, smoothWheel: true });
+    (function lenisLoop(t) { lenis.raf(t); requestAnimationFrame(lenisLoop); })(0);
+
+    // 영상이 뒤늦게 레이아웃에 반영되면서 Lenis가 예전 문서 높이로 스크롤
+    // 한계를 잡아버리는 문제 방지 — 매 영상 로드마다 재계산
+    (function() {
+      function resyncLenis() { if (lenis && lenis.resize) lenis.resize(); }
+      document.querySelectorAll('video').forEach(function(v) {
+        v.addEventListener('loadedmetadata', resyncLenis);
+        v.addEventListener('loadeddata', resyncLenis);
+      });
+      window.addEventListener('load', resyncLenis);
+      setTimeout(resyncLenis, 1500);
+      setTimeout(resyncLenis, 4000);
+    })();
+
+    // Scroll reveal
+    (function() {
+      // 프로젝트 정보: 좌→우 순차 등장
+      var infoEls = document.querySelectorAll('.project-info > .reveal');
+      function checkInfo() {
+        var vh = window.innerHeight;
+        infoEls.forEach(function(el) {
+          if (el.classList.contains('is-visible')) return;
+          var r = el.getBoundingClientRect();
+          if (r.top < vh * 0.95 && r.bottom > 0) el.classList.add('is-visible');
+        });
+      }
+      checkInfo();
+      window.addEventListener('scroll', checkInfo, { passive: true });
+      window.addEventListener('resize', checkInfo);
+      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkInfo);
+
+      // 미디어 블록: rect 기반 (body가 스크롤 컨테이너라 IO 대신 사용)
+      var mediaEls = document.querySelectorAll('.project-media > .reveal');
+      function checkMedia() {
+        var vh = window.innerHeight;
+        mediaEls.forEach(function(el) {
+          if (el.classList.contains('is-visible')) return;
+          var r = el.getBoundingClientRect();
+          if (r.top < vh * 0.92 && r.bottom > 0) el.classList.add('is-visible');
+        });
+      }
+      checkMedia();
+      window.addEventListener('scroll', checkMedia, { passive: true });
+      window.addEventListener('resize', checkMedia);
+      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkMedia);
+
+      // 레티나 서브픽셀 흐림 방지: 선 애니 완료 후 물리픽셀 라인에 스냅
+      function snapLine(el) {
+        var dpr = window.devicePixelRatio || 1;
+        el.style.transform = 'none';
+        var r = el.getBoundingClientRect();
+        if (el.classList.contains('info-hline')) {
+          var p = r.top * dpr;
+          el.style.transform = 'translateY(' + ((Math.round(p) - p) / dpr) + 'px)';
+        } else {
+          var px = r.left * dpr;
+          el.style.transform = 'translateX(' + ((Math.round(px) - px) / dpr) + 'px)';
+        }
+      }
+      var lineEls = document.querySelectorAll('.info-hline, .info-vline');
+      lineEls.forEach(function(el) {
+        el.addEventListener('animationend', function() { el.style.animation = 'none'; snapLine(el); });
+      });
+      window.addEventListener('resize', function() { lineEls.forEach(snapLine); });
+    })();
+
+    (function() {
+      var track = document.getElementById('marqueeTrack');
+      var set   = track.querySelector('.marquee-set');
+      var pos = 0, PX_PER_SEC = 30, setWidth = 0, lastTime = null, raf;
+
+      function fillClones() {
+        while (track.children.length > 1) track.removeChild(track.lastChild);
+        setWidth = set.offsetWidth;
+        for (var i = 0, n = Math.ceil(window.innerWidth / setWidth) + 1; i < n; i++)
+          track.appendChild(set.cloneNode(true));
+      }
+
+      function tick(now) {
+        var delta = lastTime !== null ? now - lastTime : 0;
+        lastTime = now;
+        pos -= PX_PER_SEC * (delta / 1000);
+        if (pos <= -setWidth) pos += setWidth;
+        track.style.transform = 'translateX(' + pos + 'px)';
+        raf = requestAnimationFrame(tick);
+      }
+
+      fillClones();
+      raf = requestAnimationFrame(tick);
+
+      window.addEventListener('load', function() {
+        cancelAnimationFrame(raf); lastTime = null; fillClones(); raf = requestAnimationFrame(tick);
+      });
+      window.addEventListener('resize', function() {
+        cancelAnimationFrame(raf); updateVW();
+        setTimeout(function() { lastTime = null; fillClones(); raf = requestAnimationFrame(tick); }, 50);
+      });
+    })();
+
+    // 모바일 햄버거 메뉴
+    (function() {
+      var toggle = document.querySelector('.menu-toggle');
+      var menu = document.querySelector('.mobile-menu');
+      if (!toggle || !menu) return;
+      function setOpen(open) {
+        menu.classList.toggle('is-open', open);
+        toggle.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        document.body.style.overflow = open ? 'hidden' : '';
+        if (typeof lenis !== 'undefined') { open ? lenis.stop() : lenis.start(); }
+      }
+      toggle.addEventListener('click', function() {
+        setOpen(!menu.classList.contains('is-open'));
+      });
+      menu.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() { setOpen(false); });
+      });
+    })();
+
+</script>
+</body>
+</html>
