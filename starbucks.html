@@ -163,6 +163,69 @@
 
     .header-nav a.active { color: #000; }
 
+    .social-menu {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .social-trigger {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      font-weight: 400;
+      text-decoration: none;
+      color: #000;
+      text-transform: capitalize;
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .social-dropdown {
+      position: absolute;
+      top: calc(100% + 12px);
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      min-width: 140px;
+      padding: 8px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+      z-index: 50;
+    }
+
+    .social-dropdown.is-open {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .social-dropdown a {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      text-decoration: none;
+      color: #000;
+      text-transform: capitalize;
+      padding: 8px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+      transition: background 0.15s ease;
+    }
+
+    .social-dropdown a:hover { background: rgba(0,0,0,0.05); }
+
     .header-cta {
       position: relative;
       overflow: hidden;
@@ -435,7 +498,13 @@
       <nav class="header-nav">
         <a href="/">Project</a>
         <a href="/about">About</a>
-        <a href="/social">Social</a>
+        <div class="social-menu">
+          <button class="social-trigger" type="button" aria-haspopup="true" aria-expanded="false">Social</button>
+          <div class="social-dropdown">
+            <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
+            <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
+          </div>
+        </div>
       </nav>
       <button class="menu-toggle" aria-label="Menu" aria-expanded="false">Menu</button>
       <a href="/" class="header-logo-center"><img src="/media/fowarp-logo-center.svg" alt="FOWARP"></a>
@@ -444,7 +513,8 @@
     <nav class="mobile-menu">
         <a href="/">Project</a>
         <a href="/about">About</a>
-        <a href="/social">Social</a>
+        <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
+        <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
     </nav>
   </header>
 
@@ -623,6 +693,28 @@
       });
       menu.querySelectorAll('a').forEach(function(a) {
         a.addEventListener('click', function() { setOpen(false); });
+      });
+    })();
+
+    // Social 드롭다운 (Behance/Instagram)
+    (function() {
+      var menu = document.querySelector('.social-menu');
+      if (!menu) return;
+      var trigger = menu.querySelector('.social-trigger');
+      var dropdown = menu.querySelector('.social-dropdown');
+      function setOpen(open) {
+        dropdown.classList.toggle('is-open', open);
+        trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      trigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        setOpen(!dropdown.classList.contains('is-open'));
+      });
+      document.addEventListener('click', function(e) {
+        if (!menu.contains(e.target)) setOpen(false);
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') setOpen(false);
       });
     })();
 </script>
