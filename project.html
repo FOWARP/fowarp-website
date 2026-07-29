@@ -270,26 +270,47 @@
       z-index: 101;
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-weight: 400;
-      /* Get in Touch(.header-cta 모바일 9.6px)와 동일 크기로 통일 */
-      font-size: 9.6px;
+      font-size: 12px;
       color: #000;
       text-transform: capitalize;
       /* 글자를 줄인 대신 터치 영역은 유지 (헤더 바 52px 안에서 세로 중앙) */
       min-height: 44px;
     }
 
+    /* 언폴드 모션: display 토글 대신 max-height 로 여닫아 "헤더가 아래로 자라는"
+       느낌을 준다. 내용은 제자리에 있고 잘려있던 영역이 열리는 방식.
+       border-top 은 0s/step-end 로 즉시 껐다 켜서 닫힌 상태에 선이 남지 않게 함.
+       visibility 는 애니메이션이 끝난 뒤 꺼서 닫힌 메뉴가 키보드 포커스를 먹지 않게 함. */
     .mobile-menu {
-      display: none;
+      display: flex;
       position: absolute;
       top: 100%;
       left: 0;
       right: 0;
       background: #fff;
-      border-top: 1px solid #000;
+      border-top: 0 solid #000;
       flex-direction: column;
-      padding: 8px 16px 16px;
+      padding: 0 16px;
+      max-height: 0;
+      overflow: hidden;
+      visibility: hidden;
+      pointer-events: none;
+      transition: max-height 0.45s cubic-bezier(0.7, 0, 0.2, 1),
+                  padding 0.45s cubic-bezier(0.7, 0, 0.2, 1),
+                  border-top-width 0s linear 0.45s,
+                  visibility 0s linear 0.45s;
     }
-    .mobile-menu.is-open { display: flex; }
+    .mobile-menu.is-open {
+      max-height: 280px;
+      padding: 8px 16px 16px;
+      border-top-width: 1px;
+      visibility: visible;
+      pointer-events: auto;
+      transition: max-height 0.45s cubic-bezier(0.7, 0, 0.2, 1),
+                  padding 0.45s cubic-bezier(0.7, 0, 0.2, 1),
+                  border-top-width 0s,
+                  visibility 0s;
+    }
     .mobile-menu a {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: 16px;
@@ -297,8 +318,18 @@
       color: #000;
       text-transform: capitalize;
       padding: 14px 0;
-      border-bottom: 1px solid #eee;
+      /* 구분선을 사이트 전역 1px 검정 헤어라인과 통일 (기존 #eee 는 거의 안 보였음) */
+      border-bottom: 1px solid #000;
+      /* 언폴드하면서 항목이 순차로 살짝 떠오른다 — 갤러리 등장 모션(revContent)과 같은 결 */
+      opacity: 0;
+      transform: translateY(9px);
+      transition: opacity 0.34s ease, transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
     }
+    .mobile-menu.is-open a { opacity: 1; transform: none; }
+    .mobile-menu.is-open a:nth-child(1) { transition-delay: 0.10s; }
+    .mobile-menu.is-open a:nth-child(2) { transition-delay: 0.16s; }
+    .mobile-menu.is-open a:nth-child(3) { transition-delay: 0.22s; }
+    .mobile-menu.is-open a:nth-child(4) { transition-delay: 0.28s; }
     .mobile-menu a:last-child { border-bottom: none; }
 
     /* ─── PAGE BODY ───────────────────────────── */
