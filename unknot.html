@@ -273,9 +273,12 @@
       z-index: 101;
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-weight: 400;
-      font-size: 14px;
+      /* Get in Touch(.header-cta 모바일 9.6px)와 동일 크기로 통일 */
+      font-size: 9.6px;
       color: #000;
       text-transform: capitalize;
+      /* 글자를 줄인 대신 터치 영역은 유지 (헤더 바 52px 안에서 세로 중앙) */
+      min-height: 44px;
     }
 
     .mobile-menu {
