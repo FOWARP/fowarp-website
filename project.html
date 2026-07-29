@@ -270,17 +270,23 @@
       z-index: 101;
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-weight: 400;
-      font-size: 12px;
+      font-size: 14px;
       color: #000;
       text-transform: capitalize;
       /* 글자를 줄인 대신 터치 영역은 유지 (헤더 바 52px 안에서 세로 중앙) */
       min-height: 44px;
     }
 
-    /* 언폴드 모션: display 토글 대신 max-height 로 여닫아 "헤더가 아래로 자라는"
-       느낌을 준다. 내용은 제자리에 있고 잘려있던 영역이 열리는 방식.
-       border-top 은 0s/step-end 로 즉시 껐다 켜서 닫힌 상태에 선이 남지 않게 함.
-       visibility 는 애니메이션이 끝난 뒤 꺼서 닫힌 메뉴가 키보드 포커스를 먹지 않게 함. */
+    /* 언폴드 모션 — max-height 대신 clip-path 로 여닫는다.
+       max-height 방식이 부드럽지 않았던 이유 3가지를 모두 해결:
+       (1) max-height 는 레이아웃 프로퍼티라 매 프레임 리플로우가 발생한다.
+           clip-path: inset() 은 GPU 합성 단계에서 처리돼 리플로우가 없다.
+       (2) 목표값 280px 이 실제 콘텐츠 높이(216px)보다 커서 이징의 마지막 23%
+           구간이 화면 밖에서 진행됐다 → 끝이 뭉툭하게 잘리는 느낌.
+           clip-path 는 콘텐츠 높이와 정확히 일치하는 지점에서 끝난다.
+       (3) cubic-bezier(0.7,0,0.2,1) 은 갤러리 선 긋기용 강한 ease-in 커브라
+           열림 모션엔 부적합했다 → 빠르게 시작해 부드럽게 멈추는 ease-out 으로 교체.
+       visibility 는 애니메이션 종료 후 꺼서 닫힌 메뉴가 키보드 포커스를 먹지 않게 함. */
     .mobile-menu {
       display: flex;
       position: absolute;
@@ -288,27 +294,20 @@
       left: 0;
       right: 0;
       background: #fff;
-      border-top: 0 solid #000;
+      border-top: 1px solid #000;
       flex-direction: column;
-      padding: 0 16px;
-      max-height: 0;
-      overflow: hidden;
+      padding: 8px 16px 16px;
+      clip-path: inset(0 0 100% 0);
       visibility: hidden;
       pointer-events: none;
-      transition: max-height 0.45s cubic-bezier(0.7, 0, 0.2, 1),
-                  padding 0.45s cubic-bezier(0.7, 0, 0.2, 1),
-                  border-top-width 0s linear 0.45s,
-                  visibility 0s linear 0.45s;
+      transition: clip-path 0.32s cubic-bezier(0.4, 0, 1, 1),
+                  visibility 0s linear 0.32s;
     }
     .mobile-menu.is-open {
-      max-height: 280px;
-      padding: 8px 16px 16px;
-      border-top-width: 1px;
+      clip-path: inset(0 0 0 0);
       visibility: visible;
       pointer-events: auto;
-      transition: max-height 0.45s cubic-bezier(0.7, 0, 0.2, 1),
-                  padding 0.45s cubic-bezier(0.7, 0, 0.2, 1),
-                  border-top-width 0s,
+      transition: clip-path 0.52s cubic-bezier(0.22, 1, 0.36, 1),
                   visibility 0s;
     }
     .mobile-menu a {
@@ -320,16 +319,22 @@
       padding: 14px 0;
       /* 구분선을 사이트 전역 1px 검정 헤어라인과 통일 (기존 #eee 는 거의 안 보였음) */
       border-bottom: 1px solid #000;
-      /* 언폴드하면서 항목이 순차로 살짝 떠오른다 — 갤러리 등장 모션(revContent)과 같은 결 */
+      /* 언폴드하면서 항목이 순차로 살짝 떠오른다 — 갤러리 등장 모션(revContent)과 같은 결.
+         스태거 마지막 항목이 0.21+0.36=0.57s 에 끝나 패널(0.52s)과 거의 동시에 안착한다.
+         닫힐 때는 지연 없이 짧게 사라져야 잔상이 남지 않는다. */
       opacity: 0;
-      transform: translateY(9px);
-      transition: opacity 0.34s ease, transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+      transform: translateY(8px);
+      transition: opacity 0.16s ease, transform 0.16s ease;
     }
-    .mobile-menu.is-open a { opacity: 1; transform: none; }
-    .mobile-menu.is-open a:nth-child(1) { transition-delay: 0.10s; }
-    .mobile-menu.is-open a:nth-child(2) { transition-delay: 0.16s; }
-    .mobile-menu.is-open a:nth-child(3) { transition-delay: 0.22s; }
-    .mobile-menu.is-open a:nth-child(4) { transition-delay: 0.28s; }
+    .mobile-menu.is-open a {
+      opacity: 1;
+      transform: none;
+      transition: opacity 0.3s ease, transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .mobile-menu.is-open a:nth-child(1) { transition-delay: 0.06s; }
+    .mobile-menu.is-open a:nth-child(2) { transition-delay: 0.11s; }
+    .mobile-menu.is-open a:nth-child(3) { transition-delay: 0.16s; }
+    .mobile-menu.is-open a:nth-child(4) { transition-delay: 0.21s; }
     .mobile-menu a:last-child { border-bottom: none; }
 
     /* ─── PAGE BODY ───────────────────────────── */
