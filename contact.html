@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact by FOWARP</title>
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <meta name="description" content="프로젝트 문의를 남겨주세요. Get in touch with FOWARP.">
+  <link rel="canonical" href="https://fowarp.vercel.app/contact">
+
+  <!-- Open Graph (카카오톡·페이스북·슬랙) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="FOWARP">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:title" content="Contact by FOWARP">
+  <meta property="og:description" content="프로젝트 문의를 남겨주세요. Get in touch with FOWARP.">
+  <meta property="og:url" content="https://fowarp.vercel.app/contact">
+  <meta property="og:image" content="https://fowarp.vercel.app/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="FOWARP">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Contact by FOWARP">
+  <meta name="twitter:description" content="프로젝트 문의를 남겨주세요. Get in touch with FOWARP.">
+  <meta name="twitter:image" content="https://fowarp.vercel.app/og-image.png">
+  <link rel="preload" href="/fonts/KarlsbaderGrotesk-400.otf" as="font" type="font/otf" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+  <script src="/js/lenis.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Karlsbader Grotesk';
+      src: url('/fonts/KarlsbaderGrotesk-400.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Karlsbader Grotesk';
+      src: url('/fonts/KarlsbaderGrotesk-500.otf') format('opentype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root { --vw: 19.2px; --vwFont: 19.2px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #fff;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      max-width: 2560px;
+      margin: 0 auto;
+    }
+
+    /* ─── HEADER ─────────────────────────────── */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(calc(var(--vwFont) * 0.52));
+      -webkit-backdrop-filter: blur(calc(var(--vwFont) * 0.52));
+    }
+
+    .marquee-section {
+      width: 100%;
+      padding: 0;
+      background: transparent;
+    }
+
+    .marquee-bar { width: 100%; overflow-x: hidden; }
+
+    .marquee-bar-inner {
+      background: #000;
+      width: 100%;
+      height: calc(var(--vwFont) * 2.083);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .marquee-track {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      will-change: transform;
+    }
+
+    .marquee-set {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--vwFont) * 5.208);
+      padding-right: calc(var(--vwFont) * 5.208);
+      flex-shrink: 0;
+    }
+
+    .marquee-text {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    /* 한글/영문 마퀴 텍스트 크기 개별 조정용 훅 (현재는 동일 크기) */
+    .marquee-text-ko { font-size: calc(var(--vwFont) * 0.729); }
+
+    .marquee-logo {
+      height: calc(var(--vwFont) * 0.852);
+      width: auto;
+      display: block;
+      filter: invert(1);
+    }
+
+    .header-main {
+      width: 100%;
+      max-width: 2560px;
+      margin: 0 auto;
+      height: calc(var(--vwFont) * 3.125); /* 1920px 기준 60px, 그 이하는 비례 축소 */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      position: relative;
+    }
+
+    .header-logo-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: block;
+      line-height: 0;
+    }
+
+    .header-logo-center img {
+      height: calc(var(--vwFont) * 1.4);
+      width: auto;
+      display: block;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: calc(var(--vwFont) * 4.167);
+      align-items: center;
+    }
+
+    .header-nav a {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      text-decoration: none;
+      color: #000;
+      text-transform: capitalize;
+    }
+
+    .header-nav a.active { color: #000; }
+
+    .social-menu {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .social-trigger {
+      appearance: none;
+      -webkit-appearance: none;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      font-weight: 400;
+      text-decoration: none;
+      color: #000;
+      text-transform: capitalize;
+      background: none;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: default;
+    }
+
+    .social-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      padding-top: 12px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-6px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .social-menu:hover .social-dropdown,
+    .social-menu:focus-within .social-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .social-dropdown-inner {
+      display: flex;
+      flex-direction: column;
+      min-width: 140px;
+      padding: 8px;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+
+    .social-dropdown a {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      text-decoration: none;
+      color: #000;
+      text-transform: capitalize;
+      padding: 8px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+      transition: background 0.15s ease;
+    }
+
+    .social-dropdown a:hover { background: rgba(0,0,0,0.05); }
+
+    .header-cta {
+      position: relative;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      padding: calc(var(--vwFont) * 0.625) calc(var(--vwFont) * 0.729);
+      border-radius: calc(var(--vwFont) * 0.417);
+      text-decoration: none;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    @keyframes ctaSheen {
+      0%, 100% { transform: translateX(-130%) skewX(-18deg); }
+      50% { transform: translateX(360%) skewX(-18deg); }
+    }
+    .header-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+      animation: ctaSheen 3s ease-in-out infinite;
+    }
+
+    /* ─── MOBILE MENU (텍스트 버튼) ──────────────────── */
+    .menu-toggle {
+      display: none;
+      align-items: center;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      z-index: 101;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      color: #000;
+      text-transform: capitalize;
+      /* 글자를 줄인 대신 터치 영역은 유지 (헤더 바 52px 안에서 세로 중앙) */
+      min-height: 44px;
+    }
+
+    /* 언폴드 모션 — max-height 대신 clip-path 로 여닫는다.
+       max-height 방식이 부드럽지 않았던 이유 3가지를 모두 해결:
+       (1) max-height 는 레이아웃 프로퍼티라 매 프레임 리플로우가 발생한다.
+           clip-path: inset() 은 GPU 합성 단계에서 처리돼 리플로우가 없다.
+       (2) 목표값 280px 이 실제 콘텐츠 높이(216px)보다 커서 이징의 마지막 23%
+           구간이 화면 밖에서 진행됐다 → 끝이 뭉툭하게 잘리는 느낌.
+           clip-path 는 콘텐츠 높이와 정확히 일치하는 지점에서 끝난다.
+       (3) cubic-bezier(0.7,0,0.2,1) 은 갤러리 선 긋기용 강한 ease-in 커브라
+           열림 모션엔 부적합했다 → 빠르게 시작해 부드럽게 멈추는 ease-out 으로 교체.
+       visibility 는 애니메이션 종료 후 꺼서 닫힌 메뉴가 키보드 포커스를 먹지 않게 함. */
+    .mobile-menu {
+      display: flex;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-top: 1px solid #000;
+      flex-direction: column;
+      padding: 8px 16px 16px;
+      clip-path: inset(0 0 100% 0);
+      visibility: hidden;
+      pointer-events: none;
+      transition: clip-path 0.32s cubic-bezier(0.4, 0, 1, 1),
+                  visibility 0s linear 0.32s;
+    }
+    .mobile-menu.is-open {
+      clip-path: inset(0 0 0 0);
+      visibility: visible;
+      pointer-events: auto;
+      transition: clip-path 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+                  visibility 0s;
+    }
+    .mobile-menu a {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: 16px;
+      text-decoration: none;
+      color: #000;
+      text-transform: capitalize;
+      padding: 14px 0;
+      /* 구분선을 사이트 전역 1px 검정 헤어라인과 통일 (기존 #eee 는 거의 안 보였음) */
+      border-bottom: 1px solid #000;
+      /* 언폴드하면서 항목이 순차로 살짝 떠오른다 — 갤러리 등장 모션(revContent)과 같은 결.
+         스태거 마지막 항목이 0.21+0.36=0.57s 에 끝나 패널(0.52s)과 거의 동시에 안착한다.
+         닫힐 때는 지연 없이 짧게 사라져야 잔상이 남지 않는다. */
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.16s ease, transform 0.16s ease;
+    }
+    .mobile-menu.is-open a {
+      opacity: 1;
+      transform: none;
+      transition: opacity 0.3s ease, transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .mobile-menu.is-open a:nth-child(1) { transition-delay: 0.06s; }
+    .mobile-menu.is-open a:nth-child(2) { transition-delay: 0.11s; }
+    .mobile-menu.is-open a:nth-child(3) { transition-delay: 0.16s; }
+    .mobile-menu.is-open a:nth-child(4) { transition-delay: 0.21s; }
+    .mobile-menu a:last-child { border-bottom: none; }
+
+    /* ─── CONTACT ─────────────────────────────────────────────
+       레퍼런스와 동일하게 검정 배경 + 중앙 단일 컬럼. 한 번에 한 질문만 묻는다.
+       헤더는 다른 페이지와 동일한 반투명 흰 바를 그대로 쓴다. */
+    body { background: #000; }
+
+    .contact {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-top: calc(var(--vwFont) * 5.2);
+    }
+
+    .contact-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: calc(var(--vw) * 2) 40px calc(var(--vw) * 2);
+      text-align: center;
+    }
+
+    /* 4단계라 끝이 보이도록 진행률을 노출한다 */
+    .step-count {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.625);
+      letter-spacing: 0.16em;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .step-q {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.833);
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: calc(var(--vwFont) * 1.1);
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: calc(var(--vwFont) * 0.9);
+      margin-top: calc(var(--vwFont) * 1.5);
+      max-width: 100%;
+    }
+
+    .badge {
+      width: calc(var(--vwFont) * 2.3);
+      height: calc(var(--vwFont) * 2.3);
+      border-radius: 50%;
+      background: #fff;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .badge svg { width: 58%; height: 58%; display: block; }
+
+    .field input,
+    .field textarea {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 2.4);
+      font-weight: 400;
+      line-height: 1.25;
+      color: #fff;
+      background: none;
+      border: none;
+      outline: none;
+      padding: 0;
+      text-align: left;
+      caret-color: #fff;
+      /* 폭은 JS 가 내용(또는 플레이스홀더) 길이에 맞춰 지정한다 —
+         레퍼런스처럼 아이콘+입력이 한 덩어리로 중앙에 유지된다 */
+      width: 40px;
+      /* 플레이스홀더 문장이 길어서 모바일에선 입력값보다 작게 표시한다 */
+      --ph-size: calc(var(--vwFont) * 2.4);
+    }
+    .field textarea { resize: none; overflow: hidden; }
+    .field input::placeholder,
+    .field textarea::placeholder { color: rgba(255, 255, 255, 0.28); font-size: var(--ph-size); }
+
+    /* 입력에 집중하면 상단 문구가 흐려지는 피사계심도 효과 (레퍼런스와 동일) */
+    .step-count, .step-q { transition: filter 0.4s ease, opacity 0.4s ease; }
+    .contact.is-typing .step-count,
+    .contact.is-typing .step-q { filter: blur(4px); opacity: 0.45; }
+
+    .next {
+      position: relative;
+      overflow: hidden;
+      margin-top: calc(var(--vwFont) * 1.6);
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 999px;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      padding: calc(var(--vwFont) * 0.66) calc(var(--vwFont) * 1.35);
+      cursor: pointer;
+    }
+    /* 헤더 CTA와 같은 시인 스윕 (방향만 반전 — 흰 배경이므로 어두운 빛) */
+    .next::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 40%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,0.13), transparent);
+      animation: ctaSheen 3s ease-in-out infinite;
+    }
+    .next:disabled { opacity: 0.45; cursor: default; }
+    .next:disabled::before { animation: none; }
+
+    .err {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.677);
+      color: #ff7a7a;
+      margin-top: calc(var(--vwFont) * 0.7);
+      min-height: calc(var(--vwFont) * 1);
+    }
+
+    /* 폼이 답답한 사람을 위한 탈출구 — 메일 주소를 그대로 노출 */
+    .escape {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.625);
+      color: rgba(255, 255, 255, 0.34);
+      margin-top: calc(var(--vwFont) * 2.4);
+    }
+    .escape a { color: rgba(255, 255, 255, 0.62); text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.28); }
+    .escape a:hover { color: #fff; border-bottom-color: #fff; }
+
+    /* ─── 완료 화면 ─── */
+    .done { display: none; flex-direction: column; align-items: center; }
+    .contact.is-done .form-wrap { display: none; }
+    .contact.is-done .done { display: flex; }
+
+    .check {
+      width: calc(var(--vwFont) * 2.6);
+      height: calc(var(--vwFont) * 2.6);
+      border-radius: 50%;
+      background: #fff;
+      color: #000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .check svg { width: 52%; height: 52%; }
+
+    .done-t {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 1.6);
+      color: #fff;
+      margin-top: calc(var(--vwFont) * 1);
+    }
+    .done-s {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.833);
+      color: rgba(255,255,255,0.6);
+      margin-top: calc(var(--vwFont) * 0.6);
+    }
+    .summary {
+      margin-top: calc(var(--vwFont) * 1.8);
+      display: grid;
+      grid-template-columns: auto auto;
+      gap: calc(var(--vwFont) * 0.34) calc(var(--vwFont) * 0.7);
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.677);
+      text-align: left;
+    }
+    .summary dt { color: rgba(255,255,255,0.4); }
+    .summary dd { color: rgba(255,255,255,0.85); max-width: calc(var(--vw) * 22); }
+
+    /* ─── 하단 포트폴리오 마키 ─────────────────────────────────
+       헤더 마키바와 동일한 rAF + translateX 엔진을 재사용한다.
+       양 끝은 마스크로 배경(검정)에 녹인다. */
+    .marq {
+      overflow: hidden;
+      padding-bottom: calc(var(--vw) * 2.2);
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    }
+    .marq-track { display: flex; will-change: transform; }
+    .marq-set {
+      display: flex;
+      gap: calc(var(--vw) * 0.625);
+      padding-right: calc(var(--vw) * 0.625);
+      flex-shrink: 0;
+    }
+    .marq-set a { display: block; line-height: 0; }
+    .marq-set img {
+      height: calc(var(--vw) * 9.4);
+      width: auto;
+      display: block;
+      /* 아이템마다 동일한 perspective 를 걸어 균일하게 기울인다
+         (부모에 perspective 를 주면 소실점이 하나라 부채꼴로 벌어진다) */
+      transform: perspective(900px) rotateY(-12deg);
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease;
+      opacity: 0.82;
+    }
+    .marq-set a:hover img { transform: perspective(900px) rotateY(0deg); opacity: 1; }
+
+    /* ─── MOBILE ──────────────────────────────── */
+    @media (max-width: 767px) {
+      .marquee-section { padding: 0; }
+      .marquee-bar-inner { height: 28px; border-radius: 0; }
+      .marquee-text { font-size: 11px; }
+      .marquee-text-ko { font-size: 12px; }
+      .marquee-logo { height: 13px; }
+      .marquee-set { gap: calc(var(--vwFont) * 10.416); padding-right: calc(var(--vwFont) * 10.416); } /* 데스크탑 대비 2배 */
+
+      .header-main { height: 52px; padding: 0 16px; }
+      .header-logo-center img { height: 16px; }
+      .header-nav { display: none; }
+      .menu-toggle { display: flex; }
+      .header-nav { gap: 10px; }
+      .header-nav a { font-size: 11px; }
+      .header-cta { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; }
+
+      .contact { padding-top: 92px; }
+      .contact-stage { padding: 24px 16px; }
+      .step-count { font-size: 10px; }
+      .step-q { font-size: 12px; margin-top: 14px; }
+      .field { margin-top: 18px; gap: 10px; max-width: none; }
+      .badge { width: 30px; height: 30px; }
+      .field input, .field textarea { font-size: 22px; --ph-size: 15px; }
+      .next { font-size: 12px; padding: 11px 22px; margin-top: 22px; }
+      .err { font-size: 11px; margin-top: 10px; min-height: 16px; }
+      .escape { font-size: 10px; margin-top: 32px; }
+      .done-t { font-size: 22px; }
+      .done-s { font-size: 12px; }
+      .summary { font-size: 11px; margin-top: 22px; }
+      .summary dd { max-width: 46vw; }
+      .marq { padding-bottom: 28px; }
+      .marq-set { gap: 8px; padding-right: 8px; }
+      .marq-set img { height: 104px; transform: perspective(700px) rotateY(-10deg); }
+
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="marquee-section">
+      <div class="marquee-bar">
+        <div class="marquee-bar-inner">
+          <div class="marquee-track" id="marqueeTrack">
+            <div class="marquee-set">
+              <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header-main">
+      <nav class="header-nav">
+        <a href="/" class="active">Project</a>
+        <a href="/about">About</a>
+        <div class="social-menu">
+          <button class="social-trigger" type="button" aria-haspopup="true">Social</button>
+          <div class="social-dropdown">
+            <div class="social-dropdown-inner">
+              <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
+              <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <button class="menu-toggle" aria-label="Menu" aria-expanded="false">Menu</button>
+      <a href="/" class="header-logo-center"><img src="/media/fowarp-logo-center.svg" alt="FOWARP"></a>
+      <a href="/contact" class="header-cta">Get in Touch</a>
+    </div>
+    <nav class="mobile-menu">
+        <a href="/" class="active">Project</a>
+        <a href="/about">About</a>
+        <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
+        <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+  </header>
+
+  <div class="contact" id="contact">
+
+    <div class="contact-stage">
+
+      <div class="form-wrap">
+        <div class="step-count" id="stepCount">01 / 04</div>
+        <div class="step-q" id="stepQ">브랜드명을 입력해 주세요.</div>
+
+        <div class="field">
+          <span class="badge" id="badge" aria-hidden="true"></span>
+          <input id="stepInput" type="text" placeholder="Please enter your brand name"
+                 autocomplete="off" spellcheck="false" aria-labelledby="stepQ">
+        </div>
+
+        <div class="err" id="err" role="alert" aria-live="polite"></div>
+        <button class="next" id="next" type="button">Okay, next</button>
+
+        <!-- 스팸 봇용 함정 필드 (사람에게는 보이지 않음) -->
+        <input id="hp" type="text" tabindex="-1" aria-hidden="true"
+               style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+      </div>
+
+      <div class="done">
+        <span class="check" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>
+        </span>
+        <div class="done-t">문의가 접수되었습니다.</div>
+        <div class="done-s">확인 후 빠르게 연락드리겠습니다.</div>
+        <dl class="summary" id="summary"></dl>
+      </div>
+
+      <div class="escape">
+        폼 대신 메일이 편하시면 <a href="mailto:hi@fowarp.com">hi@fowarp.com</a>
+      </div>
+
+    </div>
+
+    <!-- 하단 포트폴리오 마키 -->
+    <div class="marq">
+      <div class="marq-track" id="marqTrack">
+        <div class="marq-set">
+            <a href="/goventure"><img src="/media/contact-marquee/goventure.jpg" alt="GoVenture Forum" loading="lazy"></a>
+            <a href="/starbucks"><img src="/media/contact-marquee/starbucks.jpg" alt="Starbucks®" loading="lazy"></a>
+            <a href="/returnity"><img src="/media/contact-marquee/returnity.jpg" alt="RETURNITY" loading="lazy"></a>
+            <a href="/nosugaradded"><img src="/media/contact-marquee/nosugar.jpg" alt="NO SUGAR ADDED" loading="lazy"></a>
+            <a href="/kohonjin"><img src="/media/contact-marquee/kohonjin.jpg" alt="KOHONJIN" loading="lazy"></a>
+            <span><img src="/media/contact-marquee/calmlab.jpg" alt="CALMLAB+" loading="lazy"></span>
+            <a href="/hwanghugung"><img src="/media/contact-marquee/hwanghugung.jpg" alt="황후궁 삼계탕" loading="lazy"></a>
+            <span><img src="/media/contact-marquee/antursolais.jpg" alt="An Túr Solais" loading="lazy"></span>
+            <a href="/gonyakjelly"><img src="/media/contact-marquee/gonyakjelly.jpg" alt="단백질 곤약젤리" loading="lazy"></a>
+            <span><img src="/media/contact-marquee/souptoppokki.jpg" alt="SOUP TOPPOKKI" loading="lazy"></span>
+            <a href="/gooumcookit"><img src="/media/contact-marquee/gooumcookit.jpg" alt="구움쿠킷" loading="lazy"></a>
+            <a href="/unknot"><img src="/media/contact-marquee/unknot.jpg" alt="Unknot" loading="lazy"></a>
+            <a href="/jjonjingeo"><img src="/media/contact-marquee/jjonjingeo.jpg" alt="쫀징어" loading="lazy"></a>
+            <span><img src="/media/contact-marquee/danbaekking.jpg" alt="단백킹" loading="lazy"></span>
+            <span><img src="/media/contact-marquee/kkokkochip.jpg" alt="꼭꼬칩" loading="lazy"></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function updateVW() {
+      var w = window.innerWidth;
+      document.documentElement.style.setProperty('--vw', (Math.min(w, 2560) / 100) + 'px');
+      document.documentElement.style.setProperty('--vwFont', (Math.min(w, 1920) / 100) + 'px');
+    }
+    updateVW();
+    window.addEventListener('resize', updateVW);
+
+        var lenis = new Lenis({ duration: 0.9, easing: function(t) { return 1 - Math.pow(1 - t, 4); }, smoothWheel: true });
+    (function lenisLoop(t) { lenis.raf(t); requestAnimationFrame(lenisLoop); })(0);
+
+    // ─── 대화형 폼 (한 번에 한 질문) ──────────────────────────
+    (function() {
+      var ICON = {
+        brand: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1.6l2.2 7.2 7.2 2.2-7.2 2.2L12 20.4l-2.2-7.2L2.6 11l7.2-2.2z"/></svg>',
+        mail:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="M3 6l9 7 9-7"/></svg>',
+        won:   '<svg viewBox="0 0 24 24"><text x="12" y="18" text-anchor="middle" font-size="19" fill="currentColor" font-family="inherit">\u20a9</text></svg>',
+        chat:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-4 3v-5.5A8 8 0 0 1 13 4a8 8 0 0 1 8 8z"/></svg>'
+      };
+
+      var STEPS = [
+        { key:'brand',   ko:'브랜드명을 입력해 주세요.',      ph:'Please enter your brand name',     icon:ICON.brand, area:false,
+          check:function(v){ return v ? '' : '브랜드명을 입력해 주세요.'; } },
+        { key:'email',   ko:'이메일 주소를 입력해 주세요.',    ph:'Please enter your email address',  icon:ICON.mail,  area:false, inputType:'email',
+          check:function(v){ if(!v) return '이메일 주소를 입력해 주세요.';
+                             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : '이메일 형식을 확인해 주세요.'; } },
+        { key:'budget',  ko:'프로젝트 예산을 입력해 주세요.',  ph:'Please enter your project budget', icon:ICON.won,   area:false,
+          check:function(v){ return v ? '' : '예산을 입력해 주세요. 미정이면 \u0027미정\u0027 이라고 적어주세요.'; } },
+        { key:'message', ko:'문의 내용을 입력해 주세요.',      ph:'Please tell us what you need',     icon:ICON.chat,  area:true,
+          check:function(v){ return v ? '' : '문의 내용을 입력해 주세요.'; } }
+      ];
+
+      var wrap  = document.getElementById('contact');
+      var cnt   = document.getElementById('stepCount');
+      var qEl   = document.getElementById('stepQ');
+      var badge = document.getElementById('badge');
+      var field = document.querySelector('.field');
+      var errEl = document.getElementById('err');
+      var btn   = document.getElementById('next');
+      var hp    = document.getElementById('hp');
+      var input = document.getElementById('stepInput');
+
+      var i = 0, data = {}, sending = false;
+
+      function pad(n) { return (n < 10 ? '0' : '') + n; }
+
+      // 4단계 중 마지막만 textarea 라서 스텝마다 입력 요소를 교체한다
+      function mountInput(step) {
+        var el = document.createElement(step.area ? 'textarea' : 'input');
+        el.id = 'stepInput';
+        el.placeholder = step.ph;
+        el.setAttribute('autocomplete', 'off');
+        el.setAttribute('spellcheck', 'false');
+        el.setAttribute('aria-labelledby', 'stepQ');
+        if (step.area) { el.rows = 1; } else { el.type = step.inputType || 'text'; }
+        if (data[step.key]) el.value = data[step.key];
+        input.replaceWith(el);
+        input = el;
+        bind();
+        autoGrow();
+      }
+
+      // 입력 폭을 내용(또는 플레이스홀더) 길이에 맞춰 조절해서
+      // 아이콘+입력 덩어리가 항상 화면 중앙에 유지되게 한다
+      var sizer = document.createElement('span');
+      sizer.setAttribute('aria-hidden', 'true');
+      sizer.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre';
+      document.body.appendChild(sizer);
+
+      function availWidth() {
+        var stage = document.querySelector('.contact-stage');
+        var cs = getComputedStyle(stage);
+        return stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
+               - badge.offsetWidth - 20;
+      }
+
+      function fitWidth() {
+        var cs = getComputedStyle(input);
+        var empty = !input.value;
+        sizer.style.fontFamily    = cs.fontFamily;
+        sizer.style.fontWeight    = cs.fontWeight;
+        sizer.style.letterSpacing = cs.letterSpacing;
+        // 값이 없을 때는 플레이스홀더 크기로 재야 정확하다
+        sizer.style.fontSize = empty
+          ? (cs.getPropertyValue('--ph-size').trim() || cs.fontSize)
+          : cs.fontSize;
+        sizer.textContent = empty ? input.placeholder : input.value;
+        var w = sizer.offsetWidth + 6; // 캐럿 여유
+        input.style.width = Math.min(Math.max(w, 40), availWidth()) + 'px';
+      }
+
+      function autoGrow() {
+        fitWidth();
+        if (input.tagName !== 'TEXTAREA') return;
+        input.style.height = 'auto';
+        input.style.height = input.scrollHeight + 'px';
+      }
+
+      window.addEventListener('resize', autoGrow);
+
+      // 웹폰트(Karlsbader Grotesk)가 늦게 오면 첫 렌더 때 대체 폰트 기준으로
+      // 폭이 계산돼 플레이스홀더가 잘린다 → 폰트 로드 후 한 번 더 맞춘다
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function() { autoGrow(); });
+      }
+      window.addEventListener('load', autoGrow);
+
+      function bind() {
+        input.addEventListener('input', function() {
+          wrap.classList.toggle('is-typing', input.value.length > 0);
+          if (errEl.textContent) errEl.textContent = '';
+          autoGrow();
+        });
+        input.addEventListener('keydown', function(e) {
+          // textarea 는 Enter 로 줄바꿈, Cmd/Ctrl+Enter 로 제출
+          if (e.key !== 'Enter') return;
+          if (input.tagName === 'TEXTAREA' && !(e.metaKey || e.ctrlKey)) return;
+          e.preventDefault();
+          go();
+        });
+      }
+
+      function render() {
+        var s = STEPS[i];
+        cnt.textContent = pad(i + 1) + ' / ' + pad(STEPS.length);
+        qEl.textContent = s.ko;
+        badge.innerHTML = s.icon;
+        btn.textContent = (i === STEPS.length - 1) ? '보내기' : 'Okay, next';
+        errEl.textContent = '';
+        mountInput(s);
+        wrap.classList.toggle('is-typing', input.value.length > 0);
+        input.focus();
+      }
+
+      function go() {
+        if (sending) return;
+        var s = STEPS[i];
+        var v = input.value.trim();
+        var msg = s.check(v);
+        if (msg) { errEl.textContent = msg; input.focus(); return; }
+        data[s.key] = v;
+        if (i < STEPS.length - 1) { i++; render(); return; }
+        submit();
+      }
+
+      function submit() {
+        sending = true;
+        btn.disabled = true;
+        btn.textContent = '보내는 중…';
+        errEl.textContent = '';
+        var payload = { brand:data.brand, email:data.email, budget:data.budget, message:data.message, _hp:hp.value };
+
+        fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(function(r) {
+          return r.json().catch(function(){ return {}; }).then(function(j) {
+            if (!r.ok) throw new Error(j.error || ('전송 실패 (' + r.status + ')'));
+            return j;
+          });
+        }).then(function() {
+          document.getElementById('summary').innerHTML =
+            '<dt>브랜드</dt><dd>' + esc(data.brand) + '</dd>' +
+            '<dt>이메일</dt><dd>' + esc(data.email) + '</dd>' +
+            '<dt>예산</dt><dd>' + esc(data.budget) + '</dd>' +
+            '<dt>문의</dt><dd>' + esc(data.message) + '</dd>';
+          wrap.classList.remove('is-typing');
+          wrap.classList.add('is-done');
+        }).catch(function(e) {
+          sending = false;
+          btn.disabled = false;
+          btn.textContent = '다시 보내기';
+          errEl.textContent = e.message + ' — hi@fowarp.com 으로 직접 보내주셔도 됩니다.';
+        });
+      }
+
+      function esc(s) {
+        return String(s).replace(/[&<>"]/g, function(c) {
+          return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c];
+        });
+      }
+
+      btn.addEventListener('click', go);
+      render();
+    })();
+
+    // ─── 하단 포트폴리오 마키 (헤더 마키바와 동일 엔진) ──────────
+    (function() {
+      var track = document.getElementById('marqTrack');
+      if (!track) return;
+      var set = track.querySelector('.marq-set');
+      var pos = 0, PX_PER_SEC = 34, setWidth = 0, lastTime = null, raf;
+
+      function fillClones() {
+        while (track.children.length > 1) track.removeChild(track.lastChild);
+        setWidth = set.offsetWidth;
+        if (!setWidth) return;
+        for (var i = 0, n = Math.ceil(window.innerWidth / setWidth) + 1; i < n; i++)
+          track.appendChild(set.cloneNode(true));
+      }
+
+      function tick(now) {
+        var delta = lastTime !== null ? now - lastTime : 0;
+        lastTime = now;
+        pos -= PX_PER_SEC * (delta / 1000);
+        if (setWidth && pos <= -setWidth) pos += setWidth;
+        track.style.transform = 'translateX(' + pos + 'px)';
+        raf = requestAnimationFrame(tick);
+      }
+
+      fillClones();
+      raf = requestAnimationFrame(tick);
+
+      // 썸네일이 lazy 로 늦게 들어오면 세트 폭이 달라지므로 로드 후 재계산
+      window.addEventListener('load', function() {
+        cancelAnimationFrame(raf); lastTime = null; fillClones(); raf = requestAnimationFrame(tick);
+      });
+      window.addEventListener('resize', function() {
+        cancelAnimationFrame(raf); updateVW();
+        setTimeout(function() { lastTime = null; fillClones(); raf = requestAnimationFrame(tick); }, 50);
+      });
+    })();
+
+    (function() {
+      var track = document.getElementById('marqueeTrack');
+      var set   = track.querySelector('.marquee-set');
+      var pos = 0, PX_PER_SEC = 30, setWidth = 0, lastTime = null, raf;
+
+      function fillClones() {
+        while (track.children.length > 1) track.removeChild(track.lastChild);
+        setWidth = set.offsetWidth;
+        for (var i = 0, n = Math.ceil(window.innerWidth / setWidth) + 1; i < n; i++)
+          track.appendChild(set.cloneNode(true));
+      }
+
+      function tick(now) {
+        var delta = lastTime !== null ? now - lastTime : 0;
+        lastTime = now;
+        pos -= PX_PER_SEC * (delta / 1000);
+        if (pos <= -setWidth) pos += setWidth;
+        track.style.transform = 'translateX(' + pos + 'px)';
+        raf = requestAnimationFrame(tick);
+      }
+
+      fillClones();
+      raf = requestAnimationFrame(tick);
+
+      window.addEventListener('load', function() {
+        cancelAnimationFrame(raf); lastTime = null; fillClones(); raf = requestAnimationFrame(tick);
+      });
+      window.addEventListener('resize', function() {
+        cancelAnimationFrame(raf); updateVW();
+        setTimeout(function() { lastTime = null; fillClones(); raf = requestAnimationFrame(tick); }, 50);
+      });
+    })();
+
+    // 모바일 햄버거 메뉴
+    (function() {
+      var toggle = document.querySelector('.menu-toggle');
+      var menu = document.querySelector('.mobile-menu');
+      if (!toggle || !menu) return;
+      function setOpen(open) {
+        menu.classList.toggle('is-open', open);
+        toggle.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        document.body.style.overflow = open ? 'hidden' : '';
+        if (typeof lenis !== 'undefined') { open ? lenis.stop() : lenis.start(); }
+      }
+      toggle.addEventListener('click', function() {
+        setOpen(!menu.classList.contains('is-open'));
+      });
+      menu.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() { setOpen(false); });
+      });
+    })();
+
+</script>
+</body>
+</html>
