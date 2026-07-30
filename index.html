@@ -61,6 +61,16 @@
       background: #fff;
     }
 
+    /* 진입 모션: 로고만 처음부터 보이고, 나머지 헤더 오브젝트(마키 텍스트·
+       네비·CTA·모바일 메뉴 버튼)는 갤러리 라벨과 같은 시점(+0.8s)에 함께 등장한다. */
+    .marquee-track,
+    .header-nav,
+    .header-cta,
+    .menu-toggle {
+      opacity: 0;
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+    }
+
     /* 헤더 가로선 2개(마키바 아래·헤더 아래)도 갤러리 가로선과 같은 모션을 탄다.
        border/box-shadow 는 애니메이션이 안 되므로 pseudo-element 로 그린다.
        절대배치라 레이아웃 높이를 먹지 않아 마키 텍스트 수직 중앙도 유지된다. */
