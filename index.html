@@ -319,7 +319,11 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      padding: calc(var(--vw) * 0.521) 0; /* 10px */
+      /* 위 10px / 아래 10px + 행 간격 64px.
+         박스를 행 간격만큼 아래로 연장하고 음수 마진으로 레이아웃을 되돌린다
+         → 호버 배경이 다음 행 가로선까지 끊김 없이 채워진다 */
+      padding: calc(var(--vw) * 0.521) 0 calc(var(--vw) * 3.854);
+      margin-bottom: calc(var(--vw) * -3.333);
     }
 
     /* 가로선 — Figma 는 행 래퍼의 border-top(#D9D9D9)이 화면 끝까지 풀블리드.
@@ -503,7 +507,10 @@
         row-gap: 28px;
         padding: 0 24px;
       }
-      .gallery-item { padding: 8px 0; }
+      .gallery-item {
+        padding: 8px 0 calc(8px + 28px);   /* 아래 = 패딩 + 행 간격 */
+        margin-bottom: -28px;
+      }
       .gallery-item:nth-child(3n+1)::before { content: none; }
       .gallery-item:nth-child(2n+1)::before {
         content: '';
