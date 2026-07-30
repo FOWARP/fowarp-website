@@ -162,78 +162,6 @@
 
     .header-nav a.active { color: #000; }
 
-    .social-menu {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .social-trigger {
-      appearance: none;
-      -webkit-appearance: none;
-      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      font-size: calc(var(--vwFont) * 0.729);
-      font-weight: 400;
-      text-decoration: none;
-      color: #999796;
-      text-transform: capitalize;
-      background: none;
-      border: none;
-      padding: 0;
-      margin: 0;
-      cursor: default;
-    }
-
-    /* top:100% + padding-top로 트리거~드롭다운 사이 여백까지 hover 판정 영역에 포함시켜
-       마우스가 대각선으로 이동해도 중간에 hover가 끊겨 깜빡이지 않게 함 */
-    .social-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      padding-top: 12px;
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-6px);
-      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
-      pointer-events: none;
-      z-index: 50;
-    }
-
-    .social-menu:hover .social-dropdown,
-    .social-menu:focus-within .social-dropdown {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    .social-dropdown-inner {
-      display: flex;
-      flex-direction: column;
-      min-width: 140px;
-      padding: 8px;
-      background: rgba(255,255,255,0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(0,0,0,0.08);
-      border-radius: 8px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    }
-
-    .social-dropdown a {
-      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      font-size: calc(var(--vwFont) * 0.729);
-      text-decoration: none;
-      color: #000;
-      text-transform: capitalize;
-      padding: 8px 10px;
-      border-radius: 4px;
-      white-space: nowrap;
-      transition: background 0.15s ease;
-    }
-
-    .social-dropdown a:hover { background: rgba(0,0,0,0.05); }
-
     .header-cta {
       position: relative;
       overflow: hidden;
@@ -514,9 +442,12 @@
 
     /* 가로선은 행마다 있으므로 그 행이 보일 때 좌→우로 그어진다.
        ::before 는 행 첫 아이템에만 content 가 있어 나머지는 렌더되지 않는다 */
+    /* 가로선은 '행 첫 아이템'의 pseudo 라 DOM 순서상 뒤인 2·3번 아이템의
+       호버 배경(#F5F5F5)에 덮인다 → z-index 로 형제 배경 위에 올린다 */
     .gallery-item::before {
       transform: scaleX(0);
       transform-origin: left center;
+      z-index: 1;
     }
     .gallery-item.is-visible::before {
       animation: revLineX 0.7s cubic-bezier(0.7, 0, 0.84, 0) forwards;
@@ -627,15 +558,8 @@
       <nav class="header-nav">
         <a href="/project" class="active">Project</a>
         <a href="/about">About</a>
-        <div class="social-menu">
-          <button class="social-trigger" type="button" aria-haspopup="true">Social</button>
-          <div class="social-dropdown">
-            <div class="social-dropdown-inner">
-              <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
-              <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
-            </div>
-          </div>
-        </div>
+        <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
+        <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
       </nav>
       <button class="menu-toggle" aria-label="Menu" aria-expanded="false">Menu</button>
       <a href="/project" class="header-logo-center"><img src="/media/fowarp-logo-center.svg" alt="FOWARP"></a>
