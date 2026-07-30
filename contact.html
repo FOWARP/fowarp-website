@@ -368,28 +368,12 @@
       text-align: center;
     }
 
-    /* 단계 표시 — 진행 바는 제거하고 라벨만 남긴다 (Figma 폭 1063 유지) */
-    .steps {
-      width: calc(var(--vwFont) * 55.365);
-      max-width: 100%;
-    }
-
-    .steps-labels {
-      display: flex;
-      justify-content: space-between;
-      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      font-size: calc(var(--vwFont) * 0.729);
-      text-transform: capitalize;
-      color: #999796;
-    }
-    .steps-labels span { transition: color 0.3s ease; }
-    .steps-labels span.is-active { color: #000; }
-
+    /* 단계 표시(진행 바 + 라벨)는 제거됨 — 질문 위치는 Figma 시안(y=491) 유지 */
     .form-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: calc(var(--vwFont) * 6.667); /* Figma gap 128 */
+      margin-top: calc(var(--vwFont) * 9.948);
     }
 
     .step-q {
@@ -430,6 +414,31 @@
     .field textarea::placeholder { color: #c7c8c7; font-size: var(--ph-size); }
 
     /* 1단계에서는 Back 이 display:none 이라 Next 가 그대로 중앙에 선다 */
+    /* 단계 전환 텍스트 모션 (레퍼런스 mux3.mp4)
+       나갈 때: 위로 살짝 밀리며 사라짐 / 들어올 때: 아래에서 떠오름.
+       레퍼런스 실측 — 페이드아웃 약 0.18s, 빈 화면 약 0.06s, 페이드인 약 0.26s. */
+    .step-q, .field {
+      transition: opacity 0.26s ease,
+                  transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .contact.is-out .step-q,
+    .contact.is-out .field {
+      opacity: 0;
+      transform: translateY(-10px);
+      transition-duration: 0.18s;
+    }
+    /* 새 내용을 시작 자세로 '점프'시키는 한 프레임 — 전환 없이 바로 적용 */
+    .contact.is-in .step-q,
+    .contact.is-in .field {
+      opacity: 0;
+      transform: translateY(12px);
+      transition-duration: 0s;
+    }
+
+    /* 입력 중에는 질문이 뒤로 물러난다 (레퍼런스의 피사계심도) */
+    .contact.is-typing .step-q { opacity: 0.3; filter: blur(3px); }
+    .step-q { filter: blur(0); transition: opacity 0.26s ease, transform 0.26s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease; }
+
     .actions {
       display: flex;
       align-items: center;
@@ -478,8 +487,7 @@
     /* ─── 완료 화면 ─── */
     .done { display: none; flex-direction: column; align-items: center; }
     .contact.is-done .form-wrap { display: none; }
-    .contact.is-done .steps { visibility: hidden; }
-    .contact.is-done .done { display: flex; margin-top: calc(var(--vwFont) * 6.667); }
+    .contact.is-done .done { display: flex; margin-top: calc(var(--vwFont) * 9.948); }
 
     .check {
       width: calc(var(--vwFont) * 2.6);
@@ -515,29 +523,51 @@
     .summary dt { color: #999796; }
     .summary dd { color: #000; max-width: calc(var(--vw) * 22); }
 
-    /* ─── 하단 포트폴리오 마키 ─────────────────────────────────
-       헤더 마키바와 동일한 rAF + translateX 엔진을 재사용한다.
-       Figma 기준 썸네일 240×160, 간격 12px, 하단 여백 60px. */
+    /* ─── 하단 포트폴리오 마키 (레퍼런스: 원형 궤도) ─────────────
+       썸네일이 오목한 실린더 위를 도는 것처럼 보이게 한다 —
+       중앙은 정면, 양 끝으로 갈수록 rotateY 로 돌아서면서
+       translateZ 로 뷰어 쪽으로 다가와 커진다(= 관찰자가 원 안쪽).
+       각 아이템 변환은 rAF 루프가 트랙 좌표로 계산해 직접 넣는다
+       (getBoundingClientRect 를 매 프레임 쓰면 리플로우가 터진다). */
     .marq {
       overflow: hidden;
       padding-bottom: calc(var(--vwFont) * 3.125);
       margin-top: calc(var(--vwFont) * 4);
+      perspective: 1200px;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+              mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
     }
-    .marq-track { display: flex; will-change: transform; }
+    .marq-track {
+      display: flex;
+      will-change: transform;
+      transform-style: preserve-3d;
+    }
     .marq-set {
       display: flex;
       gap: calc(var(--vw) * 0.625);
       padding-right: calc(var(--vw) * 0.625);
       flex-shrink: 0;
+      transform-style: preserve-3d;
     }
-    .marq-set a, .marq-set span { display: block; line-height: 0; }
-    .marq-set img {
-      height: calc(var(--vw) * 8.333);
-      width: auto;
+    .marq-item {
+      flex: none;
+      width: calc(var(--vw) * 12.5);   /* Figma 240 */
+      height: calc(var(--vw) * 8.333); /* Figma 160 */
       display: block;
+      line-height: 0;
+      overflow: hidden;
+      will-change: transform;
       transition: opacity 0.3s ease;
     }
-    .marq-set a:hover img { opacity: 0.75; }
+    .marq-item > img,
+    .marq-item > video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+    a.marq-item:hover { opacity: 0.75; }
 
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
@@ -558,10 +588,6 @@
 
       .contact { padding-top: 80px; }
       .contact-stage { padding: 48px 16px 0; }
-      .steps { width: 100%; }
-      .steps-bar { height: 12px; }
-      .steps-dot { width: 12px; height: 12px; }
-      .steps-labels { font-size: 10px; margin-top: 14px; }
       .form-wrap { margin-top: 56px; }
       .step-q { font-size: 20px; }
       .field { margin-top: 16px; max-width: none; }
@@ -574,9 +600,10 @@
       .done-s { font-size: 12px; }
       .summary { font-size: 11px; margin-top: 22px; }
       .summary dd { max-width: 46vw; }
-      .marq { padding-bottom: 28px; margin-top: 48px; }
+      /* --vw 비례로 두면 모바일에서 아이템이 48px 로 찌그러진다 → 고정값 */
+      .marq { padding-bottom: 28px; margin-top: 48px; perspective: 700px; }
       .marq-set { gap: 8px; padding-right: 8px; }
-      .marq-set img { height: 104px; }
+      .marq-item { width: 156px; height: 104px; }
 
     }
   </style>
@@ -632,15 +659,6 @@
 
     <div class="contact-stage">
 
-      <div class="steps">
-        <div class="steps-labels" id="stepsLabels">
-          <span class="is-active">name</span>
-          <span>Email</span>
-          <span>Budget</span>
-          <span>Context</span>
-        </div>
-      </div>
-
       <div class="form-wrap">
         <div class="step-q" id="stepQ">브랜드명을 입력해 주세요.</div>
 
@@ -676,21 +694,21 @@
     <div class="marq">
       <div class="marq-track" id="marqTrack">
         <div class="marq-set">
-            <a href="/goventure"><img src="/media/contact-marquee/goventure.jpg" alt="GoVenture Forum" loading="lazy"></a>
-            <a href="/starbucks"><img src="/media/contact-marquee/starbucks.jpg" alt="Starbucks®" loading="lazy"></a>
-            <a href="/returnity"><img src="/media/contact-marquee/returnity.jpg" alt="RETURNITY" loading="lazy"></a>
-            <a href="/nosugaradded"><img src="/media/contact-marquee/nosugar.jpg" alt="NO SUGAR ADDED" loading="lazy"></a>
-            <a href="/kohonjin"><img src="/media/contact-marquee/kohonjin.jpg" alt="KOHONJIN" loading="lazy"></a>
-            <span><img src="/media/contact-marquee/calmlab.jpg" alt="CALMLAB+" loading="lazy"></span>
-            <a href="/hwanghugung"><img src="/media/contact-marquee/hwanghugung.jpg" alt="황후궁 삼계탕" loading="lazy"></a>
-            <span><img src="/media/contact-marquee/antursolais.jpg" alt="An Túr Solais" loading="lazy"></span>
-            <a href="/gonyakjelly"><img src="/media/contact-marquee/gonyakjelly.jpg" alt="단백질 곤약젤리" loading="lazy"></a>
-            <span><img src="/media/contact-marquee/souptoppokki.jpg" alt="SOUP TOPPOKKI" loading="lazy"></span>
-            <a href="/gooumcookit"><img src="/media/contact-marquee/gooumcookit.jpg" alt="구움쿠킷" loading="lazy"></a>
-            <a href="/unknot"><img src="/media/contact-marquee/unknot.jpg" alt="Unknot" loading="lazy"></a>
-            <a href="/jjonjingeo"><img src="/media/contact-marquee/jjonjingeo.jpg" alt="쫀징어" loading="lazy"></a>
-            <span><img src="/media/contact-marquee/danbaekking.jpg" alt="단백킹" loading="lazy"></span>
-            <span><img src="/media/contact-marquee/kkokkochip.jpg" alt="꼭꼬칩" loading="lazy"></span>
+            <a class="marq-item" href="/goventure"><video src="/media/contact-marquee/goventure.mp4" autoplay muted loop playsinline preload="auto" aria-label="GoVenture Forum"></video></a>
+            <a class="marq-item" href="/starbucks"><video src="/media/contact-marquee/starbucks.mp4" autoplay muted loop playsinline preload="auto" aria-label="Starbucks®"></video></a>
+            <a class="marq-item" href="/returnity"><img src="/media/contact-marquee/returnity.jpg" alt="RETURNITY" loading="lazy"></a>
+            <a class="marq-item" href="/nosugaradded"><video src="/media/contact-marquee/nosugar.mp4" autoplay muted loop playsinline preload="auto" aria-label="NO SUGAR ADDED"></video></a>
+            <a class="marq-item" href="/kohonjin"><video src="/media/contact-marquee/kohonjin.mp4" autoplay muted loop playsinline preload="auto" aria-label="KOHONJIN"></video></a>
+            <span class="marq-item"><video src="/media/contact-marquee/calmlab.mp4" autoplay muted loop playsinline preload="auto" aria-label="CALMLAB+"></video></span>
+            <a class="marq-item" href="/hwanghugung"><video src="/media/contact-marquee/hwanghugung.mp4" autoplay muted loop playsinline preload="auto" aria-label="황후궁 삼계탕"></video></a>
+            <span class="marq-item"><img src="/media/contact-marquee/antursolais.jpg" alt="An Túr Solais" loading="lazy"></span>
+            <a class="marq-item" href="/gonyakjelly"><img src="/media/contact-marquee/gonyakjelly.jpg" alt="단백질 곤약젤리" loading="lazy"></a>
+            <span class="marq-item"><video src="/media/contact-marquee/souptoppokki.mp4" autoplay muted loop playsinline preload="auto" aria-label="SOUP TOPPOKKI"></video></span>
+            <a class="marq-item" href="/gooumcookit"><img src="/media/contact-marquee/gooumcookit.jpg" alt="구움쿠킷" loading="lazy"></a>
+            <a class="marq-item" href="/unknot"><video src="/media/contact-marquee/unknot.mp4" autoplay muted loop playsinline preload="auto" aria-label="Unknot"></video></a>
+            <a class="marq-item" href="/jjonjingeo"><img src="/media/contact-marquee/jjonjingeo.jpg" alt="쫀징어" loading="lazy"></a>
+            <span class="marq-item"><img src="/media/contact-marquee/danbaekking.jpg" alt="단백킹" loading="lazy"></span>
+            <span class="marq-item"><img src="/media/contact-marquee/kkokkochip.jpg" alt="꼭꼬칩" loading="lazy"></span>
         </div>
       </div>
     </div>
@@ -725,7 +743,6 @@
 
       var wrap   = document.getElementById('contact');
       var qEl    = document.getElementById('stepQ');
-      var labels = document.getElementById('stepsLabels').children;
       var errEl  = document.getElementById('err');
       var btn    = document.getElementById('next');
       var backBtn = document.getElementById('back');
@@ -733,12 +750,6 @@
       var input  = document.getElementById('stepInput');
 
       var i = 0, data = {}, sending = false;
-
-      // 현재 단계 라벨만 검정으로 활성화한다
-      function renderProgress() {
-        for (var n = 0; n < labels.length; n++)
-          labels[n].classList.toggle('is-active', n === i);
-      }
 
       // 4단계 중 마지막만 textarea 라서 스텝마다 입력 요소를 교체한다
       function mountInput(step) {
@@ -837,7 +848,6 @@
       function render() {
         var s = STEPS[i];
         qEl.textContent = s.ko;
-        renderProgress();
         wrap.classList.toggle('is-first', i === 0);
         btn.textContent = (i === STEPS.length - 1) ? 'Send' : 'Next';
         errEl.textContent = '';
@@ -846,14 +856,35 @@
         input.focus();
       }
 
+      // 레퍼런스의 단계 전환: 현재 텍스트가 위로 빠진 뒤 새 텍스트가 아래에서 떠오른다.
+      // is-in 은 새 내용을 '시작 자세'로 한 프레임 고정하는 용도라 곧바로 벗긴다.
+      var switching = false;
+      function transitionTo(next) {
+        switching = true;
+        wrap.classList.remove('is-typing');
+        wrap.classList.add('is-out');
+        setTimeout(function() {
+          i = next;
+          wrap.classList.remove('is-out');
+          wrap.classList.add('is-in');
+          render();
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+              wrap.classList.remove('is-in');
+              switching = false;
+            });
+          });
+        }, 240); // 페이드아웃 180ms + 빈 화면 60ms
+      }
+
       function go() {
-        if (sending) return;
+        if (sending || switching) return;
         var s = STEPS[i];
         var v = input.value.trim();
         var msg = s.check(v);
         if (msg) { errEl.textContent = msg; input.focus(); return; }
         data[s.key] = v;
-        if (i < STEPS.length - 1) { i++; render(); return; }
+        if (i < STEPS.length - 1) { transitionTo(i + 1); return; }
         submit();
       }
 
@@ -896,10 +927,9 @@
       }
 
       function back() {
-        if (sending || i === 0) return;
+        if (sending || switching || i === 0) return;
         data[STEPS[i].key] = input.value.trim(); // 쓰다 만 값도 보존
-        i--;
-        render();
+        transitionTo(i - 1);
       }
 
       btn.addEventListener('click', go);
@@ -907,19 +937,60 @@
       render();
     })();
 
-    // ─── 하단 포트폴리오 마키 (헤더 마키바와 동일 엔진) ──────────
+    // ─── 하단 포트폴리오 마키 — 원형(오목 실린더) 궤도 ──────────
     (function() {
       var track = document.getElementById('marqTrack');
       if (!track) return;
       var set = track.querySelector('.marq-set');
       var pos = 0, PX_PER_SEC = 34, setWidth = 0, lastTime = null, raf;
+      var items = [], frame = 0;
+
+      // 원 반지름과 최대 회전각. 끝으로 갈수록 앞으로 나오며 약 1.2배로 커진다
+      var MAX_DEG = 55, RADIUS = 520;
 
       function fillClones() {
         while (track.children.length > 1) track.removeChild(track.lastChild);
+        // 복제 전에 원본 세트의 3D 변환을 지운다 — cloneNode 는 인라인 스타일까지 복사한다
+        [].forEach.call(set.querySelectorAll('.marq-item'), function(el) { el.style.transform = ''; });
         setWidth = set.offsetWidth;
         if (!setWidth) return;
         for (var i = 0, n = Math.ceil(window.innerWidth / setWidth) + 1; i < n; i++)
           track.appendChild(set.cloneNode(true));
+
+        // 아이템의 트랙 내 정적 좌표를 한 번만 재둔다 (매 프레임 레이아웃 조회 방지).
+        // offsetLeft 는 preserve-3d 가 걸린 .marq-set 이 offsetParent 가 돼버려
+        // 세트마다 0 으로 리셋된다 → 트랙 기준 실좌표를 직접 계산한다.
+        var prev = track.style.transform;
+        track.style.transform = 'none';
+        var trackLeft = track.getBoundingClientRect().left;
+        items = [].map.call(track.querySelectorAll('.marq-item'), function(el) {
+          var r = el.getBoundingClientRect();
+          return { el: el, mid: r.left - trackLeft + r.width / 2,
+                   video: el.querySelector('video'), playing: true };
+        });
+        track.style.transform = prev;
+      }
+
+      function orbit() {
+        var half = window.innerWidth / 2;
+        var check = (frame++ % 12) === 0; // 영상 재생 제어는 12프레임마다
+        for (var k = 0; k < items.length; k++) {
+          var it = items[k];
+          var n = (pos + it.mid - half) / half;      // -1(좌) ~ 0(중앙) ~ 1(우)
+          if (n < -1.6 || n > 1.6) {                  // 화면 밖은 계산 생략
+            if (check && it.video && it.playing) { it.video.pause(); it.playing = false; }
+            continue;
+          }
+          var c = n < -1 ? -1 : (n > 1 ? 1 : n);
+          var rad = c * MAX_DEG * Math.PI / 180;
+          var z = RADIUS * (1 - Math.cos(rad));       // 끝일수록 뷰어 쪽으로
+          it.el.style.transform = 'translateZ(' + z.toFixed(1) + 'px) rotateY(' +
+                                  (-c * MAX_DEG).toFixed(2) + 'deg)';
+          if (check && it.video && !it.playing) {
+            var pr = it.video.play(); if (pr && pr.catch) pr.catch(function(){});
+            it.playing = true;
+          }
+        }
       }
 
       function tick(now) {
@@ -928,13 +999,13 @@
         pos -= PX_PER_SEC * (delta / 1000);
         if (setWidth && pos <= -setWidth) pos += setWidth;
         track.style.transform = 'translateX(' + pos + 'px)';
+        orbit();
         raf = requestAnimationFrame(tick);
       }
 
       fillClones();
       raf = requestAnimationFrame(tick);
 
-      // 썸네일이 lazy 로 늦게 들어오면 세트 폭이 달라지므로 로드 후 재계산
       window.addEventListener('load', function() {
         cancelAnimationFrame(raf); lastTime = null; fillClones(); raf = requestAnimationFrame(tick);
       });
