@@ -359,6 +359,9 @@
     }
 
     .gallery-media {
+      /* 오버레이(position:absolute; inset:0)의 기준점. 없으면 .gallery-item 이
+         기준이 돼서 오버레이 텍스트가 타이틀 영역까지 덮는다 */
+      position: relative;
       width: 100%;
       margin-top: calc(var(--vw) * 1.667); /* 32px */
       aspect-ratio: 606.667 / 758;
