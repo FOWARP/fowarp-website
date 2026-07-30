@@ -48,19 +48,19 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body { background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; position: relative; max-width: 2560px; margin: 0 auto; }
+    body { position: relative; background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; position: relative; max-width: 2560px; margin: 0 auto; }
 
     /* ─── HEADER ─────────────────────────────── */
+    /* 시안B 헤더: 마키바 흰 배경 + #D9D9D9 헤어라인, 로고 없이 텍스트만 */
     .header {
+      border-bottom: 1px solid #D9D9D9;
       position: fixed;
       top: 0;
       left: 50%;
       transform: translateX(-50%);
       width: 100%;
       z-index: 100;
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(calc(var(--vwFont) * 0.52));
-      -webkit-backdrop-filter: blur(calc(var(--vwFont) * 0.52));
+      background: #fff;
     }
 
     /* 마키 섹션: 흰 배경 + 상단 패딩 */
@@ -76,7 +76,8 @@
     }
 
     .marquee-bar-inner {
-      background: #000;
+      background: #fff;
+      border-bottom: 1px solid #D9D9D9;
       width: 100%;
       height: calc(var(--vwFont) * 2.083); /* 40px */
       border-radius: 0;
@@ -94,15 +95,16 @@
     .marquee-set {
       display: flex;
       align-items: center;
-      gap: calc(var(--vwFont) * 5.208); /* 100px */
-      padding-right: calc(var(--vwFont) * 5.208);
+      gap: calc(var(--vwFont) * 7.344); /* Figma 141px */
+      padding-right: calc(var(--vwFont) * 7.344);
       flex-shrink: 0;
     }
 
     .marquee-text {
-      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      font-size: calc(var(--vwFont) * 0.729);
-      color: #fff;
+      font-family: Arial, 'Pretendard Variable', sans-serif;  /* Figma 지정 */
+      font-size: calc(var(--vwFont) * 0.729);  /* 14px */
+      line-height: 1.32;
+      color: #000;
       white-space: nowrap;
     }
 
@@ -125,7 +127,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 40px;
+      padding: 0 30px;
       position: relative;
     }
 
@@ -139,7 +141,7 @@
     }
 
     .header-logo-center img {
-      height: calc(var(--vwFont) * 1.4);
+      height: calc(var(--vwFont) * 1.648);  /* Figma 31.64px */
       width: auto;
       display: block;
     }
@@ -154,7 +156,7 @@
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.729);
       text-decoration: none;
-      color: #000;
+      color: #999796;   /* Figma: 비활성 회색 */
       text-transform: capitalize;
     }
 
@@ -173,7 +175,7 @@
       font-size: calc(var(--vwFont) * 0.729);
       font-weight: 400;
       text-decoration: none;
-      color: #000;
+      color: #999796;
       text-transform: capitalize;
       background: none;
       border: none;
@@ -240,7 +242,7 @@
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.729);
       padding: calc(var(--vwFont) * 0.625) calc(var(--vwFont) * 0.729);
-      border-radius: calc(var(--vwFont) * 0.417);
+      border-radius: 0;   /* Figma: 각진 버튼 */
       text-decoration: none;
       text-transform: capitalize;
       white-space: nowrap;
@@ -340,32 +342,26 @@
     .mobile-menu a:last-child { border-bottom: none; }
 
     /* ─── PAGE BODY ───────────────────────────── */
-    /* 본문 상단 266px = Figma 첫 행 y좌표. 헤더(100px 고정) 기준이라 --vwFont */
+    /* 가로선을 화면 끝까지 흘려야 해서 좌우 패딩은 갤러리가 직접 갖는다 */
     .page-body {
-      padding-top: calc(var(--vwFont) * 13.854);
-      padding-left: 20px;
-      padding-right: 20px;
+      padding-top: calc(var(--vwFont) * 9.271);  /* Figma 갤러리 top=178 */
+      padding-left: 0;
+      padding-right: 0;
       padding-bottom: calc(var(--vw) * 4.167);
       position: relative;
       z-index: 1;
     }
 
-    /* ─── 세로 괘선 (Figma: #D9D9D9 1px, 페이지 전체 높이 관통) ───
-       행마다 끊기지 않고 문서 최상단부터 최하단까지 이어져야 하므로
-       갤러리 셀이 아니라 body 기준 절대배치 오버레이로 그린다. */
+    /* 세로 괘선 — 문서 전체 높이 관통 (Figma 378:1290, #D9D9D9 1px) */
     .grid-rules {
       position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 20px;
-      right: 20px;
+      top: 0; bottom: 0; left: 20px; right: 20px;
       pointer-events: none;
       z-index: 0;
     }
     .grid-rules i {
       position: absolute;
-      top: 0;
-      bottom: 0;
+      top: 0; bottom: 0;
       width: 1px;
       background: #D9D9D9;
     }
@@ -375,21 +371,34 @@
     .grid-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
 
     /* ─── GALLERY (시안B) ─────────────────────────
-       Figma 1920 기준: 열 626.67(콘텐츠 606.67 + 좌우 인셋 10),
-       셀 높이 804 = 상하 패딩 10 + 타이틀블록 58 + 간격 32 + 미디어 694.
-       행 간격 64. 가로 구분선은 없고 세로 괘선만 페이지를 관통한다. */
+       Figma 1920: 행 패딩 30 · 열 간격 20 → 셀 606.67
+       셀 868 = 패딩 10 + 타이틀블록 58 + 간격 32 + 미디어 758 + 패딩 10 */
     .project-gallery {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      column-gap: 0;
+      column-gap: 20px;
       row-gap: calc(var(--vw) * 3.333); /* 64px */
+      padding: 0 30px;
     }
 
     .gallery-item {
       position: relative;
       display: flex;
       flex-direction: column;
-      padding: calc(var(--vw) * 0.521) calc(var(--vw) * 0.521); /* 10px */
+      padding: calc(var(--vw) * 0.521) 0; /* 10px */
+    }
+
+    /* 가로선 — Figma 는 행 래퍼의 border-top(#D9D9D9)이 화면 끝까지 풀블리드.
+       그리드를 행으로 감싸면 모바일 2열 재배치가 막히므로,
+       각 행 첫 아이템의 ::before 를 행 전체 폭(3열+간격40+패딩60=1920)으로 늘린다. */
+    .gallery-item:nth-child(3n+1)::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -30px;
+      width: calc(300% + 100px);
+      height: 1px;
+      background: #D9D9D9;
     }
 
     .gallery-label {
@@ -419,7 +428,7 @@
     .gallery-media {
       width: 100%;
       margin-top: calc(var(--vw) * 1.667); /* 32px */
-      aspect-ratio: 606.67 / 694;
+      aspect-ratio: 606.667 / 758;
       overflow: hidden;
       background: #080808;
     }
@@ -434,21 +443,16 @@
       transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
-    /* 얇은 괘선을 가리지 않도록 배경 블록 호버는 쓰지 않는다 */
     .gallery-item:hover .gallery-media video,
-    .gallery-item:hover .gallery-media img {
-      transform: scale(1.04);
-    }
+    .gallery-item:hover .gallery-media img { transform: scale(1.04); }
 
     /* ─── RETURNITY 오버레이 (Figma 393:1470) ───────
-       폭 355/606.67 = 58.52%, 좌측 125.67/606.67 = 20.71%, 상하 패딩 20px.
-       이미지는 cover 가 아니라 Figma 지정 크롭(809×1214 를 -117.33/-260 오프셋). */
+       폭 355/606.67 = 58.516%, 좌측 126/606.67 = 20.769%, 상하 패딩 20 */
     .returnity-overlay {
       position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 20.71%;
-      width: 58.52%;
+      top: 0; bottom: 0;
+      left: 20.769%;
+      width: 58.516%;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -456,7 +460,6 @@
       padding: calc(var(--vw) * 1.042) 0;
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.625); /* 12px */
-      font-weight: 400;
       color: #c7c8c7;
       text-align: center;
       text-transform: uppercase;
@@ -466,7 +469,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: calc(var(--vwFont) * 0.341); /* 6.545px */
+      gap: calc(var(--vwFont) * 0.341);
       width: 100%;
       line-height: 1;
     }
@@ -480,8 +483,8 @@
     .returnity-overlay .ro-desc { line-height: 1.4; }
 
     /* ─── SCROLL REVEAL ───────────────────────
-       시안A의 선 긋기(revLineX/Y)는 셀 괘선이 사라져 제거하고,
-       내용 페이드는 커브·지속시간·라벨→미디어 스태거(0.2s)를 그대로 유지한다. */
+       셀 괘선이 없어져 선 긋기(revLineX/Y)는 제거. 내용 페이드는
+       시안A의 커브·지속시간·라벨→미디어 스태거(0.2s)를 그대로 유지 */
     @keyframes revContent { from { opacity: 0; } to { opacity: 1; } }
 
     .gallery-label,
@@ -518,22 +521,45 @@
         padding-bottom: 60px;
       }
 
-      /* 시안A와 동일하게 모바일은 2열, 괘선도 3개로 */
+      /* 시안A와 동일하게 2열. 괘선 인셋 16 / 갤러리 패딩 24 / 열 간격 16
+         → 괘선2가 정확히 열 사이 중앙(50%)에 온다 */
       .grid-rules { left: 16px; right: 16px; }
       .grid-rules i:nth-child(2) { left: 50%; }
       .grid-rules i:nth-child(3) { display: none; }
 
       .project-gallery {
         grid-template-columns: repeat(2, 1fr);
-        column-gap: 0;
+        column-gap: 16px;
         row-gap: 28px;
+        padding: 0 24px;
       }
-      .gallery-item { padding: 8px; }
+      .gallery-item { padding: 8px 0; }
+      .gallery-item:nth-child(3n+1)::before { content: none; }
+      .gallery-item:nth-child(2n+1)::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -24px;
+        width: calc(200% + 64px);
+        height: 1px;
+        background: #D9D9D9;
+      }
       .gallery-label { gap: 5px; }
       .gallery-title { font-size: 15px; }
       .gallery-sub { font-size: 11px; }
       .gallery-media { margin-top: 14px; }
 
+      .overlay-row    { flex-direction: column; align-items: flex-start !important; gap: 6px; }
+      .overlay-top    { font-size: 9px !important; }
+      .overlay-big    { font-size: 15px !important; }
+      .overlay-small  { font-size: 9px !important; max-width: 100% !important; display: -webkit-box !important; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+      .overlay-body   { font-size: 9px !important; max-width: 100% !important; display: -webkit-box !important; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+      /* RETURNITY / An Túr Solais: 모바일에서 크롭·텍스트 줄바꿈이 깨져
+         텍스트가 미리 합성된 전용 썸네일로 교체 (HTML 오버레이는 숨김) */
+      .media-desktop-only { display: none !important; }
+      .media-mobile-only  { display: block !important; width: 100%; height: 100%; object-fit: cover; }
+      .returnity-overlay, .antursolais-overlay { display: none !important; }
     }
   </style>
 </head>
@@ -548,13 +574,9 @@
         <div class="marquee-track" id="marqueeTrack">
           <div class="marquee-set">
             <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
-            <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
             <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
-            <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
             <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
-            <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
             <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
-            <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
           </div>
         </div>
         </div>
@@ -591,7 +613,7 @@
     <div class="project-gallery">
       <a class="gallery-item" href="/goventure" style="text-decoration:none;color:inherit;">
         <div class="gallery-label">
-          <span class="gallery-title">GoVenture Forum</span>
+          <span class="gallery-title">Goventure Forum</span>
           <span class="gallery-sub">고벤처포럼 브랜드 리뉴얼</span>
         </div>
         <div class="gallery-media">
@@ -613,13 +635,13 @@
       </a>
       <a class="gallery-item" href="/returnity" style="text-decoration:none;color:inherit;">
         <div class="gallery-label">
-          <span class="gallery-title">RETURNITY</span>
+          <span class="gallery-title">Returnity</span>
           <span class="gallery-sub">리터니티 브랜드 디자인</span>
         </div>
         <div class="gallery-media" style="position:relative; overflow:hidden;">
-          <img class="media-desktop-only" src="/media/gallery/returnity.jpg" alt="RETURNITY"
-               style="position:absolute; width:133.35%; height:auto; left:-19.34%; top:-37.46%;">
-          <img class="media-mobile-only" src="/media/gallery/returnity-mobile.jpg" alt="RETURNITY" style="display:none;">
+          <img class="media-desktop-only" src="/media/gallery/returnity-b.jpg" alt="Returnity"
+               style="position:absolute; width:139.365%; height:auto; left:-22.29%; top:-33.69%;">
+          <img class="media-mobile-only" src="/media/gallery/returnity-mobile.jpg" alt="Returnity" style="display:none;">
           <div class="returnity-overlay">
             <div class="ro-top">
               <span>More than skin deep, life routine care</span>
@@ -629,15 +651,12 @@
           </div>
         </div>
       </a>
-
-      <!-- Row 2 -->
-      </a>
       <a class="gallery-item" href="/nosugaradded" style="text-decoration:none;color:inherit;">
         <div class="gallery-label">
-          <span class="gallery-title">NO SUGAR ADDED</span>
-          <span class="gallery-sub">NO SUGAR ADDED 브랜드 디자인</span>
+          <span class="gallery-title">No Sugar Added</span>
+          <span class="gallery-sub">No Sugar Added 브랜드 디자인</span>
         </div>
-        <div class="gallery-media" style="flex: none; height: calc(var(--vw) * 19.323);">
+        <div class="gallery-media">
           <video autoplay muted loop playsinline>
             <source src="/media/gallery/nosugar.mp4" type="video/mp4">
           </video>
@@ -645,8 +664,8 @@
       </a>
       <a class="gallery-item" href="/kohonjin" style="text-decoration:none;color:inherit;">
         <div class="gallery-label">
-          <span class="gallery-title">KOHONJIN</span>
-          <span class="gallery-sub">KOHONJIN 브랜드 디자인</span>
+          <span class="gallery-title">Kohonjin</span>
+          <span class="gallery-sub">Kohonjin 브랜드 디자인</span>
         </div>
         <div class="gallery-media">
           <video autoplay muted loop playsinline style="object-position:center;">
@@ -656,7 +675,7 @@
       </a>
       <div class="gallery-item">
         <div class="gallery-label">
-          <span class="gallery-title">CALMLAB+</span>
+          <span class="gallery-title">Calmlab+</span>
           <span class="gallery-sub">캄랩 브랜드 디자인</span>
         </div>
         <div class="gallery-media">
@@ -676,15 +695,12 @@
           </video>
         </div>
       </a>
-
-      <!-- Row 3 -->
-      </a>
       <div class="gallery-item">
         <div class="gallery-label">
           <span class="gallery-title">An Túr Solais</span>
           <span class="gallery-sub">An Túr Solais 브랜드 디자인</span>
         </div>
-        <div class="gallery-media" style="position: relative;">
+        <div class="gallery-media">
           <img class="media-desktop-only" src="/media/gallery/antursolais.jpg" alt="An Túr Solais">
           <img class="media-mobile-only" src="/media/gallery/antursolais-mobile.jpg" alt="An Túr Solais" style="display:none;">
           <div class="antursolais-overlay" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:max(12px, calc(var(--vw)*1.302)) max(12px, calc(var(--vw)*1.302));">
@@ -708,17 +724,14 @@
       </a>
       <div class="gallery-item">
         <div class="gallery-label">
-          <span class="gallery-title">SOUP TOPPOKKI</span>
-          <span class="gallery-sub">SOUP TOPPOKKI 브랜드 디자인</span>
+          <span class="gallery-title">Soup Toppokki</span>
+          <span class="gallery-sub">Soup Toppokki 브랜드 디자인</span>
         </div>
         <div class="gallery-media">
           <video autoplay muted loop playsinline>
             <source src="/media/gallery/souptoppokki.mp4" type="video/mp4">
           </video>
         </div>
-      </div>
-
-      <!-- Row 4 -->
       </div>
       <a class="gallery-item" href="/gooumcookit" style="text-decoration:none;color:inherit;">
         <div class="gallery-label">
@@ -745,12 +758,9 @@
           <span class="gallery-title">쫀징어</span>
           <span class="gallery-sub">쫀징어 브랜드 디자인</span>
         </div>
-        <div class="gallery-media" style="flex: none; height: calc(var(--vw) * 24.948);">
+        <div class="gallery-media">
           <img src="/media/gallery/jjonjingeo.jpg" alt="쫀징어">
         </div>
-      </a>
-
-      <!-- Row 5 -->
       </a>
       <div class="gallery-item">
         <div class="gallery-label">
@@ -766,12 +776,11 @@
           <span class="gallery-title">꼭꼬칩</span>
           <span class="gallery-sub">꼭꼬칩 브랜드 디자인</span>
         </div>
-        <div class="gallery-media" style="flex:none; height:calc(var(--vw)*20.990); position:relative;">
-          <img src="/media/gallery/kkokkozip.jpg" alt="꼭꼬칩" style="position:absolute; width:100%; height:141.36%; top:-41.36%; left:0; object-fit:cover; object-position:center;">
+        <div class="gallery-media">
+          <img src="/media/gallery/kkokkozip.jpg" alt="꼭꼬칩">
         </div>
       </div>
-
-    </a>
+    </div>
   </div>
 
   <script>
@@ -885,5 +894,3 @@
 </script>
 </body>
 </html>
-      </div>
-    
