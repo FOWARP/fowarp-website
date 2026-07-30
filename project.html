@@ -60,14 +60,15 @@
       background: #fff;
     }
 
-    /* 진입 모션: 로고만 처음부터 보이고, 나머지 헤더 오브젝트(마키 텍스트·
-       네비·CTA·모바일 메뉴 버튼)는 갤러리 라벨과 같은 시점(+0.8s)에 함께 등장한다. */
+    /* 진입 모션: 헤더 오브젝트(로고·마키 텍스트·네비·CTA·모바일 메뉴 버튼)는
+       선이 다 그어진 뒤 갤러리 라벨과 같은 시점에 함께 등장한다. */
     .marquee-track,
+    .header-logo-center,
     .header-nav,
     .header-cta,
     .menu-toggle {
       opacity: 0;
-      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 1.6s forwards;
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
     }
 
     /* 헤더 가로선 2개(마키바 아래·헤더 아래)도 갤러리 가로선과 같은 모션을 탄다.
@@ -84,7 +85,7 @@
       background: #D9D9D9;
       transform: scaleX(0);
       transform-origin: left center;
-      animation: revLineX 1.4s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+      animation: revLineX 0.9s cubic-bezier(0.85, 0, 0.15, 1) forwards;
     }
 
     /* 마키 섹션: 흰 배경 + 상단 패딩 */
@@ -474,7 +475,7 @@
     .grid-rules i {
       transform: scaleY(0);
       transform-origin: top center;
-      animation: revLineY 0.8s cubic-bezier(0.7, 0, 0.84, 0) 0.6s forwards;
+      animation: revLineY 0.7s cubic-bezier(0.85, 0, 0.15, 1) 0.4s forwards;
     }
 
     /* 가로선은 행마다 있으므로 그 행이 보일 때 좌→우로 그어진다.
@@ -487,17 +488,17 @@
       z-index: 1;
     }
     .gallery-item.is-visible::before {
-      animation: revLineX 1.4s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+      animation: revLineX 0.9s cubic-bezier(0.85, 0, 0.15, 1) forwards;
     }
 
     .gallery-label,
     .gallery-media { opacity: 0; }
 
     .gallery-item.is-visible .gallery-label {
-      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 1.6s forwards;
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
     }
     .gallery-item.is-visible .gallery-media {
-      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 1.9s forwards;
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 1.5s forwards;
     }
 
     /* ─── MOBILE ──────────────────────────────── */
@@ -509,7 +510,8 @@
       .marquee-logo { height: 13px; }
       .marquee-set { gap: calc(var(--vwFont) * 10.416); padding-right: calc(var(--vwFont) * 10.416); } /* 데스크탑 대비 2배 */
 
-      .header-main { height: 52px; padding: 0 16px; }
+      /* 괘선(16px)보다 8px 안쪽으로 — PC(괘선 20 / 콘텐츠 30)와 같은 규칙 */
+      .header-main { height: 52px; padding: 0 24px; }
       .header-logo-center img { height: 16px; }
       .header-nav { display: none; }
       .menu-toggle { display: flex; }
@@ -519,8 +521,10 @@
 
       .page-body {
         padding-top: 110px;
-        padding-left: 16px;
-        padding-right: 16px;
+        /* 좌우 패딩은 갤러리(.project-gallery)가 직접 갖는다 — 여기에 두면
+           갤러리 패딩과 합산돼 셀이 40px 에서 시작한다 */
+        padding-left: 0;
+        padding-right: 0;
         padding-bottom: 60px;
       }
 
@@ -552,7 +556,9 @@
       }
       .gallery-label { gap: 5px; }
       .gallery-title { font-size: 15px; }
-      .gallery-sub { font-size: 11px; }
+      /* 좁은 폭에서 서브헤드가 한 줄/두 줄로 갈려 같은 행의 썸네일 시작점이
+         어긋난다 → 두 줄분(11px × 1.2 × 2)을 미리 확보 */
+      .gallery-sub { font-size: 11px; min-height: 26.4px; }
       .gallery-media { margin-top: 14px; }
       .gallery-item:hover { box-shadow: 8px 0 0 0 #F5F5F5, -8px 0 0 0 #F5F5F5; }
 
