@@ -497,19 +497,39 @@
     .returnity-overlay .ro-copy i { font-style: normal; }
     .returnity-overlay .ro-desc { line-height: 1.4; }
 
-    /* ─── SCROLL REVEAL ───────────────────────
-       셀 괘선이 없어져 선 긋기(revLineX/Y)는 제거. 내용 페이드는
-       시안A의 커브·지속시간·라벨→미디어 스태거(0.2s)를 그대로 유지 */
+    /* ─── SCROLL REVEAL (시퀀스 모션) ─────────
+       예비 시안과 동일한 순서·커브·지연:
+       1) 가로선 좌→우(0.7s)  2) 세로선 위→아래(0.5s, +0.3s)
+       3) 라벨(+0.8s) → 미디어(+1.0s) 페이드 */
+    @keyframes revLineX   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @keyframes revLineY   { from { transform: scaleY(0); } to { transform: scaleY(1); } }
     @keyframes revContent { from { opacity: 0; } to { opacity: 1; } }
+
+    /* 세로 괘선은 문서 전체를 관통하는 전역 요소라 진입 시 한 번만 그어진다 */
+    .grid-rules i {
+      transform: scaleY(0);
+      transform-origin: top center;
+      animation: revLineY 0.5s cubic-bezier(0.7, 0, 0.84, 0) 0.3s forwards;
+    }
+
+    /* 가로선은 행마다 있으므로 그 행이 보일 때 좌→우로 그어진다.
+       ::before 는 행 첫 아이템에만 content 가 있어 나머지는 렌더되지 않는다 */
+    .gallery-item::before {
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .gallery-item.is-visible::before {
+      animation: revLineX 0.7s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+    }
 
     .gallery-label,
     .gallery-media { opacity: 0; }
 
     .gallery-item.is-visible .gallery-label {
-      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
     }
     .gallery-item.is-visible .gallery-media {
-      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards;
     }
 
     /* ─── MOBILE ──────────────────────────────── */
