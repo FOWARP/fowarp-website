@@ -29,6 +29,7 @@
   <meta name="twitter:description" content="브랜드의 성장에 필요한 전략과 디자인을 제안합니다. Design &amp; Branding by FOWARP.">
   <meta name="twitter:image" content="https://fowarp.vercel.app/og-image.png">
   <link rel="preload" href="/fonts/KarlsbaderGrotesk-400.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="/fonts/KarlsbaderGrotesk-600.otf" as="font" type="font/otf" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
   <script src="/js/lenis.min.js"></script>
   <style>
@@ -41,6 +42,17 @@
       src: url('/fonts/KarlsbaderGrotesk-400.otf') format('opentype');
       font-weight: 400;
       font-style: normal;
+    }
+
+    /* 타이틀이 font-weight:600 을 쓰는데 이 선언이 없으면 브라우저가 400 을
+       강제로 부풀리는 합성 볼드(faux bold)를 쓴다. 맥은 티가 덜 나지만
+       윈도우 DirectWrite 에서는 눈에 띄게 두꺼워진다 → 실제 600 서체 선언 */
+    @font-face {
+      font-family: 'Karlsbader Grotesk';
+      src: url('/fonts/KarlsbaderGrotesk-600.otf') format('opentype');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
     }
 
     :root { --vw: 19.2px; --vwFont: 19.2px; }
