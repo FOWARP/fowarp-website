@@ -540,13 +540,18 @@
     }
 
     .reveal { opacity: 0; }
-    .reveal.is-visible { animation: revContent 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .reveal.is-visible { animation: revContent 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     /* 첫 화면에서 이미 보이던 요소는 선이 다 그어진 뒤 텍스트와 '함께' 등장.
        스크롤로 들어오는 요소는 지연 없이 바로 뜬다 (기다리면 굼떠 보임) */
     .reveal.is-intro.is-visible { animation-duration: 0.75s; animation-delay: 0.9s; }
 
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
+      /* 모바일: 첫 화면(.is-intro)만 모션. 스크롤로 들어오는 것들은
+         이미 불러와진 상태로 두어 등장 모션이 발생하지 않는다 */
+      .reveal.is-visible:not(.is-intro) { animation: none; opacity: 1; }
+      .hline.is-visible:not(.is-intro) { animation: none; transform: scaleX(1); }
+
       .marquee-section { padding: 0; }
       .marquee-bar-inner { height: 28px; border-radius: 0; }
       .marquee-text { font-size: 11px; }
@@ -913,6 +918,10 @@
       }
       check();
       isIntro = false;
+      // 모바일은 첫 화면 이후 요소를 곧바로 표시해 스크롤 중 등장 모션이 없다
+      if (window.innerWidth <= 767) {
+        items.forEach(function(el) { el.classList.add('is-visible'); });
+      }
       window.addEventListener('scroll', check, { passive: true });
       window.addEventListener('resize', check);
       if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', check);

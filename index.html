@@ -544,26 +544,18 @@
       transform-origin: left center;
       z-index: 1;
     }
-    /* 스크롤로 들어오는 행은 짧게. 첫 화면(.is-intro)만 원래 시퀀스를 탄다 */
     .gallery-item.is-visible::before {
-      animation: revLineX 0.35s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+      animation: revLineX 0.75s cubic-bezier(0.7, 0, 0.84, 0) forwards;
     }
-    .gallery-item.is-intro.is-visible::before { animation-duration: 0.75s; }
 
     .gallery-label,
     .gallery-media { opacity: 0; }
 
     .gallery-item.is-visible .gallery-label {
-      animation: revContent 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
     }
     .gallery-item.is-visible .gallery-media {
-      animation: revContent 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
-    }
-    .gallery-item.is-intro.is-visible .gallery-label {
-      animation-duration: 0.75s; animation-delay: 0.9s;
-    }
-    .gallery-item.is-intro.is-visible .gallery-media {
-      animation-duration: 0.75s; animation-delay: 1.1s;
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
     }
 
     /* ─── PC (1920px 이상): 4열 ──────────────────
@@ -627,6 +619,12 @@
 
       /* 시안A와 동일하게 2열. 괘선 인셋 16 / 갤러리 패딩 24 / 열 간격 16
          → 괘선2가 정확히 열 사이 중앙(50%)에 온다 */
+      /* 모바일: 첫 화면(.is-intro)만 모션. 스크롤로 들어오는 것들은
+         이미 불러와진 상태로 두어 등장 모션이 발생하지 않게 한다 */
+      .gallery-item.is-visible:not(.is-intro)::before { animation: none; transform: scaleX(1); }
+      .gallery-item.is-visible:not(.is-intro) .gallery-label,
+      .gallery-item.is-visible:not(.is-intro) .gallery-media { animation: none; opacity: 1; }
+
       /* 모바일은 지금 속도가 맞다는 확인을 받아 기존 값 그대로 유지 */
       .header::after,
       .marquee-bar-inner::after,
@@ -661,12 +659,12 @@
       .project-gallery {
         grid-template-columns: repeat(2, 1fr);
         column-gap: 16px;
-        row-gap: 28px;
+        row-gap: 24px;
         padding: 0 30px;
       }
       .gallery-item {
-        padding: 8px 0 calc(8px + 28px);   /* 아래 = 패딩 + 행 간격 */
-        margin-bottom: -28px;
+        padding: 8px 0 calc(8px + 24px);   /* 아래 = 패딩 + 행 간격 */
+        margin-bottom: -24px;
       }
       .gallery-item:nth-child(3n+1)::before { content: none; }
       .gallery-item:nth-child(2n+1)::before {
@@ -964,7 +962,7 @@
           if (el.classList.contains('is-visible')) return;
           var r = el.getBoundingClientRect();
           // bottom>0 조건을 빼야 빠른 스크롤로 지나쳐버린 요소도 반드시 등장한다
-          if (r.top < vh * 0.95) {
+          if (r.top < vh * 0.88) {
             if (isIntro) el.classList.add('is-intro');
             el.classList.add('is-visible');
           }
@@ -972,6 +970,10 @@
       }
       check();
       isIntro = false;
+      // 모바일은 첫 화면 이후 요소를 곧바로 표시해 스크롤 중 등장 모션이 없다
+      if (window.innerWidth <= 767) {
+        items.forEach(function(el) { el.classList.add('is-visible'); });
+      }
       window.addEventListener('scroll', check, { passive: true });
       window.addEventListener('resize', check);
       if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', check);
