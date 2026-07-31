@@ -518,7 +518,7 @@
     }
 
     .reveal { opacity: 0; }
-    .reveal.is-visible { animation: revContent 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .reveal.is-visible { animation: revContent 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     /* 첫 화면에서 이미 보이던 요소는 선이 다 그어진 뒤 텍스트와 '함께' 등장.
        스크롤로 들어오는 요소는 지연 없이 바로 뜬다 (기다리면 굼떠 보임) */
     .reveal.is-intro.is-visible { animation-duration: 0.75s; animation-delay: 0.9s; }
@@ -560,6 +560,7 @@
 
       .info-row { grid-template-columns: 1fr; margin: 0 20px; }
       .info-title, .info-en, .info-ko { grid-column: span 1; padding: 10px; }
+      .info-title { gap: 5px; }   /* 메인 갤러리 라벨과 동일 */
       .info-en, .info-ko { font-size: 13px; }
       .info-name { font-size: 18px; }
       .info-desc { font-size: 12px; }

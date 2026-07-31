@@ -393,7 +393,7 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       column-gap: 20px;
-      row-gap: calc(var(--vw) * 3.333); /* 64px */
+      row-gap: calc(var(--vw) * 1.25); /* 24px */
       padding: 0 30px;
     }
 
@@ -404,8 +404,8 @@
       /* 위 10px / 아래 10px + 행 간격 64px.
          박스를 행 간격만큼 아래로 연장하고 음수 마진으로 레이아웃을 되돌린다
          → 호버 배경이 다음 행 가로선까지 끊김 없이 채워진다 */
-      padding: calc(var(--vw) * 0.521) 0 calc(var(--vw) * 3.854);
-      margin-bottom: calc(var(--vw) * -3.333);
+      padding: calc(var(--vw) * 0.521) 0 calc(var(--vw) * 1.771);
+      margin-bottom: calc(var(--vw) * -1.25);
     }
 
     /* 가로선 — Figma 는 행 래퍼의 border-top(#D9D9D9)이 화면 끝까지 풀블리드.
@@ -544,18 +544,26 @@
       transform-origin: left center;
       z-index: 1;
     }
+    /* 스크롤로 들어오는 행은 짧게. 첫 화면(.is-intro)만 원래 시퀀스를 탄다 */
     .gallery-item.is-visible::before {
-      animation: revLineX 0.75s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+      animation: revLineX 0.35s cubic-bezier(0.7, 0, 0.84, 0) forwards;
     }
+    .gallery-item.is-intro.is-visible::before { animation-duration: 0.75s; }
 
     .gallery-label,
     .gallery-media { opacity: 0; }
 
     .gallery-item.is-visible .gallery-label {
-      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+      animation: revContent 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
     }
     .gallery-item.is-visible .gallery-media {
-      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
+      animation: revContent 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    }
+    .gallery-item.is-intro.is-visible .gallery-label {
+      animation-duration: 0.75s; animation-delay: 0.9s;
+    }
+    .gallery-item.is-intro.is-visible .gallery-media {
+      animation-duration: 0.75s; animation-delay: 1.1s;
     }
 
     /* ─── PC (1920px 이상): 4열 ──────────────────
@@ -949,16 +957,21 @@
     // Scroll reveal — getBoundingClientRect 기반 (body가 스크롤 컨테이너라 IO 대신 사용)
     (function() {
       var items = document.querySelectorAll('.gallery-item');
+      var isIntro = true;   // 최초 판정에 걸린 행만 인트로 시퀀스를 탄다
       function check() {
         var vh = window.innerHeight;
         items.forEach(function(el) {
           if (el.classList.contains('is-visible')) return;
           var r = el.getBoundingClientRect();
           // bottom>0 조건을 빼야 빠른 스크롤로 지나쳐버린 요소도 반드시 등장한다
-          if (r.top < vh * 0.88) el.classList.add('is-visible');
+          if (r.top < vh * 0.95) {
+            if (isIntro) el.classList.add('is-intro');
+            el.classList.add('is-visible');
+          }
         });
       }
       check();
+      isIntro = false;
       window.addEventListener('scroll', check, { passive: true });
       window.addEventListener('resize', check);
       if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', check);
