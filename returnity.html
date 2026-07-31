@@ -492,6 +492,31 @@
     .media-block.ar-16-9 { aspect-ratio: 16 / 9; }
 
     
+    /* ─── 배경이 검정으로 바뀌면 헤더도 함께 반전 ───
+       괘선은 #686868 로 낮추고, 헤더 구간 괘선(.header-rules)은 헤더 fill 위에
+       그대로 남겨 본문 괘선과 한 줄로 이어지게 한다. */
+    .header, .marquee-text, .header-nav a, .header-cta,
+    .menu-toggle, .header-logo-center img, .mobile-menu, .mobile-menu a,
+    .grid-rules i, .header-rules i, .header::after, .marquee-bar-inner::after {
+      transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  color 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  filter 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    body.is-dark .header { background: #000; }
+    body.is-dark .marquee-text { color: #fff; }
+    body.is-dark .header-nav a { color: #B7B7B7; }
+    body.is-dark .header-nav a.active { color: #fff; }
+    body.is-dark .menu-toggle { color: #fff; }
+    body.is-dark .header-logo-center img { filter: invert(1); }
+    body.is-dark .header-cta { background: #fff; color: #000; }
+    body.is-dark .mobile-menu { background: #000; border-top-color: #fff; }
+    body.is-dark .mobile-menu a { color: #fff; border-bottom-color: #fff; }
+    body.is-dark .grid-rules i,
+    body.is-dark .header-rules i,
+    body.is-dark .header::after,
+    body.is-dark .marquee-bar-inner::after { background: #686868; }
+
     body.bg-anim { transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
     body.is-dark { background: #000; }
 
