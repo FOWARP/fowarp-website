@@ -361,9 +361,8 @@
       left: 20px;
       width: calc(100% - 40px);
       pointer-events: none;
-      /* 헤더(z-index:100) 보다 아래 — 괘선이 로고·네비·마키 텍스트를 관통하지 않게.
-         단 .page-body(z-index:1) 보다는 위여야 호버 배경(#F5F5F5)에 안 덮인다. */
-      z-index: 2;
+      /* 항상 최하단. 헤더 구간 괘선은 .header-rules 가 헤더 배경 위에 따로 그린다 */
+      z-index: 0;
     }
     /* 모바일 메뉴가 열리면 패널 위로 선이 지나가므로 잠시 숨긴다 */
     body.menu-open .grid-rules { display: none; }
@@ -465,7 +464,7 @@
 
     .gallery-item:hover {
       background: #F5F5F5;
-      box-shadow: 10px 0 0 0 #F5F5F5, -10px 0 0 0 #F5F5F5;
+      box-shadow: 9px 0 0 0 #F5F5F5, -9px 0 0 0 #F5F5F5;
       transition-delay: 0s !important;
     }
 
@@ -939,7 +938,8 @@
         items.forEach(function(el) {
           if (el.classList.contains('is-visible')) return;
           var r = el.getBoundingClientRect();
-          if (r.top < vh * 0.88 && r.bottom > 0) el.classList.add('is-visible');
+          // bottom>0 조건을 빼야 빠른 스크롤로 지나쳐버린 요소도 반드시 등장한다
+          if (r.top < vh * 0.88) el.classList.add('is-visible');
         });
       }
       check();
