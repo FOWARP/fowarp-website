@@ -495,7 +495,8 @@
        그대로 남겨 본문 괘선과 한 줄로 이어지게 한다. */
     .header, .marquee-text, .header-nav a, .header-cta,
     .menu-toggle, .header-logo-center img, .mobile-menu, .mobile-menu a,
-    .grid-rules i, .header-rules i, .header::after, .marquee-bar-inner::after {
+    .grid-rules i, .header-rules i, .header::after, .marquee-bar-inner::after,
+    .site-footer, .footer-info a {
       transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1),
                   color 0.7s cubic-bezier(0.4, 0, 0.2, 1),
                   filter 0.7s cubic-bezier(0.4, 0, 0.2, 1),
@@ -514,6 +515,9 @@
     body.is-dark .header-rules i,
     body.is-dark .header::after,
     body.is-dark .marquee-bar-inner::after { background: #686868; }
+    /* 푸터는 배경이 없어 검정 위에서 글자가 묻힌다 → 헤더와 같이 반전 */
+    body.is-dark .site-footer { color: #fff; border-top-color: #686868; }
+    body.is-dark .footer-info a { color: #fff; }
 
     body.bg-anim { transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
     body.is-dark { background: #000; }
