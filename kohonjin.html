@@ -505,6 +505,45 @@
     }
 
     
+    /* ─── FOOTER (Figma 446:1533) ─────────────────
+       높이 80, 상단 #D9D9D9 헤어라인, 좌우 콘텐츠 30px(괘선 20 + 10).
+       배경을 비워 페이지 세로 괘선이 그대로 관통하게 둔다. */
+    .site-footer {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: calc(var(--vw) * 1.042);
+      min-height: calc(var(--vwFont) * 4.167);   /* 80px */
+      padding: calc(var(--vw) * 1.042) 30px;     /* 20px / 30px */
+      border-top: 1px solid #D9D9D9;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);    /* 14px */
+      line-height: 1.32;
+      color: #000;
+    }
+    /* Figma 블록 비율 550 : 800 : 550 — 중앙 그룹 위치를 고정한다 */
+    .footer-intro {
+      flex: 55 0 0;
+      align-self: flex-start;
+      display: flex;
+      flex-direction: column;
+      gap: calc(var(--vw) * 0.26);               /* 5px */
+      white-space: nowrap;
+    }
+    .footer-info {
+      flex: 80 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: calc(var(--vw) * 2.083);              /* 40px */
+      white-space: nowrap;
+    }
+    .footer-info a { color: inherit; text-decoration: none; }
+    .footer-info a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .footer-copy { flex: 55 0 0; white-space: nowrap; text-align: right; }
+
     /* ─── SCROLL REVEAL ─────────────────────── */
     @keyframes revLineX   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
     @keyframes revLineY   { from { transform: scaleY(0); } to { transform: scaleY(1); } }
@@ -525,6 +564,20 @@
 
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
+      /* 푸터: 세로로 쌓고 좌우 여백은 본문과 동일하게 */
+      .site-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+        min-height: 0;
+        padding: 20px 30px 28px;
+        font-size: 12px;
+      }
+      .footer-intro, .footer-info, .footer-copy { flex: none; width: 100%; }
+      .footer-intro { white-space: normal; gap: 3px; }
+      .footer-info { flex-wrap: wrap; justify-content: flex-start; gap: 6px 16px; white-space: normal; }
+      .footer-copy { text-align: left; white-space: normal; }
+
       /* 모바일: 첫 화면(.is-intro)만 모션. 스크롤로 들어오는 것들은
          이미 불러와진 상태로 두어 등장 모션이 발생하지 않는다 */
       .reveal.is-visible:not(.is-intro) { animation: none; opacity: 1; }
@@ -730,6 +783,21 @@
 
     </div>
   </div>
+
+  <footer class="site-footer">
+    <div class="footer-intro">
+      <span>브랜드는 디자인을 통해 성장할 수 있습니다.</span>
+      <span>FOWARP는 지금도 우리와 함께 성장할 브랜드를 기다리고 있습니다.</span>
+    </div>
+    <div class="footer-info">
+      <span>대표: 오누리</span>
+      <span>연락처: +82 10-7914-3740</span>
+      <a href="mailto:hi@fowarp.com">이메일: hi@fowarp.com</a>
+      <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
+      <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
+    </div>
+    <p class="footer-copy">Copyright &copy; FOWARP. 모든 권리 보유.</p>
+  </footer>
 
   <script>
     function updateVW() {
