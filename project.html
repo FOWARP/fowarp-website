@@ -475,6 +475,10 @@
       transition-delay: 0s !important;
     }
 
+    /* 노슈가애디드 영상은 상단 하늘이 더 보이도록 크롭 지점만 위로
+       (마스크 크기·위치는 그대로, object-position 만 조정) */
+    a[href="/nosugaradded"] .gallery-media video { object-position: center 25%; }
+
     .gallery-item:hover .gallery-media video,
     .gallery-item:hover .gallery-media img { transform: scale(1.04); }
 

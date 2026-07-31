@@ -441,7 +441,7 @@
     .info-ko { font-family: 'Pretendard Variable', sans-serif; }
 
     .project-media {
-      margin: 27px 30px 0;   /* 좌우는 텍스트와 동일 */
+      margin: 10px 30px 0;   /* 상하좌우 모두 텍스트 블록과 동일 */
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -487,10 +487,10 @@
     }
 
     .reveal { opacity: 0; }
-    .reveal.is-visible { animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .reveal.is-visible { animation: revContent 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     /* 첫 화면에서 이미 보이던 요소는 선이 다 그어진 뒤 텍스트와 '함께' 등장.
        스크롤로 들어오는 요소는 지연 없이 바로 뜬다 (기다리면 굼떠 보임) */
-    .reveal.is-intro.is-visible { animation-delay: 0.9s; }
+    .reveal.is-intro.is-visible { animation-duration: 0.75s; animation-delay: 0.9s; }
 
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
@@ -532,9 +532,17 @@
       .info-en, .info-ko { font-size: 13px; }
       .info-name { font-size: 18px; }
       .info-desc { font-size: 12px; }
-      .project-media { margin: 20px 30px 0; gap: 6px; }
-      .media-row-2col { grid-template-columns: 1fr; gap: 6px; }
-      .media-row-2col .media-block { aspect-ratio: 1880 / 1058; }
+      .project-media { margin: 10px 30px 0; gap: 6px; }
+      /* 세로로 쌓되 PC 비율은 그대로 유지 (16:9 강제하던 규칙 제거) */
+      /* flex 로 정의된 페이지(kohonjin 등)도 있어 두 축 모두 세로로 */
+      .media-row-2col { grid-template-columns: 1fr; flex-direction: column; gap: 6px; }
+      /* 세로 스택에서 inline flex-basis 가 높이를 0 으로 만들던 문제 */
+      .media-row > .media-block { flex: none !important; width: 100% !important; }
+      /* 2열 포스터·PC 전용 중앙정렬 폭 → 좌우 마진까지 꽉 채움 */
+      .media-grid-2 { grid-template-columns: 1fr; }
+      /* PC 전용 33.333vw 중앙정렬 해제 — 좌우 마진(30px)은 다른 미디어와 동일하게 */
+      .project-media.narrow { width: auto; margin-left: 30px; margin-right: 30px; }
+      .narrow-960 { width: 100%; margin-left: 0; margin-right: 0; }
 
 
       .overlay-row    { flex-direction: column; align-items: flex-start !important; gap: 6px; }
@@ -686,7 +694,7 @@
           if (el.classList.contains('is-visible')) return;
           var r = el.getBoundingClientRect();
           // bottom>0 조건을 빼야 빠른 스크롤로 지나쳐버린 요소도 반드시 등장한다
-          if (r.top < vh * 0.88) {
+          if (r.top < vh * 0.95) {
             if (isIntro) el.classList.add('is-intro');
             el.classList.add('is-visible');
           }
