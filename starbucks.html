@@ -278,65 +278,76 @@
       min-height: 44px;
     }
 
-    /* 언폴드 모션 — max-height 대신 clip-path 로 여닫는다.
-       max-height 방식이 부드럽지 않았던 이유 3가지를 모두 해결:
-       (1) max-height 는 레이아웃 프로퍼티라 매 프레임 리플로우가 발생한다.
-           clip-path: inset() 은 GPU 합성 단계에서 처리돼 리플로우가 없다.
-       (2) 목표값 280px 이 실제 콘텐츠 높이(216px)보다 커서 이징의 마지막 23%
-           구간이 화면 밖에서 진행됐다 → 끝이 뭉툭하게 잘리는 느낌.
-           clip-path 는 콘텐츠 높이와 정확히 일치하는 지점에서 끝난다.
-       (3) cubic-bezier(0.7,0,0.2,1) 은 갤러리 선 긋기용 강한 ease-in 커브라
-           열림 모션엔 부적합했다 → 빠르게 시작해 부드럽게 멈추는 ease-out 으로 교체.
-       visibility 는 애니메이션 종료 후 꺼서 닫힌 메뉴가 키보드 포커스를 먹지 않게 함. */
-    .mobile-menu {
-      display: flex;
+    /* ─── 모바일 드롭다운 (Figma 440:1394) ───────────
+       헤더 뒤에 숨어 있다가 아래로 밀려 내려온다. 헤더를 뺀 본문은
+       backdrop-filter 로 흐려지고 흰색 80% 를 덮어 밝아진다. */
+    .menu-overlay {
       position: absolute;
       top: 100%;
       left: 0;
       right: 0;
-      background: #fff;
-      border-top: 1px solid #000;
-      flex-direction: column;
-      padding: 8px 16px 16px;
-      clip-path: inset(0 0 100% 0);
-      visibility: hidden;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0);
+      backdrop-filter: blur(0px);
+      -webkit-backdrop-filter: blur(0px);
       pointer-events: none;
-      transition: clip-path 0.32s cubic-bezier(0.4, 0, 1, 1),
-                  visibility 0s linear 0.32s;
+      transition: background-color 0.42s cubic-bezier(0.85, 0, 0.15, 1),
+                  backdrop-filter 0.42s cubic-bezier(0.85, 0, 0.15, 1),
+                  -webkit-backdrop-filter 0.42s cubic-bezier(0.85, 0, 0.15, 1);
     }
-    .mobile-menu.is-open {
-      clip-path: inset(0 0 0 0);
-      visibility: visible;
+    body.menu-open .menu-overlay {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       pointer-events: auto;
-      transition: clip-path 0.52s cubic-bezier(0.22, 1, 0.36, 1),
-                  visibility 0s;
     }
+
+    /* 패널이 헤더 위로 삐져나오지 않게 잘라내는 래퍼 */
+    .menu-clip {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .mobile-menu {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background: #fff;
+      transform: translateY(-100%);
+      transition: transform 0.42s cubic-bezier(0.85, 0, 0.15, 1);
+    }
+    body.menu-open .mobile-menu {
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
     .mobile-menu a {
+      position: relative;
+      z-index: 1;            /* 괘선보다 위 — 사이트 전역 규칙과 동일 */
+      display: flex;
+      align-items: center;
+      height: 30px;
+      padding: 0 30px;
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      font-size: 16px;
-      text-decoration: none;
+      font-size: 14px;
+      line-height: 1;
       color: #000;
+      text-decoration: none;
       text-transform: capitalize;
-      padding: 14px 0;
-      /* 구분선을 사이트 전역 1px 검정 헤어라인과 통일 (기존 #eee 는 거의 안 보였음) */
-      border-bottom: 1px solid #000;
-      /* 언폴드하면서 항목이 순차로 살짝 떠오른다 — 갤러리 등장 모션(revContent)과 같은 결.
-         스태거 마지막 항목이 0.21+0.36=0.57s 에 끝나 패널(0.52s)과 거의 동시에 안착한다.
-         닫힐 때는 지연 없이 짧게 사라져야 잔상이 남지 않는다. */
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.16s ease, transform 0.16s ease;
+      border-bottom: 1px solid #D9D9D9;
     }
-    .mobile-menu.is-open a {
-      opacity: 1;
-      transform: none;
-      transition: opacity 0.3s ease, transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .mobile-menu.is-open a:nth-child(1) { transition-delay: 0.06s; }
-    .mobile-menu.is-open a:nth-child(2) { transition-delay: 0.11s; }
-    .mobile-menu.is-open a:nth-child(3) { transition-delay: 0.16s; }
-    .mobile-menu.is-open a:nth-child(4) { transition-delay: 0.21s; }
     .mobile-menu a:last-child { border-bottom: none; }
+
+    /* 페이지 세로 괘선이 메뉴 위로도 이어진다 */
+    .menu-rules { position: absolute; inset: 0 20px; pointer-events: none; }
+    .menu-rules i { position: absolute; top: 0; bottom: 0; width: 1px; background: #D9D9D9; }
+    .menu-rules i:nth-child(1) { left: 0; }
+    .menu-rules i:nth-child(2) { left: 50%; }
+    .menu-rules i:nth-child(3) { left: 100%; margin-left: -1px; }
 
     /* ─── PAGE BODY ───────────────────────────── */
     /* 가로선을 화면 끝까지 흘려야 해서 좌우 패딩은 갤러리가 직접 갖는다 */
@@ -366,8 +377,6 @@
       /* 항상 최하단. 헤더 구간 괘선은 .header-rules 가 헤더 배경 위에 따로 그린다 */
       z-index: 0;
     }
-    /* 모바일 메뉴가 열리면 패널 위로 선이 지나가므로 잠시 숨긴다 */
-    body.menu-open .grid-rules { display: none; }
     .grid-rules i {
       position: absolute;
       top: 0; bottom: 0;
@@ -494,7 +503,7 @@
       .marquee-set { gap: calc(var(--vwFont) * 10.416); padding-right: calc(var(--vwFont) * 10.416); } /* 데스크탑 대비 2배 */
 
       /* 괘선(16px)보다 8px 안쪽으로 — PC(괘선 20 / 콘텐츠 30)와 같은 규칙 */
-      .header-main { height: 52px; padding: 0 24px; }
+      .header-main { height: 52px; padding: 0 30px; }
       .header-logo-center img { height: 16px; }
       .header-nav { display: none; }
       .menu-toggle { display: flex; }
@@ -511,20 +520,20 @@
         padding-bottom: 60px;
       }
 
-      .grid-rules { left: 16px; right: 16px; }
-      .header-rules { width: calc(100% - 32px); }
+      .grid-rules { left: 20px; right: 20px; }
+      .header-rules { width: calc(100% - 40px); }
       /* 6열 → 2열: 가운데(4번)만 남기고 나머지 내부 괘선 숨김 */
       .grid-rules i:nth-child(2), .grid-rules i:nth-child(3),
       .grid-rules i:nth-child(5), .grid-rules i:nth-child(6),
       .header-rules i:nth-child(2), .header-rules i:nth-child(3),
       .header-rules i:nth-child(5), .header-rules i:nth-child(6) { display: none; }
 
-      .info-row { grid-template-columns: 1fr; margin: 0 16px; }
-      .info-title, .info-en, .info-ko { grid-column: span 1; padding: 8px; }
+      .info-row { grid-template-columns: 1fr; margin: 0 20px; }
+      .info-title, .info-en, .info-ko { grid-column: span 1; padding: 10px; }
       .info-en, .info-ko { font-size: 13px; }
       .info-name { font-size: 18px; }
       .info-desc { font-size: 12px; }
-      .project-media { margin: 16px 16px 0; gap: 6px; }
+      .project-media { margin: 20px 20px 0; gap: 6px; }
       .media-row-2col { grid-template-columns: 1fr; gap: 6px; }
       .media-row-2col .media-block { aspect-ratio: 1880 / 1058; }
 
@@ -580,12 +589,16 @@
       <a href="/project" class="header-logo-center"><img src="/media/fowarp-logo-center.svg" alt="FOWARP"></a>
       <a href="/contact" class="header-cta">Get in Touch</a>
     </div>
-    <nav class="mobile-menu">
+    <div class="menu-overlay" aria-hidden="true"></div>
+    <div class="menu-clip">
+      <nav class="mobile-menu">
+        <div class="menu-rules" aria-hidden="true"><i></i><i></i><i></i></div>
         <a href="/project" class="active">Project</a>
         <a href="/about">About</a>
         <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
         <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
-    </nav>
+      </nav>
+    </div>
   </header>
 
   <div class="page-body">
@@ -634,7 +647,7 @@
       var el = document.querySelector('.grid-rules');
       if (!el) return;
       var r = document.body.getBoundingClientRect();
-      var inset = window.innerWidth <= 767 ? 16 : 20;
+      var inset = 20;   // Figma 기준 PC·모바일 동일
       el.style.left  = (r.left + inset) + 'px';
       el.style.width = (r.width - inset * 2) + 'px';
     }
