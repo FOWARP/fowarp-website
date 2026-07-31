@@ -499,8 +499,9 @@
 
     .reveal { opacity: 0; }
     .reveal.is-visible { animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    /* 첫 화면 정보 블록은 선이 다 그어진 뒤 등장 (홈과 같은 시퀀스) */
-    .info-row > .reveal.is-visible { animation-delay: 0.9s; }
+    /* 첫 화면에서 이미 보이던 요소는 선이 다 그어진 뒤 텍스트와 '함께' 등장.
+       스크롤로 들어오는 요소는 지연 없이 바로 뜬다 (기다리면 굼떠 보임) */
+    .reveal.is-intro.is-visible { animation-delay: 0.9s; }
 
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
@@ -742,16 +743,21 @@
     // Scroll reveal — getBoundingClientRect 기반 (body가 스크롤 컨테이너라 IO 대신 사용)
     (function() {
       var items = document.querySelectorAll('.reveal, .hline');
+      var isIntro = true;   // 최초 판정에 걸린 요소만 인트로 지연을 받는다
       function check() {
         var vh = window.innerHeight;
         items.forEach(function(el) {
           if (el.classList.contains('is-visible')) return;
           var r = el.getBoundingClientRect();
           // bottom>0 조건을 빼야 빠른 스크롤로 지나쳐버린 요소도 반드시 등장한다
-          if (r.top < vh * 0.88) el.classList.add('is-visible');
+          if (r.top < vh * 0.88) {
+            if (isIntro) el.classList.add('is-intro');
+            el.classList.add('is-visible');
+          }
         });
       }
       check();
+      isIntro = false;
       window.addEventListener('scroll', check, { passive: true });
       window.addEventListener('resize', check);
       if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', check);
