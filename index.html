@@ -332,7 +332,9 @@
       left: 20px;
       width: calc(100% - 40px);
       pointer-events: none;
-      z-index: 200;
+      /* 헤더(z-index:100) 보다 아래 — 괘선이 로고·네비·마키 텍스트를 관통하지 않게.
+         단 .page-body(z-index:1) 보다는 위여야 호버 배경(#F5F5F5)에 안 덮인다. */
+      z-index: 2;
     }
     /* 모바일 메뉴가 열리면 패널 위로 선이 지나가므로 잠시 숨긴다 */
     body.menu-open .grid-rules { display: none; }
