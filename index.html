@@ -84,6 +84,35 @@
       animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
     }
 
+    /* 헤더 전용 세로 괘선.
+       .header 는 fixed + z-index 로 자체 스택 컨텍스트라 바깥 .grid-rules 를
+       배경과 텍스트 사이에 끼워 넣을 수 없다 → 헤더 안에 같은 괘선을 따로 그린다.
+       .header 배경 위, 마키/네비/로고(둘 다 positioned)보다 먼저 그려져 텍스트에 안 걸린다.
+       i 를 100vh 로 두고 컨테이너에서 잘라내 바깥 괘선과 그어지는 속도가 정확히 같다. */
+    .header-rules {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      max-width: calc(2560px - 40px);
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .header-rules i {
+      position: absolute;
+      top: 0;
+      height: 100vh;
+      width: 1px;
+      background: #D9D9D9;
+    }
+    .header-rules i:nth-child(1) { left: 0; }
+    .header-rules i:nth-child(2) { left: 33.3333%; }
+    .header-rules i:nth-child(3) { left: 66.6667%; }
+    .header-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
+    .header-rules i:nth-child(5) { display: none; }
+
     /* 헤더 가로선 2개(마키바 아래·헤더 아래)도 갤러리 가로선과 같은 모션을 탄다.
        border/box-shadow 는 애니메이션이 안 되므로 pseudo-element 로 그린다.
        절대배치라 레이아웃 높이를 먹지 않아 마키 텍스트 수직 중앙도 유지된다. */
@@ -114,8 +143,8 @@
     }
 
     .marquee-bar-inner {
+      /* 배경을 두면 헤더 괘선을 가린다. 헤더가 이미 흰색이라 불필요 */
       position: relative;
-      background: #fff;
       width: 100%;
       height: calc(var(--vwFont) * 2.083); /* 40px */
       border-radius: 0;
@@ -488,7 +517,8 @@
     @keyframes revContent { from { opacity: 0; } to { opacity: 1; } }
 
     /* 세로 괘선은 문서 전체를 관통하는 전역 요소라 진입 시 한 번만 그어진다 */
-    .grid-rules i {
+    .grid-rules i,
+    .header-rules i {
       transform: scaleY(0);
       transform-origin: top center;
       animation: revLineY 0.6s cubic-bezier(0.85, 0, 0.15, 1) 0.3s forwards;
@@ -522,6 +552,11 @@
        괘선은 5개(0/25/50/75/100%), 가로선은 4열 폭으로 다시 계산한다. */
     @media (min-width: 1920px) {
       .project-gallery { grid-template-columns: repeat(4, 1fr); }
+
+      .header-rules i:nth-child(2) { left: 25%; }
+      .header-rules i:nth-child(3) { left: 50%; }
+      .header-rules i:nth-child(4) { left: 75%; margin-left: 0; }
+      .header-rules i:nth-child(5) { display: block; left: 100%; margin-left: -1px; }
 
       .grid-rules i:nth-child(2) { left: 25%; }
       .grid-rules i:nth-child(3) { left: 50%; }
@@ -579,7 +614,8 @@
       .gallery-item.is-visible::before {
         animation-duration: 0.9s;
       }
-      .grid-rules i {
+      .grid-rules i,
+      .header-rules i {
         animation-duration: 0.7s;
         animation-delay: 0.4s;
       }
@@ -590,6 +626,12 @@
       .menu-toggle,
       .gallery-item.is-visible .gallery-label { animation-delay: 1.2s; }
       .gallery-item.is-visible .gallery-media { animation-delay: 1.5s; }
+
+      .header-rules { width: calc(100% - 32px); }
+      .header-rules i:nth-child(2) { left: 50%; }
+      .header-rules i:nth-child(3) { display: none; }
+      .header-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
+      .header-rules i:nth-child(5) { display: none; }
 
       .grid-rules { left: 16px; right: 16px; }
       .grid-rules i:nth-child(2) { left: 50%; }
@@ -648,6 +690,8 @@
   <div class="grid-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 
   <header class="header">
+
+    <div class="header-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="marquee-section">
       <div class="marquee-bar">
         <div class="marquee-bar-inner">
