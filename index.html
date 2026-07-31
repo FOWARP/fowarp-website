@@ -168,7 +168,7 @@
     }
 
     .marquee-text {
-      font-family: Arial, 'Pretendard Variable', sans-serif;  /* Figma 지정 */
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.729);  /* 14px */
       line-height: 1.32;
       color: #000;
@@ -438,7 +438,7 @@
     }
 
     .gallery-sub {
-      font-family: 'Pretendard Variable', 'Karlsbader Grotesk', Arial, sans-serif;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.833); /* 16px */
       font-weight: 400;
       line-height: 1.2;
@@ -663,7 +663,9 @@
         padding: 0 30px;
       }
       .gallery-item {
-        padding: 8px 0 calc(8px + 24px);   /* 아래 = 패딩 + 행 간격 */
+        /* 상단 8px / 하단 16px(= 상단의 2배). 뒤의 24px 는 호버 배경을
+           다음 행 가로선까지 잇기 위한 연장분으로 음수 마진이 상쇄한다 */
+        padding: 8px 0 calc(16px + 24px);
         margin-bottom: -24px;
       }
       .gallery-item:nth-child(3n+1)::before { content: none; }
