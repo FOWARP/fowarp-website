@@ -29,36 +29,40 @@
   <meta name="twitter:description" content="KOHONJIN Design by FOWARP">
   <meta name="twitter:image" content="https://fowarp.vercel.app/og-image.png">
   <link rel="preload" href="/fonts/KarlsbaderGrotesk-400.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="/fonts/KarlsbaderGrotesk-600.otf" as="font" type="font/otf" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
   <script src="/js/lenis.min.js"></script>
   <style>
+    /*
+      --vw = min(window.innerWidth, 1920) / 100  (JS로 설정)
+      1920px 기준: 모든 크기는 calc(var(--vw) * X) 사용
+    */
     @font-face {
       font-family: 'Karlsbader Grotesk';
       src: url('/fonts/KarlsbaderGrotesk-400.otf') format('opentype');
       font-weight: 400;
       font-style: normal;
-      font-display: swap;
     }
+
+    /* 타이틀이 font-weight:600 을 쓰는데 이 선언이 없으면 브라우저가 400 을
+       강제로 부풀리는 합성 볼드(faux bold)를 쓴다. 맥은 티가 덜 나지만
+       윈도우 DirectWrite 에서는 눈에 띄게 두꺼워진다 → 실제 600 서체 선언 */
     @font-face {
       font-family: 'Karlsbader Grotesk';
-      src: url('/fonts/KarlsbaderGrotesk-500.otf') format('opentype');
-      font-weight: 500;
+      src: url('/fonts/KarlsbaderGrotesk-600.otf') format('opentype');
+      font-weight: 600;
       font-style: normal;
       font-display: swap;
     }
 
     :root { --vw: 19.2px; --vwFont: 19.2px; }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-      background: #fff;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      max-width: 2560px;
-      margin: 0 auto;
-    }
+    body { position: relative; background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; position: relative; max-width: 2560px; margin: 0 auto; }
 
     /* ─── HEADER ─────────────────────────────── */
+    /* 시안B 헤더: 마키바 흰 배경 + #D9D9D9 헤어라인, 로고 없이 텍스트만 */
     .header {
       position: fixed;
       top: 0;
@@ -66,23 +70,85 @@
       transform: translateX(-50%);
       width: 100%;
       z-index: 100;
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(calc(var(--vwFont) * 0.52));
-      -webkit-backdrop-filter: blur(calc(var(--vwFont) * 0.52));
+      background: #fff;
     }
 
+    /* 진입 모션: 헤더 오브젝트(로고·마키 텍스트·네비·CTA·모바일 메뉴 버튼)는
+       선이 다 그어진 뒤 갤러리 라벨과 같은 시점에 함께 등장한다. */
+    .marquee-track,
+    .header-logo-center,
+    .header-nav,
+    .header-cta,
+    .menu-toggle {
+      opacity: 0;
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+    }
+
+    /* 헤더 전용 세로 괘선.
+       .header 는 fixed + z-index 로 자체 스택 컨텍스트라 바깥 .grid-rules 를
+       배경과 텍스트 사이에 끼워 넣을 수 없다 → 헤더 안에 같은 괘선을 따로 그린다.
+       .header 배경 위, 마키/네비/로고(둘 다 positioned)보다 먼저 그려져 텍스트에 안 걸린다.
+       i 를 100vh 로 두고 컨테이너에서 잘라내 바깥 괘선과 그어지는 속도가 정확히 같다. */
+    .header-rules {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      max-width: calc(2560px - 40px);
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .header-rules i {
+      position: absolute;
+      top: 0;
+      height: 100vh;
+      width: 1px;
+      background: #D9D9D9;
+    }
+    .header-rules i:nth-child(1) { left: 0; }
+    .header-rules i:nth-child(2) { left: 16.6667%; }
+    .header-rules i:nth-child(3) { left: 33.3333%; }
+    .header-rules i:nth-child(4) { left: 50%; }
+    .header-rules i:nth-child(5) { left: 66.6667%; }
+    .header-rules i:nth-child(6) { left: 83.3333%; }
+    .header-rules i:nth-child(7) { left: 100%; margin-left: -1px; }
+
+    /* 헤더 가로선 2개(마키바 아래·헤더 아래)도 갤러리 가로선과 같은 모션을 탄다.
+       border/box-shadow 는 애니메이션이 안 되므로 pseudo-element 로 그린다.
+       절대배치라 레이아웃 높이를 먹지 않아 마키 텍스트 수직 중앙도 유지된다. */
+    .header::after,
+    .marquee-bar-inner::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: #D9D9D9;
+      transform: scaleX(0);
+      transform-origin: left center;
+      animation: revLineX 0.75s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+    }
+
+    /* 마키 섹션: 흰 배경 + 상단 패딩 */
     .marquee-section {
       width: 100%;
       padding: 0;
       background: transparent;
     }
 
-    .marquee-bar { width: 100%; overflow-x: hidden; }
+    .marquee-bar {
+      width: 100%;
+      overflow-x: hidden;
+    }
 
     .marquee-bar-inner {
-      background: #000;
+      /* 배경을 두면 헤더 괘선을 가린다. 헤더가 이미 흰색이라 불필요 */
+      position: relative;
       width: 100%;
-      height: calc(var(--vwFont) * 2.083);
+      height: calc(var(--vwFont) * 2.083); /* 40px */
       border-radius: 0;
       display: flex;
       align-items: center;
@@ -98,15 +164,16 @@
     .marquee-set {
       display: flex;
       align-items: center;
-      gap: calc(var(--vwFont) * 5.208);
-      padding-right: calc(var(--vwFont) * 5.208);
+      gap: calc(var(--vwFont) * 7.344); /* Figma 141px */
+      padding-right: calc(var(--vwFont) * 7.344);
       flex-shrink: 0;
     }
 
     .marquee-text {
-      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      font-size: calc(var(--vwFont) * 0.729);
-      color: #fff;
+      font-family: Arial, 'Pretendard Variable', sans-serif;  /* Figma 지정 */
+      font-size: calc(var(--vwFont) * 0.729);  /* 14px */
+      line-height: 1.32;
+      color: #000;
       white-space: nowrap;
     }
 
@@ -120,6 +187,7 @@
       filter: invert(1);
     }
 
+    /* 메인 헤더 바 */
     .header-main {
       width: 100%;
       max-width: 2560px;
@@ -128,7 +196,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 40px;
+      padding: 0 30px;
       position: relative;
     }
 
@@ -142,14 +210,14 @@
     }
 
     .header-logo-center img {
-      height: calc(var(--vwFont) * 1.4);
+      height: calc(var(--vwFont) * 1.4);   /* 시안A와 동일 (26.88px) */
       width: auto;
       display: block;
     }
 
     .header-nav {
       display: flex;
-      gap: calc(var(--vwFont) * 4.167);
+      gap: calc(var(--vwFont) * 4.167); /* 80px */
       align-items: center;
     }
 
@@ -157,7 +225,7 @@
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.729);
       text-decoration: none;
-      color: #000;
+      color: #B7B7B7;   /* 비활성 카테고리 */
       text-transform: capitalize;
     }
 
@@ -171,7 +239,7 @@
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.729);
       padding: calc(var(--vwFont) * 0.625) calc(var(--vwFont) * 0.729);
-      border-radius: calc(var(--vwFont) * 0.417);
+      border-radius: calc(var(--vwFont) * 0.417);   /* 예전 시안과 동일 (1920 기준 8px) */
       text-decoration: none;
       text-transform: capitalize;
       white-space: nowrap;
@@ -271,78 +339,107 @@
     .mobile-menu a:last-child { border-bottom: none; }
 
     /* ─── PAGE BODY ───────────────────────────── */
+    /* 가로선을 화면 끝까지 흘려야 해서 좌우 패딩은 갤러리가 직접 갖는다 */
     .page-body {
-      padding-top: calc(var(--vwFont) * 12);
-      padding-left: 40px;
-      padding-right: 40px;
+      padding-top: calc(var(--vwFont) * 9.167);  /* Figma 첫 가로선 y=176 */
+      padding-left: 0;
+      padding-right: 0;
       padding-bottom: calc(var(--vw) * 4.167);
-    }
-
-    /* ─── PROJECT INFO ────────────────────────── */
-    .project-info {
-      display: flex;
-      align-items: stretch;
-      gap: calc(var(--vw) * 0.625);
-      width: 100%;
-    }
-
-    .info-title {
-      width: calc(var(--vw) * 12.917);
-      flex-shrink: 0;
       position: relative;
-      display: flex;
-      flex-direction: column;
+      z-index: 1;
     }
 
-    .info-hline {
+    /* 세로 괘선 — 문서 전체 높이 관통 (Figma 378:1290, #D9D9D9 1px) */
+    /* Figma 레이어 순서상 괘선 프레임이 헤더·갤러리보다 위에 있다
+       → 헤더(z-index:100) 위로 올려 헤더 구간에도 선이 지나가게 한다.
+       호버 시 회색 블록(#F5F5F5)에도 가려지지 않는다. */
+    /* 문서 전체(4800px+)를 0.5s 에 그으면 번쩍이듯 지나가 모션이 죽는다.
+       괘선은 위치가 고정된 균일한 세로선이라 fixed 로 뷰포트 높이만 그려도
+       스크롤 중 외형이 동일하다 → 예비 시안의 '한 칸 높이를 0.5s' 와 같은 속도감. */
+    .grid-rules {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 20px;
+      width: calc(100% - 40px);
+      pointer-events: none;
+      /* 항상 최하단. 헤더 구간 괘선은 .header-rules 가 헤더 배경 위에 따로 그린다 */
+      z-index: 0;
+    }
+    /* 모바일 메뉴가 열리면 패널 위로 선이 지나가므로 잠시 숨긴다 */
+    body.menu-open .grid-rules { display: none; }
+    .grid-rules i {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: #D9D9D9;
+    }
+    .grid-rules i:nth-child(1) { left: 0; }
+    .grid-rules i:nth-child(2) { left: 16.6667%; }
+    .grid-rules i:nth-child(3) { left: 33.3333%; }
+    .grid-rules i:nth-child(4) { left: 50%; }
+    .grid-rules i:nth-child(5) { left: 66.6667%; }
+    .grid-rules i:nth-child(6) { left: 83.3333%; }
+    .grid-rules i:nth-child(7) { left: 100%; margin-left: -1px; }
+
+    /* ─── DETAIL (Figma 426:1358) ────────────────
+       1920 기준: 좌우 마진 20, 6열(313.33), 괘선 7줄.
+       가로선 y=176 / y=331, 미디어 y=358 부터 10px 간격 */
+    .hline {
       width: 100%;
       height: 1px;
-      background: #000;
-      flex-shrink: 0;
+      background: #D9D9D9;
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .hline.is-visible {
+      animation: revLineX 0.75s cubic-bezier(0.7, 0, 0.84, 0) forwards;
     }
 
-    .info-title-text {
+    .info-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      align-items: start;
+      margin: 0 20px;
+    }
+    .info-row > * { padding: 10px; }
+    .info-title { grid-column: span 1; display: flex; flex-direction: column; gap: calc(var(--vw) * 0.417); }
+    .info-name {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      font-size: calc(var(--vwFont) * 0.833);
-      font-weight: 400;
+      font-size: calc(var(--vwFont) * 1.354); /* 26px */
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
       color: #000;
-      line-height: 1.5;
-      margin-top: calc(var(--vw) * 0.365);
-      flex: 1;
     }
-
-    .info-vline {
-      width: 1px;
-      background: #000;
-      flex-shrink: 0;
-      align-self: stretch;
+    .info-desc {
+      font-family: 'Pretendard Variable', sans-serif;
+      font-size: calc(var(--vwFont) * 0.833); /* 16px */
+      font-weight: 400;
+      line-height: 1.2;
+      color: #000;
     }
+    .info-en    { grid-column: span 3; }
+    .info-ko    { grid-column: span 2; }
 
-    .info-text {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: calc(var(--vw) * 0.573);
-      min-width: 0;
-    }
-
-    .info-text p {
-      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+    /* 영문 Karlsbader Grotesk / 국문 Pretendard — 본문 18px, 행간 1.5 */
+    .info-en, .info-ko {
       font-size: calc(var(--vwFont) * 0.938);
       font-weight: 400;
-      color: #000;
       line-height: 1.5;
-      flex: 1;
+      color: #000;
     }
+    .info-en { font-family: 'Karlsbader Grotesk', Arial, sans-serif; }
+    .info-ko { font-family: 'Pretendard Variable', sans-serif; }
 
-    /* ─── PROJECT MEDIA ───────────────────────── */
     .project-media {
+      margin: 27px 20px 0;
       display: flex;
       flex-direction: column;
-      gap: calc(var(--vw) * 0.521);
-      margin-top: calc(var(--vw) * 1.563);
+      gap: 10px;
     }
 
+    /* ─── PROJECT MEDIA (기존 페이지에서 계승) ─── */
     .media-block {
       width: 100%;
       overflow: hidden;
@@ -399,50 +496,23 @@
       gap: calc(var(--vw) * 1.064); /* Figma 20.427px @1920 */
     }
 
+    
     /* ─── SCROLL REVEAL ─────────────────────── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.4s ease,
-                  transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .reveal.is-visible { opacity: 1; transform: translateY(0); }
-
-    /* 미디어 블록: 아래→위 슬라이드업 + 페이드 (강화, 텐션 easing) */
-    @keyframes revMediaUp { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: translateY(0); } }
-    .project-media > .reveal { opacity: 0; transform: translateY(48px); }
-    .project-media > .reveal.is-visible {
-      animation: revMediaUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-    /* 1번 사진만 텍스트 시퀀스 뒤 이어서(1s), 2번부터는 진입 즉시 */
-    .project-media > .reveal:first-child.is-visible { animation-delay: 1s; }
-
-    /* project-info: 갤러리와 동일 시퀀스 (가로선→세로선→텍스트 페이드) */
-    @keyframes revLineX  { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-    @keyframes revLineY  { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    @keyframes revLineX   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @keyframes revLineY   { from { transform: scaleY(0); } to { transform: scaleY(1); } }
     @keyframes revContent { from { opacity: 0; } to { opacity: 1; } }
 
-    /* 컨테이너 fade-up 무효화 (자식이 개별 애니) */
-    .info-title.reveal,
-    .info-text.reveal { opacity: 1; transform: none; transition: none; }
-    /* 초기(숨김) 상태 */
-    .info-hline { transform: scaleX(0); transform-origin: left center; }
-    .info-vline.reveal { transform: scaleY(0); transform-origin: top center; opacity: 1; transition: none; }
-    .info-title-text,
-    .info-text p { opacity: 0; }
-    /* 시퀀스: 1)가로선 좌→우 2)세로선 위→아래 3)텍스트 페이드 */
-    .info-title.is-visible .info-hline,
-    .info-text.is-visible .info-hline {
-      animation: revLineX 0.7s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+    .grid-rules i,
+    .header-rules i {
+      transform: scaleY(0);
+      transform-origin: top center;
+      animation: revLineY 0.6s cubic-bezier(0.85, 0, 0.15, 1) 0.3s forwards;
     }
-    .info-vline.reveal.is-visible {
-      animation: revLineY 0.5s cubic-bezier(0.7, 0, 0.84, 0) 0.3s forwards;
-    }
-    .info-title.is-visible .info-title-text,
-    .info-text.is-visible p {
-      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
-    }
+
+    .reveal { opacity: 0; }
+    .reveal.is-visible { animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    /* 첫 화면 정보 블록은 선이 다 그어진 뒤 등장 (홈과 같은 시퀀스) */
+    .info-row > .reveal.is-visible { animation-delay: 0.9s; }
 
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
@@ -453,7 +523,8 @@
       .marquee-logo { height: 13px; }
       .marquee-set { gap: calc(var(--vwFont) * 10.416); padding-right: calc(var(--vwFont) * 10.416); } /* 데스크탑 대비 2배 */
 
-      .header-main { height: 52px; padding: 0 16px; }
+      /* 괘선(16px)보다 8px 안쪽으로 — PC(괘선 20 / 콘텐츠 30)와 같은 규칙 */
+      .header-main { height: 52px; padding: 0 24px; }
       .header-logo-center img { height: 16px; }
       .header-nav { display: none; }
       .menu-toggle { display: flex; }
@@ -462,66 +533,88 @@
       .header-cta { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; }
 
       .page-body {
-        padding-top: 110px;
-        padding-left: 16px;
-        padding-right: 16px;
+        padding-top: 92px;
+        /* 좌우 패딩은 갤러리(.project-gallery)가 직접 갖는다 — 여기에 두면
+           갤러리 패딩과 합산돼 셀이 40px 에서 시작한다 */
+        padding-left: 0;
+        padding-right: 0;
         padding-bottom: 60px;
       }
 
-      .project-info { flex-direction: column; gap: 16px; }
-      .info-title { width: 100%; }
-      .info-vline { display: none; }
-      .info-title-text { font-size: 11px; margin-top: 8px; font-weight: 400; text-transform: uppercase; }
-      .info-text p { font-size: 11px; color: #686868; }
-      .info-hline { display: none; }
+      .grid-rules { left: 16px; right: 16px; }
+      .header-rules { width: calc(100% - 32px); }
+      /* 6열 → 2열: 가운데(4번)만 남기고 나머지 내부 괘선 숨김 */
+      .grid-rules i:nth-child(2), .grid-rules i:nth-child(3),
+      .grid-rules i:nth-child(5), .grid-rules i:nth-child(6),
+      .header-rules i:nth-child(2), .header-rules i:nth-child(3),
+      .header-rules i:nth-child(5), .header-rules i:nth-child(6) { display: none; }
 
-      .project-media { gap: 8px; margin-top: 24px; }
-
-      /* 모바일도 Figma 비율 그대로 유지 (16:9 강제 금지 — 목업·세로영상이 찌그러짐) */
-      .media-row-2col { flex-direction: column; }
-
+      .info-row { grid-template-columns: 1fr; margin: 0 16px; }
+      .info-title, .info-en, .info-ko { grid-column: span 1; padding: 8px; }
+      .info-en, .info-ko { font-size: 13px; }
+      .info-name { font-size: 18px; }
+      .info-desc { font-size: 12px; }
+      .project-media { margin: 16px 16px 0; gap: 6px; }
+      .media-row-2col { grid-template-columns: 1fr; gap: 6px; }
+      .media-row-2col .media-block { aspect-ratio: 1880 / 1058; }
+      /* ── 기존 페이지에서 계승 ── */
       .media-row-rec { flex-direction: column; gap: 8px; }
-      .media-row-rec > .rec-col-1,
-      .media-row-rec > .rec-col-2,
-      .media-row-rec > .rec-col-3 { flex: none; width: 100%; }
+      .media-row-rec > .rec-col-1, .media-row-rec > .rec-col-2, .media-row-rec > .rec-col-3 { flex: none; width: 100%; }
       .media-stack { gap: 8px; }
+
+      .overlay-row    { flex-direction: column; align-items: flex-start !important; gap: 6px; }
+      .overlay-top    { font-size: 9px !important; }
+      .overlay-big    { font-size: 15px !important; }
+      .overlay-small  { font-size: 9px !important; max-width: 100% !important; display: -webkit-box !important; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+      .overlay-body   { font-size: 9px !important; max-width: 100% !important; display: -webkit-box !important; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+      /* RETURNITY / An Túr Solais: 모바일에서 크롭·텍스트 줄바꿈이 깨져
+         텍스트가 미리 합성된 전용 썸네일로 교체 (HTML 오버레이는 숨김) */
+      .media-desktop-only { display: none !important; }
+      /* 리터니티는 시안B 크롭이 셀 비율(0.8)과 같아 모바일에서도 그대로 쓴다.
+         (예비 시안의 텍스트 합성 썸네일은 구 디자인 전용) */
+      .tile-returnity .media-desktop-only { display: block !important; }
+      .tile-returnity .media-mobile-only  { display: none !important; }
+      .media-mobile-only  { display: block !important; width: 100%; height: 100%; object-fit: cover; }
+      .returnity-overlay, .antursolais-overlay { display: none !important; }
     }
   </style>
 </head>
 <body>
 
+  <div class="grid-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
   <header class="header">
+
+    <div class="header-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="marquee-section">
       <div class="marquee-bar">
         <div class="marquee-bar-inner">
-          <div class="marquee-track" id="marqueeTrack">
-            <div class="marquee-set">
-              <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
-              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
-              <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
-              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
-              <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
-              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
-              <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
-              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
-            </div>
+        <div class="marquee-track" id="marqueeTrack">
+          <div class="marquee-set">
+            <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
+            <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
+            <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
+            <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
           </div>
+        </div>
         </div>
       </div>
     </div>
+
     <div class="header-main">
       <nav class="header-nav">
-        <a href="/" class="active">Project</a>
+        <a href="/project" class="active">Project</a>
         <a href="/about">About</a>
         <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
         <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
       </nav>
       <button class="menu-toggle" aria-label="Menu" aria-expanded="false">Menu</button>
-      <a href="/" class="header-logo-center"><img src="/media/fowarp-logo-center.svg" alt="FOWARP"></a>
+      <a href="/project" class="header-logo-center"><img src="/media/fowarp-logo-center.svg" alt="FOWARP"></a>
       <a href="/contact" class="header-cta">Get in Touch</a>
     </div>
     <nav class="mobile-menu">
-        <a href="/" class="active">Project</a>
+        <a href="/project" class="active">Project</a>
         <a href="/about">About</a>
         <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
         <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
@@ -529,31 +622,18 @@
   </header>
 
   <div class="page-body">
+    <div class="hline"></div>
 
-    <!-- 프로젝트 정보 -->
-    <div class="project-info">
+    <div class="info-row">
       <div class="info-title reveal">
-        <div class="info-hline"></div>
-        <span class="info-title-text">KOHONJIN</span>
-        <div class="info-hline"></div>
+        <span class="info-name">Kohonjin</span>
+        <span class="info-desc">고혼진 브랜드 디자인</span>
       </div>
-
-      <div class="info-vline reveal"></div>
-
-      <div class="info-text reveal">
-        <div class="info-hline"></div>
-        <p>We branded KOHONJIN, a beauty that holds steady against the passage of time. KOHONJIN applies a skin derma delivery system for anti-aging care that slows the visible passage of time, and continues to develop technologies that improve the absorption of active ingredients. To give visual form to KOHONJIN's distinctive branding strategy, we 3D rendered the brand's products and carried out both the content design and the website design.</p>
-        <div class="info-hline"></div>
-      </div>
-
-      <div class="info-vline reveal"></div>
-
-      <div class="info-text reveal">
-        <div class="info-hline"></div>
-        <p>시간의 흐름에도 흔들리지 않는 아름다움, KOHONJIN을 브랜딩 하였습니다. KOHONJIN은 시간의 흐름을 잠재우는 안티에이징 케어를 위한 스킨 더마 딜리버리 시스템을 적용하고 있으며 유효 성분의 흡수를 위한 기술 개발을 꾸준히 연구하고 있습니다. KOHONJIN의 차별화된 브랜딩 전략을 시각적으로 표현하기 위해 자사 제품을 3D 렌더링하여 컨텐츠 디자인 및 웹사이트 디자인을 진행하였습니다.</p>
-        <div class="info-hline"></div>
-      </div>
+      <p class="info-en reveal">We branded KOHONJIN, a beauty that holds steady against the passage of time. KOHONJIN applies a skin derma delivery system for anti-aging care that slows the visible passage of time, and continues to develop technologies that improve the absorption of active ingredients. To give visual form to KOHONJIN's distinctive branding strategy, we 3D rendered the brand's products and carried out both the content design and the website design.</p>
+      <p class="info-ko reveal">시간의 흐름에도 흔들리지 않는 아름다움, KOHONJIN을 브랜딩 하였습니다. KOHONJIN은 시간의 흐름을 잠재우는 안티에이징 케어를 위한 스킨 더마 딜리버리 시스템을 적용하고 있으며 유효 성분의 흡수를 위한 기술 개발을 꾸준히 연구하고 있습니다. KOHONJIN의 차별화된 브랜딩 전략을 시각적으로 표현하기 위해 자사 제품을 3D 렌더링하여 컨텐츠 디자인 및 웹사이트 디자인을 진행하였습니다.</p>
     </div>
+
+    <div class="hline"></div>
 
     <!-- 미디어 -->
     <div class="project-media">
@@ -622,97 +702,87 @@
       </div>
 
     </div>
-
   </div>
 
   <script>
     function updateVW() {
-      var w = window.innerWidth;
-      document.documentElement.style.setProperty('--vw', (Math.min(w, 2560) / 100) + 'px');
-      document.documentElement.style.setProperty('--vwFont', (Math.min(w, 1920) / 100) + 'px');
+      var iw = window.innerWidth;
+      document.documentElement.style.setProperty('--vw', (Math.min(iw, 2560) / 100) + 'px');
+      document.documentElement.style.setProperty('--vwFont', (Math.min(iw, 1920) / 100) + 'px');
+    }
+    // 괘선은 fixed 라 뷰포트 기준이 된다. body(max-width 2560, 중앙정렬) 와
+    // 어긋나지 않도록 실제 body 박스를 재서 맞춘다.
+    function syncRules() {
+      var el = document.querySelector('.grid-rules');
+      if (!el) return;
+      var r = document.body.getBoundingClientRect();
+      var inset = window.innerWidth <= 767 ? 16 : 20;
+      el.style.left  = (r.left + inset) + 'px';
+      el.style.width = (r.width - inset * 2) + 'px';
     }
     updateVW();
-    window.addEventListener('resize', updateVW);
+    syncRules();
+    window.addEventListener('resize', function() { updateVW(); syncRules(); });
 
-    var lenis = new Lenis({ duration: 0.9, easing: function(t) { return 1 - Math.pow(1 - t, 4); }, smoothWheel: true });
-    (function lenisLoop(t) { lenis.raf(t); requestAnimationFrame(lenisLoop); })(0);
+    // Smooth scroll (Lenis)
+    var lenis = new Lenis({
+      duration: 0.9,
+      easing: function(t) { return 1 - Math.pow(1 - t, 4); },
+      smoothWheel: true
+    });
+    function lenisRaf(time) { lenis.raf(time); requestAnimationFrame(lenisRaf); }
+    requestAnimationFrame(lenisRaf);
 
-    // 영상이 뒤늦게 레이아웃에 반영되면서 Lenis가 예전 문서 높이로 스크롤
-    // 한계를 잡아버리는 문제 방지 — 매 영상 로드마다 재계산
+    // (인트로 전환 코드 없음 — index.html에서 단일 페이지로 처리)
+
+    // 무거운 영상이 늦게 반영되면 Lenis 가 옛 문서 높이로 한계를 잡는다 → 재동기화
     (function() {
-      function resyncLenis() { if (lenis && lenis.resize) lenis.resize(); }
+      function resync() { if (lenis && lenis.resize) lenis.resize(); }
       document.querySelectorAll('video').forEach(function(v) {
-        v.addEventListener('loadedmetadata', resyncLenis);
-        v.addEventListener('loadeddata', resyncLenis);
+        v.addEventListener('loadedmetadata', resync);
+        v.addEventListener('loadeddata', resync);
       });
-      window.addEventListener('load', resyncLenis);
-      setTimeout(resyncLenis, 1500);
-      setTimeout(resyncLenis, 4000);
+      window.addEventListener('load', resync);
+      setTimeout(resync, 1500); setTimeout(resync, 4000);
     })();
 
-    // Scroll reveal
+    // Scroll reveal — getBoundingClientRect 기반 (body가 스크롤 컨테이너라 IO 대신 사용)
     (function() {
-      // 프로젝트 정보: 좌→우 순차 등장
-      // CSS transition-delay로 스태거, 이중 rAF로 opacity:0 first paint 보장
-      var infoEls = document.querySelectorAll('.project-info > .reveal');
-      function checkInfo() {
+      var items = document.querySelectorAll('.reveal, .hline');
+      function check() {
         var vh = window.innerHeight;
-        infoEls.forEach(function(el) {
+        items.forEach(function(el) {
           if (el.classList.contains('is-visible')) return;
           var r = el.getBoundingClientRect();
-          if (r.top < vh * 0.95 && r.bottom > 0) el.classList.add('is-visible');
+          // bottom>0 조건을 빼야 빠른 스크롤로 지나쳐버린 요소도 반드시 등장한다
+          if (r.top < vh * 0.88) el.classList.add('is-visible');
         });
       }
-      checkInfo();
-      window.addEventListener('scroll', checkInfo, { passive: true });
-      window.addEventListener('resize', checkInfo);
-      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkInfo);
+      check();
+      window.addEventListener('scroll', check, { passive: true });
+      window.addEventListener('resize', check);
+      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', check);
 
-      // 미디어 블록: rect 기반 (body가 스크롤 컨테이너라 IO 대신 사용)
-      var mediaEls = document.querySelectorAll('.project-media > .reveal');
-      function checkMedia() {
-        var vh = window.innerHeight;
-        mediaEls.forEach(function(el) {
-          if (el.classList.contains('is-visible')) return;
-          var r = el.getBoundingClientRect();
-          if (r.top < vh * 0.92 && r.bottom > 0) el.classList.add('is-visible');
-        });
-      }
-      checkMedia();
-      window.addEventListener('scroll', checkMedia, { passive: true });
-      window.addEventListener('resize', checkMedia);
-      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkMedia);
-
-      // 레티나 서브픽셀 흐림 방지: 선 애니 완료 후 물리픽셀 라인에 스냅
-      function snapLine(el) {
-        var dpr = window.devicePixelRatio || 1;
-        el.style.transform = 'none';
-        var r = el.getBoundingClientRect();
-        if (el.classList.contains('info-hline')) {
-          var p = r.top * dpr;
-          el.style.transform = 'translateY(' + ((Math.round(p) - p) / dpr) + 'px)';
-        } else {
-          var px = r.left * dpr;
-          el.style.transform = 'translateX(' + ((Math.round(px) - px) / dpr) + 'px)';
-        }
-      }
-      var lineEls = document.querySelectorAll('.info-hline, .info-vline');
-      lineEls.forEach(function(el) {
-        el.addEventListener('animationend', function() { el.style.animation = 'none'; snapLine(el); });
-      });
-      window.addEventListener('resize', function() { lineEls.forEach(snapLine); });
     })();
 
+    /* ── Seamless marquee ── */
     (function() {
       var track = document.getElementById('marqueeTrack');
       var set   = track.querySelector('.marquee-set');
-      var pos = 0, PX_PER_SEC = 30, setWidth = 0, lastTime = null, raf;
+
+      var pos      = 0;
+      var PX_PER_SEC = 30; /* 화면 크기와 무관하게 초당 60px 고정 */
+      var setWidth = 0;
+      var raf;
+      var lastTime = null;
 
       function fillClones() {
         while (track.children.length > 1) track.removeChild(track.lastChild);
         setWidth = set.offsetWidth;
-        for (var i = 0, n = Math.ceil(window.innerWidth / setWidth) + 1; i < n; i++)
+        var copies = Math.ceil(window.innerWidth / setWidth) + 1;
+        for (var i = 0; i < copies; i++) {
           track.appendChild(set.cloneNode(true));
+        }
       }
 
       function tick(now) {
@@ -728,14 +798,23 @@
       raf = requestAnimationFrame(tick);
 
       window.addEventListener('load', function() {
-        cancelAnimationFrame(raf); lastTime = null; fillClones(); raf = requestAnimationFrame(tick);
+        cancelAnimationFrame(raf);
+        lastTime = null;
+        fillClones();
+        raf = requestAnimationFrame(tick);
       });
+
       window.addEventListener('resize', function() {
-        cancelAnimationFrame(raf); updateVW();
-        setTimeout(function() { lastTime = null; fillClones(); raf = requestAnimationFrame(tick); }, 50);
+        cancelAnimationFrame(raf);
+        updateVW();
+        setTimeout(function() {
+          lastTime = null;
+          fillClones();
+          raf = requestAnimationFrame(tick);
+        }, 50);
       });
     })();
-
+  
     // 모바일 햄버거 메뉴
     (function() {
       var toggle = document.querySelector('.menu-toggle');
@@ -746,6 +825,7 @@
         toggle.classList.toggle('is-open', open);
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
         document.body.style.overflow = open ? 'hidden' : '';
+        document.body.classList.toggle('menu-open', open);
         if (typeof lenis !== 'undefined') { open ? lenis.stop() : lenis.start(); }
       }
       toggle.addEventListener('click', function() {
