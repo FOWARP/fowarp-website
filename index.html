@@ -659,14 +659,14 @@
       .project-gallery {
         grid-template-columns: repeat(2, 1fr);
         column-gap: 16px;
-        row-gap: 24px;
+        row-gap: 0;   /* 셀 하단 패딩 16px 이 곧 썸네일↔다음 행 선 간격 */
         padding: 0 30px;
       }
       .gallery-item {
-        /* 상단 8px / 하단 16px(= 상단의 2배). 뒤의 24px 는 호버 배경을
-           다음 행 가로선까지 잇기 위한 연장분으로 음수 마진이 상쇄한다 */
-        padding: 8px 0 calc(16px + 24px);
-        margin-bottom: -24px;
+        /* 상단 8px / 하단 16px = 상단의 2배.
+           행 간격이 0 이라 하단 패딩이 그대로 썸네일↔다음 행 선 간격이 된다 */
+        padding: 8px 0 16px;
+        margin-bottom: 0;   /* PC 의 호버 연장용 음수 마진 해제 */
       }
       .gallery-item:nth-child(3n+1)::before { content: none; }
       .gallery-item:nth-child(2n+1)::before {
