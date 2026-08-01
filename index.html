@@ -1121,6 +1121,38 @@
       });
     })();
 
+
+  /* 보이는 영상만 재생 — 한 페이지에서 다수를 동시 재생하면 브라우저 동시 디코더
+     상한에 걸려 재생이 시작됐다가 강제로 멈춘다(특히 Safari). 화면 밖은 정지시켜
+     동시 재생 수를 줄이고, 브라우저가 임의로 멈춘 경우엔 다시 살린다. */
+  (function () {
+    var vids = document.querySelectorAll('video[autoplay]');
+    if (!vids.length || !window.IntersectionObserver) return;
+
+    var visible = new WeakSet();
+    function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) { visible.add(v); play(v); }
+        else { visible.delete(v); v.pause(); }
+      });
+    }, { rootMargin: '200px 0px' });
+
+    Array.prototype.forEach.call(vids, function (v) {
+      v.addEventListener('pause', function () {
+        if (visible.has(v) && !document.hidden) setTimeout(function () { if (visible.has(v)) play(v); }, 60);
+      });
+      io.observe(v);
+    });
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) return;
+      Array.prototype.forEach.call(vids, function (v) { if (visible.has(v)) play(v); });
+    });
+  })();
+
 </script>
 </body>
 </html>
