@@ -774,7 +774,68 @@
       .flip-a.is-off .fb::after { transition: transform 0.3s ease 0.08s; }
       .flip-a.is-off:hover .fb::after { transform: scaleX(1); }
     }
-    .mobile-menu span.menu-off { color: #B7B7B7; text-decoration: line-through; }
+    .mobile-menu span.menu-off { cursor: pointer; }
+
+    /* ─── About 사이드 패널 ──────────────────────────────────────
+       헤더 About 을 누르면 왼쪽에서 밀려 나온다 (레퍼런스 iroje.com 은 오른쪽).
+       열려 있는 동안 나머지 화면은 모바일 드롭다운과 같은 방식으로
+       밝아지며 흐려진다. X 버튼은 패널 바깥쪽(오른쪽)에 검정으로 둔다. */
+    .about-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(255,255,255,0);
+      backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+      pointer-events: none;
+      transition: background-color .42s cubic-bezier(.85,0,.15,1),
+                  backdrop-filter .42s cubic-bezier(.85,0,.15,1);
+    }
+    body.about-open .about-overlay {
+      background: rgba(255,255,255,.8);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      pointer-events: auto;
+    }
+    .about-panel {
+      position: fixed; top: 0; left: 0; z-index: 301;
+      width: calc(var(--vw) * 33.177);   /* Figma 637 */
+      max-width: 92vw; height: 100vh;
+      background: #fff; border-right: 1px solid #D9D9D9;
+      transform: translateX(-100%);
+      transition: transform .42s cubic-bezier(.85,0,.15,1);
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
+    }
+    body.about-open .about-panel { transform: translateX(0); }
+    .about-panel-inner { padding: calc(var(--vwFont) * 2.083) 0 60px; }
+    .about-block { border-top: 1px solid #D9D9D9; border-bottom: 1px solid #D9D9D9; }
+    .about-block + .about-block { margin-top: calc(var(--vw) * 1.042); }
+    .about-block p {
+      margin: 0 20px; padding: 10px;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      line-height: 1.5; color: #000;
+    }
+    .about-block .ab-en { font-size: calc(var(--vwFont) * .938); }
+    .about-block .ab-ko { font-size: calc(var(--vwFont) * .990); }
+    .about-close {
+      position: fixed; z-index: 302;
+      top: calc(var(--vwFont) * 1.042);
+      left: calc(var(--vw) * 33.177);
+      width: 36px; height: 36px; margin-left: 10px;
+      border: 0; background: transparent; cursor: pointer;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s ease .12s;
+    }
+    body.about-open .about-close { opacity: 1; pointer-events: auto; }
+    .about-close span {
+      position: absolute; left: 6px; top: 17px;
+      width: 24px; height: 1.5px; background: #000;
+    }
+    .about-close span:first-child { transform: rotate(45deg); }
+    .about-close span:last-child { transform: rotate(-45deg); }
+    @media (max-width: 767px) {
+      .about-panel { width: 88vw; max-width: none; }
+      .about-close { left: 88vw; top: 12px; }
+      .about-block p { margin: 0 10px; }
+      .about-block .ab-en { font-size: 13px; }
+      .about-block .ab-ko { font-size: 14px; }
+    }
 </style>
 </head>
 <body>
@@ -802,7 +863,7 @@
     <div class="header-main">
       <nav class="header-nav">
         <a href="/project" class="active flip-a"><span class="fa">Project</span><span class="fb" aria-hidden="true">Project</span></a>
-        <span class="flip-a is-off"><span class="fa">About</span><span class="fb" aria-hidden="true">About</span></span>
+        <span class="flip-a" data-about tabindex="0"><span class="fa">About</span><span class="fb" aria-hidden="true">About</span></span>
         <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener" class="flip-a"><span class="fa">Behance</span><span class="fb" aria-hidden="true">Behance</span></a>
         <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener" class="flip-a"><span class="fa">Instagram</span><span class="fb" aria-hidden="true">Instagram</span></a>
       </nav>
@@ -815,7 +876,7 @@
       <nav class="mobile-menu">
         <div class="menu-rules" aria-hidden="true"><i></i><i></i><i></i></div>
         <a href="/project" class="active">Project</a>
-        <span class="menu-off">About</span>
+        <span class="menu-off" data-about tabindex="0">About</span>
         <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
         <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
       </nav>
@@ -914,7 +975,18 @@
     <p class="footer-copy">Copyright &copy; FOWARP. 모든 권리 보유.</p>
   </footer>
 
-  <script>
+  
+  <!-- About 사이드 패널 -->
+  <div class="about-overlay" id="aboutOverlay"></div>
+  <aside class="about-panel" id="aboutPanel" role="dialog" aria-modal="true" aria-label="About FOWARP" aria-hidden="true">
+    <div class="about-panel-inner">
+      <div class="about-block"><p class="ab-en">FOWARP is a brand born from the fusion of "FORWARD" and "WARP". We contemplate the growth of our clients' brands and lead better user experiences through the best brand building.<br><br>Countless brands are born and disappear every day in the market. In this landscape, FOWARP proposes innovative solutions through design for brands to grow.<br><br>A brand can grow through design. FOWARP is waiting for brands to grow with us even now.</p></div>
+      <div class="about-block"><p class="ab-ko">FOWARP는 FORWARD와 WARP의 단어가 만나 탄생한 브랜드입니다. 클라이언트의 브랜드 성장을 위해 고찰하며, 최상의 브랜드 구축을 통해 더 나은 사용자 경험을 이끌어 냅니다.<br><br>하루에도 수 없이 많은 브랜드들이 탄생하고 또한 사라집니다. 이러한 시장 속에서 FOWARP는 디자인을 통해 브랜드가 성장할 수 있는 독창적인 솔루션을 제안합니다.<br><br>브랜드는 디자인을 통해 성장할 수 있습니다. FOWARP는 지금도 우리와 함께 성장할 브랜드를 기다리고 있습니다.</p></div>
+    </div>
+  </aside>
+  <button class="about-close" id="aboutClose" type="button" aria-label="닫기"><span></span><span></span></button>
+
+<script>
     function updateVW() {
       var iw = window.innerWidth;
       document.documentElement.style.setProperty('--vw', (Math.min(iw, 2560) / 100) + 'px');
@@ -1087,6 +1159,32 @@
       if (/[\uAC00-\uD7A3]/.test(el.textContent)) el.classList.add('has-ko');
     });
   })();
+
+    // ─── About 사이드 패널 ─────────────────────────────────────
+    (function () {
+      var panel = document.getElementById('aboutPanel');
+      if (!panel) return;
+      var overlay = document.getElementById('aboutOverlay');
+      var closeBtn = document.getElementById('aboutClose');
+      function open() {
+        document.body.classList.add('about-open');
+        panel.setAttribute('aria-hidden', 'false');
+        if (typeof lenis !== 'undefined') lenis.stop();
+      }
+      function close() {
+        document.body.classList.remove('about-open');
+        panel.setAttribute('aria-hidden', 'true');
+        if (typeof lenis !== 'undefined') lenis.start();
+      }
+      [].forEach.call(document.querySelectorAll('[data-about]'), function (el) {
+        el.addEventListener('click', function (e) { e.preventDefault(); open(); });
+      });
+      closeBtn.addEventListener('click', close);
+      overlay.addEventListener('click', close);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && document.body.classList.contains('about-open')) close();
+      });
+    })();
 </script>
 </body>
 </html>
