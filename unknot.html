@@ -719,14 +719,10 @@
     }
     body.is-win.is-dark .header-cta { -webkit-text-stroke: 0.004em #fff; }
 
-    /* 한글은 획이 촘촘해 같은 값에서 더 많이 깎인다 (0.008em 기준 한글 -16% / 영문 -12%).
-       실물 확인 결과 한글은 보정 없이도 충분해 외곽선을 쓰지 않는다. */
-    body.is-win .marquee-text-ko, body.is-win .gallery-sub,
-    body.is-win .info-desc, body.is-win .info-ko,
-    body.is-win .footer-intro, body.is-win .footer-info, body.is-win .footer-copy,
-    body.is-win.is-dark .marquee-text-ko, body.is-win.is-dark .info-desc,
-    body.is-win.is-dark .info-ko, body.is-win.is-dark .footer-intro,
-    body.is-win.is-dark .footer-info, body.is-win.is-dark .footer-copy {
+    /* 한글은 획이 촘촘해 같은 값에서 더 많이 깎이고, 실물 확인 결과 보정이 불필요.
+       클래스로 언어를 나누면 한글 타이틀(구움쿠킷·황후궁 삼계탕 등)이 영문 그룹에
+       섞이므로, 로드 시 실제 글자를 보고 한글이 있으면 .has-ko 를 붙여 제외한다. */
+    body.is-win .has-ko, body.is-win.is-dark .has-ko {
       -webkit-text-stroke-width: 0;
     }
 </style>
@@ -1063,7 +1059,14 @@
   /* 윈도우에서만 글자 두께 보정 (위 .is-win 규칙) */
   (function () {
     var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
-    if (/win/i.test(p)) document.body.classList.add('is-win');
+    if (!/win/i.test(p)) return;
+    document.body.classList.add('is-win');
+    var sel = '.marquee-text, .marquee-text-ko, .header-nav a, .menu-toggle, .mobile-menu a,'
+            + '.gallery-title, .gallery-sub, .info-name, .info-desc, .info-en, .info-ko,'
+            + '.footer-intro, .footer-info, .footer-copy, .header-cta';
+    Array.prototype.forEach.call(document.querySelectorAll(sel), function (el) {
+      if (/[\uAC00-\uD7A3]/.test(el.textContent)) el.classList.add('has-ko');
+    });
   })();
 </script>
 </body>
