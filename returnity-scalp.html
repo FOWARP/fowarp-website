@@ -456,11 +456,11 @@
 
 
     /* ─── 상세 스트립 ───────────────────────────────────────────────
-       Figma 상페_860px(760x44061pt)를 PDF 로 내보내 모션 구간 경계에서 잘라
-       세로로 이어 붙인 것. 조각 사이 여백 0 이어야 한 장처럼 이어진다.
-       폭은 1920 기준 760px (Figma 배치와 동일). */
+       Figma 상페_860px 를 PDF 로 내보내 모션 구간 경계에서 잘라 이어 붙인 것.
+       정지 12조각 + 영상 12개가 번갈아 들어간다. 조각 사이 여백 0.
+       폭은 스킨힐러 상세와 동일한 640px(1920 기준). */
     .detail-strip {
-      width: calc(var(--vw) * 39.583);
+      width: calc(var(--vw) * 33.333);
       margin: 10px auto 0;
       display: flex;
       flex-direction: column;
@@ -750,26 +750,53 @@
 
     <div class="detail-strip">
       <img src="/media/returnity-scalp/s01.jpg" alt="" loading="lazy">
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/v01.mp4" type="video/mp4">
+      </video>
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/v02.mp4" type="video/mp4">
+      </video>
       <img src="/media/returnity-scalp/s02.jpg" alt="" loading="lazy">
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/v03.mp4" type="video/mp4">
+      </video>
       <img src="/media/returnity-scalp/s03.jpg" alt="" loading="lazy">
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/v04.mp4" type="video/mp4">
+      </video>
       <img src="/media/returnity-scalp/s04.jpg" alt="" loading="lazy">
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/v05.mp4" type="video/mp4">
+      </video>
       <img src="/media/returnity-scalp/s05.jpg" alt="" loading="lazy">
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/v06.mp4" type="video/mp4">
+      </video>
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/v07.mp4" type="video/mp4">
+      </video>
       <img src="/media/returnity-scalp/s06.jpg" alt="" loading="lazy">
       <video autoplay muted loop playsinline>
-        <source src="/media/returnity-scalp/n14098.mp4" type="video/mp4">
+        <source src="/media/returnity-scalp/v08.mp4" type="video/mp4">
       </video>
       <img src="/media/returnity-scalp/s07.jpg" alt="" loading="lazy">
-      <video autoplay muted loop playsinline>
-        <source src="/media/returnity-scalp/n14100.mp4" type="video/mp4">
-      </video>
-      <video autoplay muted loop playsinline>
-        <source src="/media/returnity-scalp/n14099.mp4" type="video/mp4">
-      </video>
-      <video autoplay muted loop playsinline>
-        <source src="/media/returnity-scalp/n14101.mp4" type="video/mp4">
-      </video>
       <img src="/media/returnity-scalp/s08.jpg" alt="" loading="lazy">
       <img src="/media/returnity-scalp/s09.jpg" alt="" loading="lazy">
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/v09.mp4" type="video/mp4">
+      </video>
+      <img src="/media/returnity-scalp/s10.jpg" alt="" loading="lazy">
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/v10.mp4" type="video/mp4">
+      </video>
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/v11.mp4" type="video/mp4">
+      </video>
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/v12.mp4" type="video/mp4">
+      </video>
+      <img src="/media/returnity-scalp/s11.jpg" alt="" loading="lazy">
+      <img src="/media/returnity-scalp/s12.jpg" alt="" loading="lazy">
     </div>
   </div>
 
