@@ -454,6 +454,25 @@
     .info-en { font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif; }
     .info-ko { font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif; }
 
+
+    /* ─── 상세 스트립 ───────────────────────────────────────────────
+       Figma 상페_860px(760x44061pt)를 PDF 로 내보내 모션 구간 경계에서 잘라
+       세로로 이어 붙인 것. 조각 사이 여백 0 이어야 한 장처럼 이어진다.
+       폭은 1920 기준 760px (Figma 배치와 동일). */
+    .detail-strip {
+      width: calc(var(--vw) * 39.583);
+      margin: 10px auto 0;
+      display: flex;
+      flex-direction: column;
+      font-size: 0;
+    }
+    .detail-strip img,
+    .detail-strip video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
     .project-media {
       margin: 10px 30px 0;   /* 상하좌우 모두 텍스트 블록과 동일 */
       display: flex;
@@ -607,6 +626,7 @@
       .info-name { font-size: 18px; }
       .info-desc { font-size: 12px; }
       .project-media { margin: 10px 30px 0; gap: 6px; }
+      .detail-strip { width: auto; margin-left: 30px; margin-right: 30px; }
       /* 세로로 쌓되 PC 비율은 그대로 유지 (16:9 강제하던 규칙 제거) */
       /* flex 로 정의된 페이지(kohonjin 등)도 있어 두 축 모두 세로로 */
       .media-row-2col { grid-template-columns: 1fr; flex-direction: column; gap: 6px; }
@@ -729,10 +749,28 @@
 
     <div class="hline"></div>
 
-    <!-- 미디어 : 콘텐츠 수령 후 채운다.
-         Figma 451:6544 은 세로 괘선 SVG 만 들어 있어 이미지 에셋을 받을 수 없었다.
-         페이지 전체를 감싼 프레임 링크를 받으면 여기에 media-block 을 추가한다. -->
-    <div class="project-media narrow">
+    <div class="detail-strip">
+      <img src="/media/returnity-scalp/s01.jpg" alt="" loading="lazy">
+      <img src="/media/returnity-scalp/s02.jpg" alt="" loading="lazy">
+      <img src="/media/returnity-scalp/s03.jpg" alt="" loading="lazy">
+      <img src="/media/returnity-scalp/s04.jpg" alt="" loading="lazy">
+      <img src="/media/returnity-scalp/s05.jpg" alt="" loading="lazy">
+      <img src="/media/returnity-scalp/s06.jpg" alt="" loading="lazy">
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/n14098.mp4" type="video/mp4">
+      </video>
+      <img src="/media/returnity-scalp/s07.jpg" alt="" loading="lazy">
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/n14100.mp4" type="video/mp4">
+      </video>
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/n14099.mp4" type="video/mp4">
+      </video>
+      <video autoplay muted loop playsinline>
+        <source src="/media/returnity-scalp/n14101.mp4" type="video/mp4">
+      </video>
+      <img src="/media/returnity-scalp/s08.jpg" alt="" loading="lazy">
+      <img src="/media/returnity-scalp/s09.jpg" alt="" loading="lazy">
     </div>
   </div>
 
