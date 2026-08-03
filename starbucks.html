@@ -228,7 +228,8 @@
       align-items: center;
     }
 
-    .header-nav a {
+    .header-nav a,
+    .header-nav > span {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.729);
       text-decoration: none;
@@ -236,7 +237,8 @@
       text-transform: capitalize;
     }
 
-    .header-nav a.active { color: #000; }
+    .header-nav a.active,
+    .header-nav > span.active { color: #000; }
 
     .header-cta {
       display: inline-block;
@@ -579,7 +581,8 @@
       .header-nav { display: none; }
       .menu-toggle { display: flex; }
       .header-nav { gap: 10px; }
-      .header-nav a { font-size: 11px; }
+      .header-nav a,
+      .header-nav > span { font-size: 11px; }
       .header-cta { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; }
 
       .page-body {
@@ -643,7 +646,7 @@
        두께는 em 단위 — px 고정이면 작은 글자만 과하게 깎인다.
        외곽선 색은 반드시 '글자 뒤 배경색'과 같아야 한다. */
     body.is-win .marquee-text, body.is-win .marquee-text-ko,
-    body.is-win .header-nav a, body.is-win .menu-toggle, body.is-win .mobile-menu a,
+    body.is-win .header-nav a, body.is-win .header-nav > span, body.is-win .menu-toggle, body.is-win .mobile-menu a,
     body.is-win .gallery-title, body.is-win .gallery-sub,
     body.is-win .info-name, body.is-win .info-desc,
     body.is-win .info-en, body.is-win .info-ko,
@@ -652,7 +655,7 @@
     }
     body.is-win .header-cta { -webkit-text-stroke: 0.004em #000; }
     body.is-win.is-dark .marquee-text, body.is-win.is-dark .marquee-text-ko,
-    body.is-win.is-dark .header-nav a, body.is-win.is-dark .menu-toggle,
+    body.is-win.is-dark .header-nav a, body.is-win.is-dark .header-nav > span, body.is-win.is-dark .menu-toggle,
     body.is-win.is-dark .mobile-menu a,
     body.is-win.is-dark .info-name, body.is-win.is-dark .info-desc,
     body.is-win.is-dark .info-en, body.is-win.is-dark .info-ko,
@@ -990,7 +993,7 @@
     var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
     if (!/win/i.test(p)) return;
     document.body.classList.add('is-win');
-    var sel = '.marquee-text, .marquee-text-ko, .header-nav a, .menu-toggle, .mobile-menu a,'
+    var sel = '.marquee-text, .marquee-text-ko, .header-nav a, .header-nav > span, .menu-toggle, .mobile-menu a,'
             + '.gallery-title, .gallery-sub, .info-name, .info-desc, .info-en, .info-ko,'
             + '.footer-intro, .footer-info, .footer-copy, .header-cta';
     Array.prototype.forEach.call(document.querySelectorAll(sel), function (el) {

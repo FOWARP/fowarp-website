@@ -119,7 +119,8 @@
       align-items: center;
     }
 
-    .header-nav a {
+    .header-nav a,
+    .header-nav > span {
       font-family: 'Karlsbader Grotesk', Arial, sans-serif;
       font-size: calc(var(--vw) * 0.729);
       text-decoration: none;
@@ -127,7 +128,8 @@
       text-transform: capitalize;
     }
 
-    .header-nav a.active { color: #000; }
+    .header-nav a.active,
+    .header-nav > span.active { color: #000; }
 
     .header-cta {
       background: #000;
