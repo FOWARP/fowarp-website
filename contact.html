@@ -454,51 +454,50 @@
     .summary dt { color: #999796; }
     .summary dd { color: #000; max-width: calc(var(--vw) * 22); }
 
-    /* ─── 하단 포트폴리오 마키 (레퍼런스: 원형 궤도) ─────────────
-       썸네일이 오목한 실린더 위를 도는 것처럼 보이게 한다 —
-       중앙은 정면, 양 끝으로 갈수록 rotateY 로 돌아서면서
-       translateZ 로 뷰어 쪽으로 다가와 커진다(= 관찰자가 원 안쪽).
-       각 아이템 변환은 rAF 루프가 트랙 좌표로 계산해 직접 넣는다
-       (getBoundingClientRect 를 매 프레임 쓰면 리플로우가 터진다). */
-    .marq {
+    /* ─── 하단 포트폴리오 원호 캐러셀 ─────────────────────────────
+       카드가 큰 원의 둘레에 놓이고 원 중심을 축으로 회전한다.
+       각 카드는 자기 각도만큼 함께 기울어져 접선 방향을 향한다.
+       원 중심은 화면 아래에 있어 위쪽 호만 보인다 (부채꼴).
+       반지름·각도는 JS 가 카드 폭에서 계산해 넣는다. */
+    .orbit {
+      position: relative;
       overflow: hidden;
-      padding-bottom: calc(var(--vwFont) * 3.125);
       margin-top: calc(var(--vwFont) * 4);
-      perspective: 1200px;
-      -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-              mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+      height: calc(var(--vw) * 21);
+      touch-action: pan-y;
+      cursor: grab;
     }
-    .marq-track {
-      display: flex;
-      will-change: transform;
-      transform-style: preserve-3d;
+    .orbit.is-drag { cursor: grabbing; }
+    .orbit-ring {
+      position: absolute;
+      left: 50%;
+      width: 0;
+      height: 0;
     }
-    .marq-set {
-      display: flex;
-      gap: calc(var(--vw) * 0.625);
-      padding-right: calc(var(--vw) * 0.625);
-      flex-shrink: 0;
-      transform-style: preserve-3d;
-    }
-    .marq-item {
-      flex: none;
-      width: calc(var(--vw) * 12.5);   /* Figma 240 */
-      height: calc(var(--vw) * 8.333); /* Figma 160 */
-      display: block;
-      line-height: 0;
+    .orbit-item {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: calc(var(--vw) * 10.417);          /* 1920 기준 200 */
+      aspect-ratio: 200 / 260;
+      margin-left: calc(var(--vw) * -5.208);    /* 카드 중심을 원 중심에 */
       overflow: hidden;
+      border-radius: calc(var(--vw) * 0.417);
+      line-height: 0;
       will-change: transform;
       transition: opacity 0.3s ease;
+      backface-visibility: hidden;
     }
-    .marq-item > img,
-    .marq-item > video {
+    .orbit-item > img,
+    .orbit-item > video {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center;
       display: block;
+      pointer-events: none;
     }
-    a.marq-item:hover { opacity: 0.75; }
+    a.orbit-item:hover { opacity: 0.75; }
 
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
@@ -532,9 +531,8 @@
       .summary { font-size: 11px; margin-top: 22px; }
       .summary dd { max-width: 46vw; }
       /* --vw 비례로 두면 모바일에서 아이템이 48px 로 찌그러진다 → 고정값 */
-      .marq { padding-bottom: 28px; margin-top: 48px; perspective: 700px; }
-      .marq-set { gap: 8px; padding-right: 8px; }
-      .marq-item { width: 156px; height: 104px; }
+      .orbit { margin-top: 48px; height: 260px; }
+      .orbit-item { width: 116px; margin-left: -58px; border-radius: 6px; }
 
     }
   </style>
@@ -614,26 +612,24 @@
 
     </div>
 
-    <!-- 하단 포트폴리오 마키 -->
-    <div class="marq">
-      <div class="marq-track" id="marqTrack">
-        <div class="marq-set">
-            <a class="marq-item" href="/goventure"><video src="/media/contact-marquee/goventure.mp4" autoplay muted loop playsinline preload="auto" aria-label="GoVenture Forum"></video></a>
-            <a class="marq-item" href="/starbucks"><video src="/media/contact-marquee/starbucks.mp4" autoplay muted loop playsinline preload="auto" aria-label="Starbucks®"></video></a>
-            <a class="marq-item" href="/returnity-skinhealer"><img src="/media/contact-marquee/returnity.jpg" alt="RETURNITY" loading="lazy"></a>
-            <a class="marq-item" href="/nosugaradded"><video src="/media/contact-marquee/nosugar.mp4" autoplay muted loop playsinline preload="auto" aria-label="NO SUGAR ADDED"></video></a>
-            <a class="marq-item" href="/kohonjin"><video src="/media/contact-marquee/kohonjin.mp4" autoplay muted loop playsinline preload="auto" aria-label="KOHONJIN"></video></a>
-            <span class="marq-item"><video src="/media/contact-marquee/calmlab.mp4" autoplay muted loop playsinline preload="auto" aria-label="CALMLAB+"></video></span>
-            <a class="marq-item" href="/hwanghugung"><video src="/media/contact-marquee/hwanghugung.mp4" autoplay muted loop playsinline preload="auto" aria-label="황후궁 삼계탕"></video></a>
-            <span class="marq-item"><img src="/media/contact-marquee/antursolais.jpg" alt="An Túr Solais" loading="lazy"></span>
-            <a class="marq-item" href="/gonyakjelly"><img src="/media/contact-marquee/gonyakjelly.jpg" alt="단백질 곤약젤리" loading="lazy"></a>
-            <span class="marq-item"><video src="/media/contact-marquee/souptoppokki.mp4" autoplay muted loop playsinline preload="auto" aria-label="SOUP TOPPOKKI"></video></span>
-            <a class="marq-item" href="/gooumcookit"><img src="/media/contact-marquee/gooumcookit.jpg" alt="구움쿠킷" loading="lazy"></a>
-            <a class="marq-item" href="/unknot"><video src="/media/contact-marquee/unknot.mp4" autoplay muted loop playsinline preload="auto" aria-label="Unknot"></video></a>
-            <a class="marq-item" href="/jjonjingeo"><img src="/media/contact-marquee/jjonjingeo.jpg" alt="쫀징어" loading="lazy"></a>
-            <span class="marq-item"><img src="/media/contact-marquee/danbaekking.jpg" alt="단백킹" loading="lazy"></span>
-            <span class="marq-item"><img src="/media/contact-marquee/kkokkochip.jpg" alt="꼭꼬칩" loading="lazy"></span>
-        </div>
+    <!-- 하단 포트폴리오 — 원호 캐러셀 -->
+    <div class="orbit" id="orbit">
+      <div class="orbit-ring" id="orbitRing">
+        <a class="orbit-item" href="/goventure"><video src="/media/contact-marquee/goventure.mp4" autoplay muted loop playsinline preload="auto" aria-label="GoVenture Forum"></video></a>
+        <a class="orbit-item" href="/starbucks"><video src="/media/contact-marquee/starbucks.mp4" autoplay muted loop playsinline preload="auto" aria-label="Starbucks®"></video></a>
+        <a class="orbit-item" href="/returnity-skinhealer"><img src="/media/contact-marquee/returnity.jpg" alt="RETURNITY" loading="lazy"></a>
+        <a class="orbit-item" href="/nosugaradded"><video src="/media/contact-marquee/nosugar.mp4" autoplay muted loop playsinline preload="auto" aria-label="NO SUGAR ADDED"></video></a>
+        <a class="orbit-item" href="/kohonjin"><video src="/media/contact-marquee/kohonjin.mp4" autoplay muted loop playsinline preload="auto" aria-label="KOHONJIN"></video></a>
+        <span class="orbit-item"><video src="/media/contact-marquee/calmlab.mp4" autoplay muted loop playsinline preload="auto" aria-label="CALMLAB+"></video></span>
+        <a class="orbit-item" href="/hwanghugung"><video src="/media/contact-marquee/hwanghugung.mp4" autoplay muted loop playsinline preload="auto" aria-label="황후궁 삼계탕"></video></a>
+        <span class="orbit-item"><img src="/media/contact-marquee/antursolais.jpg" alt="An Túr Solais" loading="lazy"></span>
+        <a class="orbit-item" href="/gonyakjelly"><img src="/media/contact-marquee/gonyakjelly.jpg" alt="단백질 곤약젤리" loading="lazy"></a>
+        <span class="orbit-item"><video src="/media/contact-marquee/souptoppokki.mp4" autoplay muted loop playsinline preload="auto" aria-label="SOUP TOPPOKKI"></video></span>
+        <a class="orbit-item" href="/gooumcookit"><img src="/media/contact-marquee/gooumcookit.jpg" alt="구움쿠킷" loading="lazy"></a>
+        <a class="orbit-item" href="/unknot"><video src="/media/contact-marquee/unknot.mp4" autoplay muted loop playsinline preload="auto" aria-label="Unknot"></video></a>
+        <a class="orbit-item" href="/jjonjingeo"><img src="/media/contact-marquee/jjonjingeo.jpg" alt="쫀징어" loading="lazy"></a>
+        <span class="orbit-item"><img src="/media/contact-marquee/danbaekking.jpg" alt="단백킹" loading="lazy"></span>
+        <span class="orbit-item"><img src="/media/contact-marquee/kkokkochip.jpg" alt="꼭꼬칩" loading="lazy"></span>
       </div>
     </div>
 
@@ -861,81 +857,89 @@
       render();
     })();
 
-    // ─── 하단 포트폴리오 마키 — 원형(오목 실린더) 궤도 ──────────
-    (function() {
-      var track = document.getElementById('marqTrack');
-      if (!track) return;
-      var set = track.querySelector('.marq-set');
-      var pos = 0, PX_PER_SEC = 34, setWidth = 0, lastTime = null, raf;
-      var items = [], frame = 0;
+    // ─── 하단 포트폴리오 — 원호 캐러셀 ──────────────────────────
+    // 카드를 원 둘레에 균등 배치하고 원 중심을 축으로 돌린다.
+    // transform: rotate(θ) translateY(-R) — 회전이 카드 기울기까지 겸한다.
+    // 원본 세트를 2배로 복제해 한 바퀴를 촘촘히 채운다.
+    (function () {
+      var ring = document.getElementById('orbitRing');
+      var stage = document.getElementById('orbit');
+      if (!ring || !stage) return;
 
-      // 원 반지름과 최대 회전각. 끝으로 갈수록 앞으로 나오며 약 1.2배로 커진다
-      var MAX_DEG = 55, RADIUS = 520;
+      var sources = [].slice.call(ring.children);
+      var TARGET = 20;                          // 한 바퀴에 놓을 카드 수 (적을수록 호가 조인다)
+      for (var k = sources.length; k < TARGET; k++) ring.appendChild(sources[k % sources.length].cloneNode(true));
+      while (ring.children.length > TARGET) ring.removeChild(ring.lastChild);
+      var items = [].slice.call(ring.children);
+      var N = items.length;
+      var STEP = 360 / N;                       // 카드 간 각도
+      var VISIBLE = 70;                         // 이 각도 밖은 숨긴다
+      var DEG_PER_SEC = 3.2;
+      var base = 0, R = 0, last = null, raf, frame = 0;
+      var dragging = false, lastX = 0, vel = 0;
 
-      function fillClones() {
-        while (track.children.length > 1) track.removeChild(track.lastChild);
-        // 복제 전에 원본 세트의 3D 변환을 지운다 — cloneNode 는 인라인 스타일까지 복사한다
-        [].forEach.call(set.querySelectorAll('.marq-item'), function(el) { el.style.transform = ''; });
-        setWidth = set.offsetWidth;
-        if (!setWidth) return;
-        for (var i = 0, n = Math.ceil(window.innerWidth / setWidth) + 1; i < n; i++)
-          track.appendChild(set.cloneNode(true));
-
-        // 아이템의 트랙 내 정적 좌표를 한 번만 재둔다 (매 프레임 레이아웃 조회 방지).
-        // offsetLeft 는 preserve-3d 가 걸린 .marq-set 이 offsetParent 가 돼버려
-        // 세트마다 0 으로 리셋된다 → 트랙 기준 실좌표를 직접 계산한다.
-        var prev = track.style.transform;
-        track.style.transform = 'none';
-        var trackLeft = track.getBoundingClientRect().left;
-        items = [].map.call(track.querySelectorAll('.marq-item'), function(el) {
-          var r = el.getBoundingClientRect();
-          return { el: el, mid: r.left - trackLeft + r.width / 2,
-                   video: el.querySelector('video'), playing: true };
-        });
-        track.style.transform = prev;
+      function layout() {
+        var w = items[0].getBoundingClientRect().width;
+        var gap = w * 0.12;
+        // 현(chord)이 카드 폭+간격이 되도록 반지름을 정한다
+        R = (w + gap) / (2 * Math.sin(Math.PI / N));
+        var h = items[0].getBoundingClientRect().height;
+        ring.style.top = (R + h / 2 + h * 0.08) + 'px';
       }
 
-      function orbit() {
-        var half = window.innerWidth / 2;
-        var check = (frame++ % 12) === 0; // 영상 재생 제어는 12프레임마다
-        for (var k = 0; k < items.length; k++) {
-          var it = items[k];
-          var n = (pos + it.mid - half) / half;      // -1(좌) ~ 0(중앙) ~ 1(우)
-          if (n < -1.6 || n > 1.6) {                  // 화면 밖은 계산 생략
-            if (check && it.video && it.playing) { it.video.pause(); it.playing = false; }
-            continue;
+      function norm(d) { d = d % 360; if (d > 180) d -= 360; if (d < -180) d += 360; return d; }
+
+      function draw() {
+        var check = (frame++ % 10) === 0;
+        for (var i = 0; i < N; i++) {
+          var a = norm(base + i * STEP);
+          var el = items[i];
+          var on = Math.abs(a) <= VISIBLE;
+          if (on) {
+            el.style.display = '';
+            el.style.transform = 'rotate(' + a.toFixed(2) + 'deg) translateY(' + (-R) + 'px)';
+          } else if (el.style.display !== 'none') {
+            el.style.display = 'none';
           }
-          var c = n < -1 ? -1 : (n > 1 ? 1 : n);
-          var rad = c * MAX_DEG * Math.PI / 180;
-          var z = RADIUS * (1 - Math.cos(rad));       // 끝일수록 뷰어 쪽으로
-          it.el.style.transform = 'translateZ(' + z.toFixed(1) + 'px) rotateY(' +
-                                  (-c * MAX_DEG).toFixed(2) + 'deg)';
-          if (check && it.video && !it.playing) {
-            var pr = it.video.play(); if (pr && pr.catch) pr.catch(function(){});
-            it.playing = true;
+          if (check) {
+            var v = el.querySelector('video');
+            if (v) { if (on && v.paused) { var p = v.play(); if (p && p.catch) p.catch(function(){}); }
+                     else if (!on && !v.paused) v.pause(); }
           }
         }
       }
 
-      function tick(now) {
-        var delta = lastTime !== null ? now - lastTime : 0;
-        lastTime = now;
-        pos -= PX_PER_SEC * (delta / 1000);
-        if (setWidth && pos <= -setWidth) pos += setWidth;
-        track.style.transform = 'translateX(' + pos + 'px)';
-        orbit();
+      function tick(t) {
+        if (last === null) last = t;
+        var dt = Math.min((t - last) / 1000, 0.05); last = t;
+        if (dragging) { /* 드래그 중에는 관성만 */ }
+        else if (Math.abs(vel) > 0.01) { base += vel * dt; vel *= 0.94; }
+        else { base += DEG_PER_SEC * dt; }
+        draw();
         raf = requestAnimationFrame(tick);
       }
 
-      fillClones();
-      raf = requestAnimationFrame(tick);
-
-      window.addEventListener('load', function() {
-        cancelAnimationFrame(raf); lastTime = null; fillClones(); raf = requestAnimationFrame(tick);
+      stage.addEventListener('pointerdown', function (e) {
+        dragging = true; lastX = e.clientX; vel = 0;
+        stage.classList.add('is-drag');
+        stage.setPointerCapture && stage.setPointerCapture(e.pointerId);
       });
-      window.addEventListener('resize', function() {
+      stage.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        var dx = e.clientX - lastX; lastX = e.clientX;
+        var d = dx / (R || 600) * (180 / Math.PI);
+        base += d; vel = d * 60; draw();
+      });
+      function endDrag() { dragging = false; stage.classList.remove('is-drag'); }
+      stage.addEventListener('pointerup', endDrag);
+      stage.addEventListener('pointercancel', endDrag);
+      stage.addEventListener('pointerleave', endDrag);
+
+      layout(); draw();
+      raf = requestAnimationFrame(tick);
+      window.addEventListener('resize', function () {
         cancelAnimationFrame(raf); updateVW();
-        setTimeout(function() { lastTime = null; fillClones(); raf = requestAnimationFrame(tick); }, 50);
+        setTimeout(function () { last = null; layout(); draw(); raf = requestAnimationFrame(tick); }, 50);
       });
     })();
 
