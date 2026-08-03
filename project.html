@@ -336,7 +336,7 @@
       display: flex;
       align-items: center;
       height: 40px;
-      padding: 0 30px;
+      padding: 0 20px;
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: 14px;
       line-height: 1;
@@ -347,7 +347,7 @@
     }
 
     /* 페이지 세로 괘선이 메뉴 위로도 이어진다 */
-    .menu-rules { position: absolute; inset: 0 20px; pointer-events: none; }
+    .menu-rules { position: absolute; inset: 0 10px; pointer-events: none; }
     .menu-rules i { position: absolute; top: 0; bottom: 0; width: 1px; background: #D9D9D9; }
     .menu-rules i:nth-child(1) { left: 0; }
     .menu-rules i:nth-child(2) { left: 50%; }
@@ -649,7 +649,7 @@
         align-items: flex-start;
         gap: 14px;
         min-height: 0;
-        padding: 20px 30px 28px;
+        padding: 20px 20px 28px;
         font-size: 12px;
       }
       .footer-intro, .footer-info, .footer-copy { flex: none; width: 100%; }
@@ -665,7 +665,7 @@
       .marquee-set { gap: calc(var(--vwFont) * 10.416); padding-right: calc(var(--vwFont) * 10.416); } /* 데스크탑 대비 2배 */
 
       /* 괘선(16px)보다 8px 안쪽으로 — PC(괘선 20 / 콘텐츠 30)와 같은 규칙 */
-      .header-main { height: 52px; padding: 0 30px; }
+      .header-main { height: 52px; padding: 0 20px; }
       .header-logo-center img { height: 16px; }
       .header-nav { display: none; }
       .menu-toggle { display: flex; }
@@ -709,13 +709,13 @@
       .gallery-item.is-visible .gallery-label { animation-delay: 1.2s; }
       .gallery-item.is-visible .gallery-media { animation-delay: 1.5s; }
 
-      .header-rules { width: calc(100% - 40px); }
+      .header-rules { width: calc(100% - 20px); }
       .header-rules i:nth-child(2) { left: 50%; }
       .header-rules i:nth-child(3) { display: none; }
       .header-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
       .header-rules i:nth-child(5) { display: none; }
 
-      .grid-rules { left: 20px; right: 20px; }
+      .grid-rules { left: 10px; right: 10px; }
       .grid-rules i:nth-child(2) { left: 50%; }
       .grid-rules i:nth-child(3) { display: none; }
       .grid-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
@@ -725,7 +725,7 @@
         grid-template-columns: repeat(2, 1fr);
         column-gap: 20px;   /* 가운데 괘선 기준 좌우 10px */
         row-gap: 0;   /* 셀 하단 패딩 16px 이 곧 썸네일↔다음 행 선 간격 */
-        padding: 0 30px;
+        padding: 0 20px;
       }
       .gallery-item {
         /* 상단 8px / 하단 16px = 상단의 2배.
@@ -737,8 +737,8 @@
         content: '';
         position: absolute;
         top: 0;
-        left: -30px;
-        width: calc(200% + 76px);
+        left: -20px;
+        width: calc(200% + 60px);
         height: 1px;
         background: #D9D9D9;
       }
@@ -1056,7 +1056,7 @@
       var el = document.querySelector('.grid-rules');
       if (!el) return;
       var r = document.body.getBoundingClientRect();
-      var inset = 20;   // Figma 기준 PC·모바일 동일
+      var inset = window.innerWidth <= 767 ? 10 : 20;   // 모바일은 10px
       el.style.left  = (r.left + inset) + 'px';
       el.style.width = (r.width - inset * 2) + 'px';
     }

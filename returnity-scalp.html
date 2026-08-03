@@ -339,7 +339,7 @@
       display: flex;
       align-items: center;
       height: 40px;
-      padding: 0 30px;
+      padding: 0 20px;
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: 14px;
       line-height: 1;
@@ -350,7 +350,7 @@
     }
 
     /* 페이지 세로 괘선이 메뉴 위로도 이어진다 */
-    .menu-rules { position: absolute; inset: 0 20px; pointer-events: none; }
+    .menu-rules { position: absolute; inset: 0 10px; pointer-events: none; }
     .menu-rules i { position: absolute; top: 0; bottom: 0; width: 1px; background: #D9D9D9; }
     .menu-rules i:nth-child(1) { left: 0; }
     .menu-rules i:nth-child(2) { left: 50%; }
@@ -573,7 +573,7 @@
         align-items: flex-start;
         gap: 14px;
         min-height: 0;
-        padding: 20px 30px 28px;
+        padding: 20px 20px 28px;
         font-size: 12px;
       }
       .footer-intro, .footer-info, .footer-copy { flex: none; width: 100%; }
@@ -594,7 +594,7 @@
       .marquee-set { gap: calc(var(--vwFont) * 10.416); padding-right: calc(var(--vwFont) * 10.416); } /* 데스크탑 대비 2배 */
 
       /* 괘선(16px)보다 8px 안쪽으로 — PC(괘선 20 / 콘텐츠 30)와 같은 규칙 */
-      .header-main { height: 52px; padding: 0 30px; }
+      .header-main { height: 52px; padding: 0 20px; }
       .header-logo-center img { height: 16px; }
       .header-nav { display: none; }
       .menu-toggle { display: flex; }
@@ -611,23 +611,23 @@
         padding-bottom: 60px;
       }
 
-      .grid-rules { left: 20px; right: 20px; }
-      .header-rules { width: calc(100% - 40px); }
+      .grid-rules { left: 10px; right: 10px; }
+      .header-rules { width: calc(100% - 20px); }
       /* 6열 → 2열: 가운데(4번)만 남기고 나머지 내부 괘선 숨김 */
       .grid-rules i:nth-child(2), .grid-rules i:nth-child(3),
       .grid-rules i:nth-child(5), .grid-rules i:nth-child(6),
       .header-rules i:nth-child(2), .header-rules i:nth-child(3),
       .header-rules i:nth-child(5), .header-rules i:nth-child(6) { display: none; }
 
-      .info-row { grid-template-columns: 1fr; margin: 0 20px; }
+      .info-row { grid-template-columns: 1fr; margin: 0 10px; }
       .info-title, .info-en, .info-ko { grid-column: span 1; padding: 10px; }
       .info-title { gap: 5px; }   /* 메인 갤러리 라벨과 동일 */
       .info-en, .info-ko { font-size: 13px; }
       .info-ko { font-size: 14px; }
       .info-name { font-size: 18px; }
       .info-desc { font-size: 12px; }
-      .project-media { margin: 10px 30px 0; gap: 6px; }
-      .detail-strip { width: auto; margin-left: 30px; margin-right: 30px; }
+      .project-media { margin: 10px 20px 0; gap: 6px; }
+      .detail-strip { width: auto; margin-left: 20px; margin-right: 20px; }
       /* 세로로 쌓되 PC 비율은 그대로 유지 (16:9 강제하던 규칙 제거) */
       /* flex 로 정의된 페이지(kohonjin 등)도 있어 두 축 모두 세로로 */
       .media-row-2col { grid-template-columns: 1fr; flex-direction: column; gap: 6px; }
@@ -635,8 +635,8 @@
       .media-row > .media-block { flex: none !important; width: 100% !important; }
       /* 2열 포스터·PC 전용 중앙정렬 폭 → 좌우 마진까지 꽉 채움 */
       .media-grid-2 { grid-template-columns: 1fr; }
-      /* PC 전용 33.333vw 중앙정렬 해제 — 좌우 마진(30px)은 다른 미디어와 동일하게 */
-      .project-media.narrow { width: auto; margin-left: 30px; margin-right: 30px; }
+      /* PC 전용 33.333vw 중앙정렬 해제 — 좌우 마진(20px)은 다른 미디어와 동일하게 */
+      .project-media.narrow { width: auto; margin-left: 20px; margin-right: 20px; }
       .narrow-960 { width: 100%; margin-left: 0; margin-right: 0; }
 
 
@@ -829,7 +829,7 @@
       var el = document.querySelector('.grid-rules');
       if (!el) return;
       var r = document.body.getBoundingClientRect();
-      var inset = 20;   // Figma 기준 PC·모바일 동일
+      var inset = window.innerWidth <= 767 ? 10 : 20;   // 모바일은 10px
       el.style.left  = (r.left + inset) + 'px';
       el.style.width = (r.width - inset * 2) + 'px';
     }
