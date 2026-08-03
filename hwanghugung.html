@@ -684,7 +684,33 @@
       .media-mobile-only  { display: block !important; width: 100%; height: 100%; object-fit: cover; }
       .returnity-overlay, .antursolais-overlay { display: none !important; }
     }
-  </style>
+  
+    /* ─── 윈도우 렌더링 보정 ────────────────────────────────────────
+       DirectWrite 는 맥보다 글자를 두껍게 그린다. -webkit-font-smoothing 은
+       윈도우에서 효과가 없고, Karlsbader 는 400 보다 얇은 웨이트가 없어
+       배경색과 같은 색의 얇은 외곽선으로 글자를 깎는다 (실측 -12%).
+       두께는 em 단위 — px 고정이면 작은 글자만 과하게 깎인다.
+       외곽선 색은 반드시 '글자 뒤 배경색'과 같아야 한다. */
+    body.is-win .marquee-text, body.is-win .marquee-text-ko,
+    body.is-win .header-nav a, body.is-win .menu-toggle, body.is-win .mobile-menu a,
+    body.is-win .gallery-title, body.is-win .gallery-sub,
+    body.is-win .info-name, body.is-win .info-desc,
+    body.is-win .info-en, body.is-win .info-ko,
+    body.is-win .footer-intro, body.is-win .footer-info, body.is-win .footer-copy {
+      -webkit-text-stroke: 0.008em #fff;
+    }
+    body.is-win .header-cta { -webkit-text-stroke: 0.008em #000; }
+    body.is-win.is-dark .marquee-text, body.is-win.is-dark .marquee-text-ko,
+    body.is-win.is-dark .header-nav a, body.is-win.is-dark .menu-toggle,
+    body.is-win.is-dark .mobile-menu a,
+    body.is-win.is-dark .info-name, body.is-win.is-dark .info-desc,
+    body.is-win.is-dark .info-en, body.is-win.is-dark .info-ko,
+    body.is-win.is-dark .footer-intro, body.is-win.is-dark .footer-info,
+    body.is-win.is-dark .footer-copy {
+      -webkit-text-stroke: 0.008em #000;
+    }
+    body.is-win.is-dark .header-cta { -webkit-text-stroke: 0.008em #fff; }
+</style>
 </head>
 <body>
 
@@ -1009,6 +1035,12 @@
     });
   })();
 
+
+  /* 윈도우에서만 글자 두께 보정 (위 .is-win 규칙) */
+  (function () {
+    var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+    if (/win/i.test(p)) document.body.classList.add('is-win');
+  })();
 </script>
 </body>
 </html>
