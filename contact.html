@@ -284,18 +284,21 @@
        상단 진행 바가 Name/Email/Budget/Context 네 단계를 표시한다. */
 
     .contact {
-      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;           /* 스크롤 없이 한 화면에 */
       display: flex;
       flex-direction: column;
       padding-top: calc(var(--vwFont) * 5.208); /* 헤더(마키 40 + 바 60) */
     }
 
     .contact-stage {
-      flex: 1;
+      flex: 1 1 auto;
+      min-height: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: calc(var(--vwFont) * 10.417) 40px 0; /* 헤더 아래 200px */
+      justify-content: center;    /* 남는 높이의 한가운데에 폼 */
+      padding: 0 40px;
       text-align: center;
     }
 
@@ -462,8 +465,9 @@
     .orbit {
       position: relative;
       overflow: hidden;
-      margin-top: calc(var(--vwFont) * 4);
-      height: calc(var(--vw) * 21);
+      flex: none;
+      margin-top: 0;
+      height: min(calc(var(--vw) * 29), 50vh);
       touch-action: pan-y;
       cursor: grab;
     }
@@ -478,9 +482,9 @@
       position: absolute;
       left: 0;
       top: 0;
-      width: calc(var(--vw) * 10.417);          /* 1920 기준 200 */
+      width: calc(var(--vw) * 12);              /* 1920 기준 230 */
       aspect-ratio: 200 / 260;
-      margin-left: calc(var(--vw) * -5.208);    /* 카드 중심을 원 중심에 */
+      margin-left: calc(var(--vw) * -6);        /* 카드 중심을 원 중심에 */
       overflow: hidden;
       border-radius: calc(var(--vw) * 0.417);
       line-height: 0;
@@ -531,7 +535,7 @@
       .summary { font-size: 11px; margin-top: 22px; }
       .summary dd { max-width: 46vw; }
       /* --vw 비례로 두면 모바일에서 아이템이 48px 로 찌그러진다 → 고정값 */
-      .orbit { margin-top: 48px; height: 260px; }
+      .orbit { margin-top: 0; height: min(300px, 38vh); }
       .orbit-item { width: 116px; margin-left: -58px; border-radius: 6px; }
 
     }
