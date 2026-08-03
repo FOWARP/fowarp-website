@@ -1186,23 +1186,23 @@
 
         // ── 상단 방사형 점 광선 ──
         // 중앙 초점에서 위·바깥으로 점이 줄지어 뻗어나간다. 점은 계속 바깥으로 흐른다.
-        var fx = cx, fy = H * 0.80;                 // 초점 (지평선 부근)
-        var RAYS = 21, DOTS = 17;
-        var maxR = H * 2.1;
+        var fx = cx, fy = H * 0.95;                 // 초점 (화면 하단)
+        var RAYS = 23, DOTS = 64;
+        var maxR = H * 1.25;
         for (var ri = 0; ri < RAYS; ri++) {
           var a0 = (ri / (RAYS - 1) - 0.5) * 2.9;   // 좌우로 벌어지는 각도
           for (var di = 0; di < DOTS; di++) {
-            var u = ((di / DOTS) + (t * 0.16) % 1) % 1;
-            if (u < 0.04) continue;
+            var u = ((di / DOTS) + (t * 0.09) % 1) % 1;
+            if (u < 0.06) continue;
             var ang = a0 * (0.55 + u * 0.85);       // 멀어질수록 더 벌어진다
             var rr = u * maxR;
             var rx = fx + Math.sin(ang) * rr;
             var ry = fy - Math.cos(ang) * rr * 0.92;
             if (ry < -20 || rx < -20 || rx > W + 20) continue;
-            var fade = Math.min(1, u * 4.5) * (1 - u * 0.35);
-            var vv = Math.round(210 - fade * 27);   // #D2D2D2 → #B7B7B7
-            var rs = Math.max(1.3, W / 560) * (1 - u * 0.35);
-            ctx.fillStyle = 'rgba(' + vv + ',' + vv + ',' + vv + ',' + Math.min(1, fade * 1.35).toFixed(3) + ')';
+            var fade = Math.min(1, u * 6) * Math.pow(1 - u, 0.75);
+            var vv = Math.round(205 - fade * 22);   // #CDCDCD → #B7B7B7
+            var rs = Math.max(1.6, W / 520) * (1 - u * 0.35);
+            ctx.fillStyle = 'rgba(' + vv + ',' + vv + ',' + vv + ',' + Math.min(1, fade * 2.4).toFixed(3) + ')';
             ctx.fillRect(rx, ry, rs, rs);
           }
         }
