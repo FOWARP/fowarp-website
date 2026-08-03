@@ -825,6 +825,27 @@
       .flip-a:hover .fa { transform: translateY(-0.667em) rotateX(90deg); }
       .flip-a:hover .fb { top: 0; transform: translateZ(0) rotateX(0deg); }
     }
+
+    /* ─── 비활성 링크 (About) ────────────────────────────────────
+       링크는 막되 버튼 형태와 플립은 유지하고, hover 시 넘어온 글자
+       가운데에 취소선이 좌→우로 그어져 '지금은 못 들어감'을 알린다. */
+    .flip-a.is-off { cursor: default; }
+    .flip-a.is-off .fb::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    @media (hover: hover) {
+      .flip-a.is-off .fb::after { transition: transform 0.3s ease 0.08s; }
+      .flip-a.is-off:hover .fb::after { transform: scaleX(1); }
+    }
+    .mobile-menu span.menu-off { color: #B7B7B7; text-decoration: line-through; }
 </style>
 </head>
 <body>
@@ -852,7 +873,7 @@
     <div class="header-main">
       <nav class="header-nav">
         <a href="/project" class="active flip-a"><span class="fa">Project</span><span class="fb" aria-hidden="true">Project</span></a>
-        <a href="/about" class="flip-a"><span class="fa">About</span><span class="fb" aria-hidden="true">About</span></a>
+        <span class="flip-a is-off"><span class="fa">About</span><span class="fb" aria-hidden="true">About</span></span>
         <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener" class="flip-a"><span class="fa">Behance</span><span class="fb" aria-hidden="true">Behance</span></a>
         <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener" class="flip-a"><span class="fa">Instagram</span><span class="fb" aria-hidden="true">Instagram</span></a>
       </nav>
@@ -865,7 +886,7 @@
       <nav class="mobile-menu">
         <div class="menu-rules" aria-hidden="true"><i></i><i></i><i></i></div>
         <a href="/project" class="active">Project</a>
-        <a href="/about">About</a>
+        <span class="menu-off">About</span>
         <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
         <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
       </nav>
