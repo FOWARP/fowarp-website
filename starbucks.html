@@ -669,33 +669,33 @@
       -webkit-text-stroke-width: 0;
     }
 
-    /* ─── 링크 hover 언더바 ───────────────────────────────────────
-       헤더·푸터의 '페이지 이동' 링크에만 적용.
-       hover 시 좌→우로 그어지고, 벗어날 때도 같은 방향으로 빠져나간다
-       (기본 상태의 origin 을 right 로 둬서 오른쪽으로 사라지게 함).
-       커브는 사이트 공통 expo-out. 터치 기기에서는 적용하지 않는다. */
+    /* ─── 링크 hover 플립 (레퍼런스: rayraylab.com 헤더 CONTACT) ───
+       글자를 두 벌 겹쳐 두고 X축으로 접어 교체한다.
+       평상시  앞 글자는 평면, 뒤 글자는 아래로 접혀 보이지 않음
+       hover   앞 글자는 위쪽 모서리로 접혀 사라지고
+               뒤 글자가 아래 모서리에서 펴져 올라온다
+       perspective 를 주지 않아 원근 없이 눌리듯 바뀐다 (레퍼런스 동일).
+       터치 기기에서는 적용하지 않는다. */
+    .flip-a { position: relative; display: inline-block; }
+    .flip-a .fa,
+    .flip-a .fb {
+      display: block;
+      white-space: nowrap;
+      backface-visibility: hidden;
+    }
+    .flip-a .fb {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
     @media (hover: hover) {
-      .header-nav a,
-      .footer-info a { position: relative; }
-      .header-nav a::after,
-      .footer-info a::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: -0.22em;
-        height: 1px;
-        background: currentColor;
-        transform: scaleX(0);
-        transform-origin: right center;
-        transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
-        pointer-events: none;
-      }
-      .header-nav a:hover::after,
-      .footer-info a:hover::after {
-        transform: scaleX(1);
-        transform-origin: left center;
-      }
+      .flip-a .fa,
+      .flip-a .fb { transition: transform 0.3s ease; }
+      .flip-a .fa { transform-origin: center top; }
+      .flip-a .fb { transform-origin: center bottom; transform: rotateX(-90deg); }
+      .flip-a:hover .fa { transform: rotateX(90deg); }
+      .flip-a:hover .fb { transform: rotateX(0deg); }
     }
 </style>
 </head>
@@ -723,10 +723,10 @@
 
     <div class="header-main">
       <nav class="header-nav">
-        <a href="/project" class="active">Project</a>
-        <a href="/about">About</a>
-        <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
-        <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
+        <a href="/project" class="active flip-a"><span class="fa">Project</span><span class="fb" aria-hidden="true">Project</span></a>
+        <a href="/about" class="flip-a"><span class="fa">About</span><span class="fb" aria-hidden="true">About</span></a>
+        <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener" class="flip-a"><span class="fa">Behance</span><span class="fb" aria-hidden="true">Behance</span></a>
+        <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener" class="flip-a"><span class="fa">Instagram</span><span class="fb" aria-hidden="true">Instagram</span></a>
       </nav>
       <button class="menu-toggle" aria-label="Menu" aria-expanded="false">Menu</button>
       <a href="/project" class="header-logo-center"><img src="/media/fowarp-logo-center.svg" alt="FOWARP"></a>
@@ -786,9 +786,9 @@
     <div class="footer-info">
       <span>대표: 오누리</span>
       <span>연락처: +82 10-7914-3740</span>
-      <a href="mailto:hi@fowarp.com">이메일: hi@fowarp.com</a>
-      <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
-      <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
+      <a href="mailto:hi@fowarp.com" class="flip-a"><span class="fa">이메일: hi@fowarp.com</span><span class="fb" aria-hidden="true">이메일: hi@fowarp.com</span></a>
+      <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener" class="flip-a"><span class="fa">Behance</span><span class="fb" aria-hidden="true">Behance</span></a>
+      <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener" class="flip-a"><span class="fa">Instagram</span><span class="fb" aria-hidden="true">Instagram</span></a>
     </div>
     <p class="footer-copy">Copyright &copy; FOWARP. 모든 권리 보유.</p>
   </footer>
