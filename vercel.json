@@ -1,4 +1,13 @@
 {
   "cleanUrls": true,
-  "regions": ["icn1"]
+  "regions": [
+    "icn1"
+  ],
+  "redirects": [
+    {
+      "source": "/returnity",
+      "destination": "/returnity-skinhealer",
+      "permanent": true
+    }
+  ]
 }

@@ -456,14 +456,12 @@
 
     /* ─── MEDIA ─── */
 
-    /* ─── 섹션 블록 ────────────────────────────────────────────────
-       Figma 배치 순서 그대로: 배너 영상 → Home → Serum → Brand.
-       각 섹션은 Figma 프레임을 PDF 로 내보내 2배(3720px)로 렌더한 것.
-       영상은 해당 섹션 위에 Figma 좌표(%)대로 덮는다. */
-    .sec-block { position: relative; overflow: hidden; font-size: 0; }
-    .sec-block > img { display: block; width: 100%; height: auto; }
-    .sec-video { position: absolute; overflow: hidden; }
-    .sec-video video { display: block; width: 100%; height: 100%; object-fit: cover; }
+    /* ─── 상세 스트립 ───────────────────────────────────────────────
+       Figma 453:14234(1920x7009pt)를 PDF 로 내보내 영상 구간 경계에서 잘라
+       이어 붙인 것. 조각 사이 여백 0 이어야 한 장처럼 이어진다. */
+    .detail-strip { display: flex; flex-direction: column; font-size: 0; }
+    .detail-strip img,
+    .detail-strip video { display: block; width: 100%; height: auto; }
 
     .project-media {
       margin: 10px 30px 0;   /* 상하좌우 모두 텍스트 블록과 동일 */
@@ -742,53 +740,24 @@
 
     <div class="hline"></div>
 
-    <!-- 미디어 — Figma 453:14234 배치 순서 그대로
-         1 배너 영상 / 2 (PC) Home / 3 (PC) Serum / 4 (PC) Brand
-         정지 섹션은 Figma 프레임 PDF 렌더, 영상은 그 위에 좌표대로 오버레이 -->
+    <!-- 미디어 — Figma 453:14234 를 PDF 로 내보내 영상 구간에서 잘라 이어 붙임.
+         영상 3개는 오누리가 전달한 원본(이미 1880/1860 폭으로 재단됨). -->
     <div class="project-media">
-
-      <!-- 1 · 배너 영상 (고벤처 첫 영상과 동일한 1880:1058, 중앙 정렬) -->
-      <div class="media-block reveal">
-        <video autoplay muted loop playsinline>
-          <source src="/media/calmlab/v1.mp4" type="video/mp4">
-        </video>
+      <div class="detail-strip reveal">
+      <img src="/media/calmlab/s01.jpg" alt="" loading="lazy">
+      <video autoplay muted loop playsinline>
+        <source src="/media/calmlab/v1.mp4" type="video/mp4">
+      </video>
+      <img src="/media/calmlab/s02.jpg" alt="" loading="lazy">
+      <video autoplay muted loop playsinline>
+        <source src="/media/calmlab/v2.mp4" type="video/mp4">
+      </video>
+      <img src="/media/calmlab/s03.jpg" alt="" loading="lazy">
+      <video autoplay muted loop playsinline>
+        <source src="/media/calmlab/v3.mp4" type="video/mp4">
+      </video>
+      <img src="/media/calmlab/s04.jpg" alt="" loading="lazy">
       </div>
-
-      <!-- 2 · (PC) Home + 그린티 마스크팩 영상 -->
-      <div class="sec-block reveal">
-        <img src="/media/calmlab/home.jpg" alt="" loading="lazy">
-        <div class="sec-video" style="left:48.8542%;top:-1.3251%;width:52.2917%;height:59.4406%">
-          <video autoplay muted loop playsinline>
-            <source src="/media/calmlab/v2.mp4" type="video/mp4">
-          </video>
-        </div>
-      </div>
-
-      <!-- 3 · (PC) Serum -->
-      <div class="sec-block reveal">
-        <img src="/media/calmlab/serum.jpg" alt="" loading="lazy">
-      </div>
-
-      <!-- 4 · (PC) Brand + 3분할 모션 -->
-      <div class="sec-block reveal">
-        <img src="/media/calmlab/brand.jpg" alt="" loading="lazy">
-        <div class="sec-video" style="left:6.2742%;top:85.8336%;width:24.9462%;height:14.6789%">
-          <video autoplay muted loop playsinline>
-            <source src="/media/calmlab/v4.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="sec-video" style="left:38.5699%;top:85.8336%;width:24.9462%;height:14.6789%">
-          <video autoplay muted loop playsinline>
-            <source src="/media/calmlab/v5.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="sec-video" style="left:70.8602%;top:85.8336%;width:24.9462%;height:14.6789%">
-          <video autoplay muted loop playsinline>
-            <source src="/media/calmlab/v6.mp4" type="video/mp4">
-          </video>
-        </div>
-      </div>
-
     </div>
   </div>
 
