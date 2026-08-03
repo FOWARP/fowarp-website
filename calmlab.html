@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FOWARP | 브랜드 디자인 에이전시</title>
+  <title>Calmlab+ | 캄랩 웹사이트 디자인 | FOWARP</title>
   <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-  <meta name="description" content="브랜드의 성장에 필요한 전략과 디자인을 제안합니다. Design &amp; Branding by FOWARP.">
-  <link rel="canonical" href="https://fowarp.vercel.app/">
+  <meta name="description" content="자극은 줄이고 효과에 집중한 데일리 처방, 캄랩의 웹사이트를 디자인하였습니다. Design &amp; Branding by FOWARP.">
+  <link rel="canonical" href="https://fowarp.vercel.app/calmlab">
 
   <!-- Open Graph (카카오톡·페이스북·슬랙) -->
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="article">
   <meta property="og:site_name" content="FOWARP">
   <meta property="og:locale" content="ko_KR">
-  <meta property="og:title" content="FOWARP | 브랜드 디자인 에이전시">
-  <meta property="og:description" content="브랜드의 성장에 필요한 전략과 디자인을 제안합니다. Design &amp; Branding by FOWARP.">
-  <meta property="og:url" content="https://fowarp.vercel.app/">
+  <meta property="og:title" content="Calmlab+ | 캄랩 웹사이트 디자인 | FOWARP">
+  <meta property="og:description" content="자극은 줄이고 효과에 집중한 데일리 처방, 캄랩의 웹사이트를 디자인하였습니다. Design &amp; Branding by FOWARP.">
+  <meta property="og:url" content="https://fowarp.vercel.app/calmlab">
   <meta property="og:image" content="https://fowarp.vercel.app/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -25,8 +25,8 @@
 
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="FOWARP | 브랜드 디자인 에이전시">
-  <meta name="twitter:description" content="브랜드의 성장에 필요한 전략과 디자인을 제안합니다. Design &amp; Branding by FOWARP.">
+  <meta name="twitter:title" content="Calmlab+ | 캄랩 웹사이트 디자인 | FOWARP">
+  <meta name="twitter:description" content="자극은 줄이고 효과에 집중한 데일리 처방, 캄랩의 웹사이트를 디자인하였습니다. Design &amp; Branding by FOWARP.">
   <meta name="twitter:image" content="https://fowarp.vercel.app/og-image.png">
   <link rel="preload" href="/fonts/KarlsbaderGrotesk-400.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="/fonts/KarlsbaderGrotesk-600.otf" as="font" type="font/otf" crossorigin>
@@ -115,10 +115,12 @@
       background: #D9D9D9;
     }
     .header-rules i:nth-child(1) { left: 0; }
-    .header-rules i:nth-child(2) { left: 33.3333%; }
-    .header-rules i:nth-child(3) { left: 66.6667%; }
-    .header-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
-    .header-rules i:nth-child(5) { display: none; }
+    .header-rules i:nth-child(2) { left: 16.6667%; }
+    .header-rules i:nth-child(3) { left: 33.3333%; }
+    .header-rules i:nth-child(4) { left: 50%; }
+    .header-rules i:nth-child(5) { left: 66.6667%; }
+    .header-rules i:nth-child(6) { left: 83.3333%; }
+    .header-rules i:nth-child(7) { left: 100%; margin-left: -1px; }
 
     /* 헤더 가로선 2개(마키바 아래·헤더 아래)도 갤러리 가로선과 같은 모션을 탄다.
        border/box-shadow 는 애니메이션이 안 되므로 pseudo-element 로 그린다.
@@ -356,7 +358,7 @@
     /* ─── PAGE BODY ───────────────────────────── */
     /* 가로선을 화면 끝까지 흘려야 해서 좌우 패딩은 갤러리가 직접 갖는다 */
     .page-body {
-      padding-top: calc(var(--vwFont) * 9.271);  /* Figma 갤러리 top=178 */
+      padding-top: calc(var(--vwFont) * 9.167);  /* Figma 첫 가로선 y=176 */
       padding-left: 0;
       padding-right: 0;
       padding-bottom: calc(var(--vw) * 4.167);
@@ -388,55 +390,41 @@
       background: #D9D9D9;
     }
     .grid-rules i:nth-child(1) { left: 0; }
-    .grid-rules i:nth-child(2) { left: 33.3333%; }
-    .grid-rules i:nth-child(3) { left: 66.6667%; }
-    .grid-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
-    .grid-rules i:nth-child(5) { display: none; }   /* 4열에서만 사용 */
+    .grid-rules i:nth-child(2) { left: 16.6667%; }
+    .grid-rules i:nth-child(3) { left: 33.3333%; }
+    .grid-rules i:nth-child(4) { left: 50%; }
+    .grid-rules i:nth-child(5) { left: 66.6667%; }
+    .grid-rules i:nth-child(6) { left: 83.3333%; }
+    .grid-rules i:nth-child(7) { left: 100%; margin-left: -1px; }
 
-    /* ─── GALLERY (시안B) ─────────────────────────
-       Figma 1920: 행 패딩 30 · 열 간격 20 → 셀 606.67
-       셀 868 = 패딩 10 + 타이틀블록 58 + 간격 32 + 미디어 758 + 패딩 10 */
-    .project-gallery {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      column-gap: 20px;
-      row-gap: 0;   /* 셀 하단 패딩 10px 이 곧 썸네일↔다음 행 선 간격 */
-      padding: 0 30px;
-    }
-
-    .gallery-item {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      /* 위 10px / 아래 10px + 행 간격 64px.
-         박스를 행 간격만큼 아래로 연장하고 음수 마진으로 레이아웃을 되돌린다
-         → 호버 배경이 다음 행 가로선까지 끊김 없이 채워진다 */
-      /* 하단은 고정 10px — 좌우 여백(괘선 기준 10px)이 고정값이라
-         --vw 비례로 두면 화면이 좁아질수록 하단만 줄어든다 */
-      padding: calc(var(--vw) * 0.521) 0 10px;
-    }
-
-    /* 가로선 — Figma 는 행 래퍼의 border-top(#D9D9D9)이 화면 끝까지 풀블리드.
-       그리드를 행으로 감싸면 모바일 2열 재배치가 막히므로,
-       각 행 첫 아이템의 ::before 를 행 전체 폭(3열+간격40+패딩60=1920)으로 늘린다. */
-    .gallery-item:nth-child(3n+1)::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -30px;
-      width: calc(300% + 100px);
+    /* ─── DETAIL (Figma 426:1358) ────────────────
+       1920 기준: 좌우 마진 20, 6열(313.33), 괘선 7줄.
+       가로선 y=176 / y=331, 미디어 y=358 부터 10px 간격 */
+    .hline {
+      width: 100%;
       height: 1px;
       background: #D9D9D9;
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    .hline.is-visible {
+      animation: revLineX 0.75s cubic-bezier(0.7, 0, 0.84, 0) forwards;
     }
 
-    .gallery-label {
-      display: flex;
-      flex-direction: column;
-      gap: calc(var(--vw) * 0.417); /* 8px */
-      flex-shrink: 0;
+    .info-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      align-items: start;
+      margin: 0 20px;
     }
-
-    .gallery-title {
+    .info-row > * { padding: 10px; }
+    .info-title { grid-column: span 1; display: flex; flex-direction: column; gap: calc(var(--vw) * 0.417); }
+    /* 1920 이상에서 T1 이 26px 로 커지면 600 이 과하게 두꺼워 보인다.
+       맥북 14(1512, 20.5px/600)의 시각 굵기에 맞춰 500 으로 낮춘다. */
+    @media (min-width: 1920px) {
+      .info-name { font-weight: 500; }
+    }
+    .info-name {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 1.354); /* 26px */
       font-weight: 600;
@@ -444,88 +432,65 @@
       line-height: 1.2;
       color: #000;
     }
-
-    .gallery-sub {
+    .info-desc {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.833); /* 16px */
       font-weight: 400;
       line-height: 1.2;
       color: #000;
     }
+    .info-en    { grid-column: span 3; }
+    .info-ko    { grid-column: span 2; }
 
-    .gallery-media {
-      /* 오버레이(position:absolute; inset:0)의 기준점. 없으면 .gallery-item 이
-         기준이 돼서 오버레이 텍스트가 타이틀 영역까지 덮는다 */
-      position: relative;
+    /* 영문 Karlsbader Grotesk / 국문 Pretendard — 본문 18px, 행간 1.5 */
+    .info-en, .info-ko {
+      font-size: calc(var(--vwFont) * 0.938);
+      font-weight: 400;
+      line-height: 1.5;
+      color: #000;
+    }
+    /* 국문만 1px 크게 */
+    .info-ko { font-size: calc(var(--vwFont) * 0.990); }
+    .info-en { font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif; }
+    .info-ko { font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif; }
+
+    /* ─── MEDIA ─── */
+    .project-media {
+      margin: 10px 30px 0;   /* 상하좌우 모두 텍스트 블록과 동일 */
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .media-block {
       width: 100%;
-      margin-top: calc(var(--vw) * 1.667); /* 32px */
-      aspect-ratio: 606.667 / 758;
+      aspect-ratio: 1880 / 1058;
       overflow: hidden;
       background: #080808;
+      position: relative;
     }
-
-    .gallery-media video,
-    .gallery-media img {
+    .media-block > video,
+    .media-block > img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center;
       display: block;
-      transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
+    .media-row-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .media-row-2col .media-block { aspect-ratio: 940 / 1058; }
 
-    /* 호버 — 시안A 와 동일. box-shadow 로 회색 블록을 열 간격(20px)의
-       절반씩 좌우로 번지게 해서 인접 셀과 맞물리게 한다 */
-    .gallery-item { transition: background 0.3s ease, box-shadow 0.3s ease; }
-
-    .gallery-item:hover {
-      background: #F5F5F5;
-      box-shadow: 9px 0 0 0 #F5F5F5, -9px 0 0 0 #F5F5F5;
-      transition-delay: 0s !important;
-    }
-
-    /* 노슈가애디드 영상은 상단 하늘이 더 보이도록 크롭 지점만 위로
-       (마스크 크기·위치는 그대로, object-position 만 조정) */
-    a[href="/nosugaradded"] .gallery-media video { object-position: center 25%; }
-
-    .gallery-item:hover .gallery-media video,
-    .gallery-item:hover .gallery-media img { transform: scale(1.04); }
-
-    /* ─── RETURNITY 오버레이 (Figma 393:1470) ───────
-       폭 355/606.67 = 58.516%, 좌측 126/606.67 = 20.769%, 상하 패딩 20 */
-    .returnity-overlay {
+    /* 배너는 원본 상하가 잘려야 구도가 맞고, 하단에 검정 그라디언트 */
+    .media-banner > img { height: 133.27%; top: -19.56%; position: absolute; left: 0; }
+    .banner-gradient {
       position: absolute;
-      top: 0; bottom: 0;
-      left: 20.769%;
-      width: 58.516%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      padding: calc(var(--vw) * 1.042) 0;
-      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      font-size: calc(var(--vwFont) * 0.625); /* 12px */
-      color: #c7c8c7;
-      text-align: center;
-      text-transform: uppercase;
+      bottom: 0; left: 0;
+      width: 100%;
+      height: calc(var(--vw) * 6.042);
+      background: linear-gradient(to bottom, transparent, #000);
       pointer-events: none;
     }
-    .returnity-overlay .ro-top {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: calc(var(--vwFont) * 0.341);
-      width: 100%;
-      line-height: 1;
-    }
-    .returnity-overlay .ro-copy {
-      display: flex;
-      align-items: center;
-      gap: calc(var(--vwFont) * 0.341);
-      line-height: 1.32;
-    }
-    .returnity-overlay .ro-copy i { font-style: normal; }
-    .returnity-overlay .ro-desc { line-height: 1.4; }
+    /* 사원증은 프레임 안에 여백을 두고 놓인다 (Figma 731/940) */
+    .media-idcard { display: flex; align-items: center; justify-content: center; }
+    .media-idcard > img { width: 77.8%; height: auto; }
 
     /* ─── FOOTER (Figma 446:1533) ─────────────────
        높이 80, 상단 #D9D9D9 헤어라인, 좌우 콘텐츠 30px(괘선 20 + 10).
@@ -566,15 +531,11 @@
     .footer-info a:hover { text-decoration: underline; text-underline-offset: 3px; }
     .footer-copy { flex: 55 0 0; white-space: nowrap; text-align: right; }
 
-    /* ─── SCROLL REVEAL (시퀀스 모션) ─────────
-       예비 시안과 동일한 순서·커브·지연:
-       1) 가로선 좌→우(0.7s)  2) 세로선 위→아래(0.5s, +0.3s)
-       3) 라벨(+0.8s) → 미디어(+1.0s) 페이드 */
+    /* ─── SCROLL REVEAL ─────────────────────── */
     @keyframes revLineX   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
     @keyframes revLineY   { from { transform: scaleY(0); } to { transform: scaleY(1); } }
     @keyframes revContent { from { opacity: 0; } to { opacity: 1; } }
 
-    /* 세로 괘선은 문서 전체를 관통하는 전역 요소라 진입 시 한 번만 그어진다 */
     .grid-rules i,
     .header-rules i {
       transform: scaleY(0);
@@ -582,64 +543,11 @@
       animation: revLineY 0.6s cubic-bezier(0.85, 0, 0.15, 1) 0.3s forwards;
     }
 
-    /* 가로선은 행마다 있으므로 그 행이 보일 때 좌→우로 그어진다.
-       ::before 는 행 첫 아이템에만 content 가 있어 나머지는 렌더되지 않는다 */
-    /* 가로선은 '행 첫 아이템'의 pseudo 라 DOM 순서상 뒤인 2·3번 아이템의
-       호버 배경(#F5F5F5)에 덮인다 → z-index 로 형제 배경 위에 올린다 */
-    .gallery-item::before {
-      transform: scaleX(0);
-      transform-origin: left center;
-      z-index: 1;
-    }
-    .gallery-item.is-visible::before {
-      animation: revLineX 0.75s cubic-bezier(0.7, 0, 0.84, 0) forwards;
-    }
-
-    .gallery-label,
-    .gallery-media { opacity: 0; }
-
-    .gallery-item.is-visible .gallery-label {
-      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
-    }
-    .gallery-item.is-visible .gallery-media {
-      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
-    }
-
-    /* ─── PC (1920px 이상): 4열 ──────────────────
-       3열 유지 시 QHD 에서 셀이 820px 까지 커져 썸네일이 과해진다.
-       괘선은 5개(0/25/50/75/100%), 가로선은 4열 폭으로 다시 계산한다. */
-    @media (min-width: 1920px) {
-      /* 1920 이상에서 T1 이 26px 로 커지면 600 이 과하게 두꺼워 보인다.
-         맥북 14(1512, 20.5px/600)의 시각 굵기에 맞춰 500 으로 낮춘다. */
-      .gallery-title { font-weight: 500; }
-
-      .project-gallery { grid-template-columns: repeat(4, 1fr); }
-
-      .header-rules i:nth-child(2) { left: 25%; }
-      .header-rules i:nth-child(3) { left: 50%; }
-      .header-rules i:nth-child(4) { left: 75%; margin-left: 0; }
-      .header-rules i:nth-child(5) { display: block; left: 100%; margin-left: -1px; }
-
-      .grid-rules i:nth-child(2) { left: 25%; }
-      .grid-rules i:nth-child(3) { left: 50%; }
-      .grid-rules i:nth-child(4) { left: 75%; margin-left: 0; }
-      .grid-rules i:nth-child(5) { display: block; left: 100%; margin-left: -1px; }
-
-      /* 행 첫 아이템이 3n+1 → 4n+1 로 바뀐다.
-         1·13번은 두 규칙에 모두 걸리지만 뒤에 오는 4n+1 이 이긴다.
-         폭 = 4열 + 열간격 3개(60) + 좌우 패딩(60) */
-      .gallery-item:nth-child(3n+1)::before { content: none; }
-      .gallery-item:nth-child(4n+1)::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -30px;
-        width: calc(400% + 120px);
-        height: 1px;
-        background: #D9D9D9;
-        z-index: 1;
-      }
-    }
+    .reveal { opacity: 0; }
+    .reveal.is-visible { animation: revContent 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    /* 첫 화면에서 이미 보이던 요소는 선이 다 그어진 뒤 텍스트와 '함께' 등장.
+       스크롤로 들어오는 요소는 지연 없이 바로 뜬다 (기다리면 굼떠 보임) */
+    .reveal.is-intro.is-visible { animation-duration: 0.75s; animation-delay: 0.9s; }
 
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
@@ -656,6 +564,11 @@
       .footer-intro { white-space: normal; gap: 3px; }
       .footer-info { flex-wrap: wrap; justify-content: flex-start; gap: 6px 16px; white-space: normal; }
       .footer-copy { text-align: left; white-space: normal; }
+
+      /* 모바일: 첫 화면(.is-intro)만 모션. 스크롤로 들어오는 것들은
+         이미 불러와진 상태로 두어 등장 모션이 발생하지 않는다 */
+      .reveal.is-visible:not(.is-intro) { animation: none; opacity: 1; }
+      .hline.is-visible:not(.is-intro) { animation: none; transform: scaleX(1); }
 
       .marquee-section { padding: 0; }
       .marquee-bar-inner { height: 28px; border-radius: 0; }
@@ -674,7 +587,7 @@
       .header-cta { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; }
 
       .page-body {
-        padding-top: 110px;
+        padding-top: 92px;
         /* 좌우 패딩은 갤러리(.project-gallery)가 직접 갖는다 — 여기에 두면
            갤러리 패딩과 합산돼 셀이 40px 에서 시작한다 */
         padding-left: 0;
@@ -682,73 +595,33 @@
         padding-bottom: 60px;
       }
 
-      /* 시안A와 동일하게 2열. 괘선 인셋 16 / 갤러리 패딩 24 / 열 간격 16
-         → 괘선2가 정확히 열 사이 중앙(50%)에 온다 */
-      /* 모바일: 첫 화면(.is-intro)만 모션. 스크롤로 들어오는 것들은
-         이미 불러와진 상태로 두어 등장 모션이 발생하지 않게 한다 */
-      .gallery-item.is-visible:not(.is-intro)::before { animation: none; transform: scaleX(1); }
-      .gallery-item.is-visible:not(.is-intro) .gallery-label,
-      .gallery-item.is-visible:not(.is-intro) .gallery-media { animation: none; opacity: 1; }
-
-      /* 모바일은 지금 속도가 맞다는 확인을 받아 기존 값 그대로 유지 */
-      .header::after,
-      .marquee-bar-inner::after,
-      .gallery-item.is-visible::before {
-        animation-duration: 0.9s;
-      }
-      .grid-rules i,
-      .header-rules i {
-        animation-duration: 0.7s;
-        animation-delay: 0.4s;
-      }
-      .marquee-track,
-      .header-logo-center,
-      .header-nav,
-      .header-cta,
-      .menu-toggle,
-      .gallery-item.is-visible .gallery-label { animation-delay: 1.2s; }
-      .gallery-item.is-visible .gallery-media { animation-delay: 1.5s; }
-
-      .header-rules { width: calc(100% - 40px); }
-      .header-rules i:nth-child(2) { left: 50%; }
-      .header-rules i:nth-child(3) { display: none; }
-      .header-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
-      .header-rules i:nth-child(5) { display: none; }
-
       .grid-rules { left: 20px; right: 20px; }
-      .grid-rules i:nth-child(2) { left: 50%; }
-      .grid-rules i:nth-child(3) { display: none; }
-      .grid-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
-      .grid-rules i:nth-child(5) { display: none; }
+      .header-rules { width: calc(100% - 40px); }
+      /* 6열 → 2열: 가운데(4번)만 남기고 나머지 내부 괘선 숨김 */
+      .grid-rules i:nth-child(2), .grid-rules i:nth-child(3),
+      .grid-rules i:nth-child(5), .grid-rules i:nth-child(6),
+      .header-rules i:nth-child(2), .header-rules i:nth-child(3),
+      .header-rules i:nth-child(5), .header-rules i:nth-child(6) { display: none; }
 
-      .project-gallery {
-        grid-template-columns: repeat(2, 1fr);
-        column-gap: 20px;   /* 가운데 괘선 기준 좌우 10px */
-        row-gap: 0;   /* 셀 하단 패딩 16px 이 곧 썸네일↔다음 행 선 간격 */
-        padding: 0 30px;
-      }
-      .gallery-item {
-        /* 상단 8px / 하단 16px = 상단의 2배.
-           행 간격이 0 이라 하단 패딩이 그대로 썸네일↔다음 행 선 간격이 된다 */
-        padding: 8px 0 10px;   /* 하단 10px = 괘선까지 좌우 여백과 동일 */
-      }
-      .gallery-item:nth-child(3n+1)::before { content: none; }
-      .gallery-item:nth-child(2n+1)::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -30px;
-        width: calc(200% + 76px);
-        height: 1px;
-        background: #D9D9D9;
-      }
-      .gallery-label { gap: 5px; }
-      .gallery-title { font-size: 15px; }
-      /* 좁은 폭에서 서브헤드가 한 줄/두 줄로 갈려 같은 행의 썸네일 시작점이
-         어긋난다 → 두 줄분(11px × 1.2 × 2)을 미리 확보 */
-      .gallery-sub { font-size: 11px; min-height: 26.4px; }
-      .gallery-media { margin-top: 14px; }
-      .gallery-item:hover { box-shadow: 8px 0 0 0 #F5F5F5, -8px 0 0 0 #F5F5F5; }
+      .info-row { grid-template-columns: 1fr; margin: 0 20px; }
+      .info-title, .info-en, .info-ko { grid-column: span 1; padding: 10px; }
+      .info-title { gap: 5px; }   /* 메인 갤러리 라벨과 동일 */
+      .info-en, .info-ko { font-size: 13px; }
+      .info-ko { font-size: 14px; }
+      .info-name { font-size: 18px; }
+      .info-desc { font-size: 12px; }
+      .project-media { margin: 10px 30px 0; gap: 6px; }
+      /* 세로로 쌓되 PC 비율은 그대로 유지 (16:9 강제하던 규칙 제거) */
+      /* flex 로 정의된 페이지(kohonjin 등)도 있어 두 축 모두 세로로 */
+      .media-row-2col { grid-template-columns: 1fr; flex-direction: column; gap: 6px; }
+      /* 세로 스택에서 inline flex-basis 가 높이를 0 으로 만들던 문제 */
+      .media-row > .media-block { flex: none !important; width: 100% !important; }
+      /* 2열 포스터·PC 전용 중앙정렬 폭 → 좌우 마진까지 꽉 채움 */
+      .media-grid-2 { grid-template-columns: 1fr; }
+      /* PC 전용 33.333vw 중앙정렬 해제 — 좌우 마진(30px)은 다른 미디어와 동일하게 */
+      .project-media.narrow { width: auto; margin-left: 30px; margin-right: 30px; }
+      .narrow-960 { width: 100%; margin-left: 0; margin-right: 0; }
+      .banner-gradient { height: 60px; }
 
       .overlay-row    { flex-direction: column; align-items: flex-start !important; gap: 6px; }
       .overlay-top    { font-size: 9px !important; }
@@ -803,11 +676,11 @@
 </head>
 <body>
 
-  <div class="grid-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="grid-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
   <header class="header">
 
-    <div class="header-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="header-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="marquee-section">
       <div class="marquee-bar">
         <div class="marquee-bar-inner">
@@ -847,185 +720,24 @@
   </header>
 
   <div class="page-body">
-    <div class="project-gallery">
-      <a class="gallery-item" href="/goventure" style="text-decoration:none;color:inherit;">
-        <div class="gallery-label">
-          <span class="gallery-title">Goventure Forum</span>
-          <span class="gallery-sub">고벤처포럼 브랜드 리뉴얼</span>
-        </div>
-        <div class="gallery-media">
-          <video autoplay muted loop playsinline>
-            <source src="/media/B01/goventure.mp4" type="video/mp4">
-          </video>
-        </div>
-      </a>
-      <a class="gallery-item" href="/starbucks" style="text-decoration:none;color:inherit;">
-        <div class="gallery-label">
-          <span class="gallery-title">Starbucks®</span>
-          <span class="gallery-sub">스타벅스 베로나 · 스프링 드립백 프로모션</span>
-        </div>
-        <div class="gallery-media">
-          <video autoplay muted loop playsinline>
-            <source src="/media/B01/starbucks.mp4" type="video/mp4">
-          </video>
-        </div>
-      </a>
-      <a class="gallery-item tile-returnity" href="/returnity" style="text-decoration:none;color:inherit;">
-        <div class="gallery-label">
-          <span class="gallery-title">Returnity</span>
-          <span class="gallery-sub">리터니티 스킨힐러 디바이스 디자인</span>
-        </div>
-        <div class="gallery-media" style="position:relative; overflow:hidden;">
-          <img class="media-desktop-only" src="/media/gallery/returnity-b.jpg" alt="Returnity"
-               style="position:absolute; width:139.365%; height:auto; left:-22.29%; top:-33.69%;">
-          <img class="media-mobile-only" src="/media/gallery/returnity-mobile.jpg" alt="Returnity" style="display:none;">
-          <div class="returnity-overlay">
-            <div class="ro-top">
-              <span>More than skin deep, life routine care</span>
-              <span class="ro-copy"><i>&copy;</i><i>RETURNITY</i></span>
-            </div>
-            <p class="ro-desc">A home care device engineered to deliver ion<br>plasma directly through a vacuum tube for<br>effective skincare.</p>
-          </div>
-        </div>
-      </a>
-      <a class="gallery-item" href="/nosugaradded" style="text-decoration:none;color:inherit;">
-        <div class="gallery-label">
-          <span class="gallery-title">No Sugar Added</span>
-          <span class="gallery-sub">노슈가애디드 브랜드 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <video autoplay muted loop playsinline>
-            <source src="/media/gallery/nosugar.mp4" type="video/mp4">
-          </video>
-        </div>
-      </a>
-      <a class="gallery-item" href="/kohonjin" style="text-decoration:none;color:inherit;">
-        <div class="gallery-label">
-          <span class="gallery-title">Kohonjin</span>
-          <span class="gallery-sub">고혼진 브랜드 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <video autoplay muted loop playsinline style="object-position:center;">
-            <source src="/media/gallery/kohonjin.mp4" type="video/mp4">
-          </video>
-        </div>
-      </a>
-      <a class="gallery-item" href="/returnity-scalp" style="text-decoration:none;color:inherit;">
-        <div class="gallery-label">
-          <span class="gallery-title">Returnity</span>
-          <span class="gallery-sub">리터니티 율무 딥스케일링 두피 스왑 상세페이지 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <img src="/media/gallery/returnity-scalp.jpg" alt="RETURNITY 율무 딥스케일링 두피 스왑">
-        </div>
-      </a>
-      <a class="gallery-item" href="/calmlab" style="text-decoration:none;color:inherit;">
-        <div class="gallery-label">
-          <span class="gallery-title">Calmlab+</span>
-          <span class="gallery-sub">캄랩 웹사이트 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <video autoplay muted loop playsinline style="object-position:center;">
-            <source src="/media/gallery/calmlab.mp4" type="video/mp4">
-          </video>
-        </div>
-      </a>
-      <a class="gallery-item" href="/hwanghugung" style="text-decoration:none;color:inherit;">
-        <div class="gallery-label">
-          <span class="gallery-title">황후궁 삼계탕</span>
-          <span class="gallery-sub">황후궁 삼계탕 브랜드 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <video autoplay muted loop playsinline style="object-position:center;">
-            <source src="/media/gallery/hwanghugung.mp4" type="video/mp4">
-          </video>
-        </div>
-      </a>
-      <div class="gallery-item">
-        <div class="gallery-label">
-          <span class="gallery-title">An Túr Solais</span>
-          <span class="gallery-sub">앙투어솔레 브랜드 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <img class="media-desktop-only" src="/media/gallery/antursolais.jpg" alt="An Túr Solais">
-          <img class="media-mobile-only" src="/media/gallery/antursolais-mobile.jpg" alt="An Túr Solais" style="display:none;">
-          <div class="antursolais-overlay" style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:max(12px, calc(var(--vw)*1.302)) max(12px, calc(var(--vw)*1.302));">
-            <div class="overlay-body" style="text-align:center;color:#fff;font-family:'Karlsbader Grotesk','Pretendard Variable',Arial,sans-serif;font-size:calc(var(--vwFont)*0.469);line-height:1.6;text-transform:uppercase;letter-spacing:0.05em;max-width:calc(var(--vw)*22);margin:0 auto;">
-              AN TÚR SOLAIS IS A PREMIUM KOREAN GRILLING CHEESE BRAND CRAFTED WITH 100% NATURAL IRISH MILK. KNOWN FOR ITS SIGNATURE CHEWY, BUTTERY TEXTURE, IT HAS BECOME THE #1 GRILLING CHEESE BRAND IN KOREA, SURPASSING ONE MILLION BOXES SOLD. THE BRAND BLENDS AUTHENTIC IRISH DAIRY TRADITION WITH MODERN KOREAN FOOD CULTURE.
-            </div>
-            <div class="overlay-top" style="text-align:center;color:#fff;font-family:'Karlsbader Grotesk','Pretendard Variable',Arial,sans-serif;font-size:calc(var(--vwFont)*0.469);line-height:1.4;text-transform:uppercase;letter-spacing:0.05em;">
-              ©AN TÚR SOLAIS
-            </div>
-          </div>
-        </div>
+    <div class="hline"></div>
+
+    <div class="info-row">
+      <div class="info-title reveal">
+        <span class="info-name">Calmlab+</span>
+        <span class="info-desc">캄랩 웹사이트 디자인</span>
       </div>
-      <a class="gallery-item" href="/gonyakjelly" style="text-decoration:none;color:inherit;">
-        <div class="gallery-label">
-          <span class="gallery-title">단백질 곤약젤리</span>
-          <span class="gallery-sub">단백질 곤약젤리 브랜드 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <img src="/media/gallery/protein-konjac.jpg" alt="단백질 곤약젤리">
-        </div>
-      </a>
-      <div class="gallery-item">
-        <div class="gallery-label">
-          <span class="gallery-title">Soup Toppokki</span>
-          <span class="gallery-sub">국물 떡볶이 브랜드 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <video autoplay muted loop playsinline>
-            <source src="/media/gallery/souptoppokki.mp4" type="video/mp4">
-          </video>
-        </div>
-      </div>
-      <a class="gallery-item" href="/gooumcookit" style="text-decoration:none;color:inherit;">
-        <div class="gallery-label">
-          <span class="gallery-title">구움쿠킷</span>
-          <span class="gallery-sub">구움쿠킷 브랜드 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <img src="/media/gallery/goumcookit.jpg" alt="구움쿠킷">
-        </div>
-      </a>
-      <a class="gallery-item" href="/unknot" style="text-decoration:none;color:inherit;">
-        <div class="gallery-label">
-          <span class="gallery-title">Unknot</span>
-          <span class="gallery-sub">언나트 브랜드 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <video autoplay muted loop playsinline>
-            <source src="/media/gallery/unknot.mp4" type="video/mp4">
-          </video>
-        </div>
-      </a>
-      <a class="gallery-item" href="/jjonjingeo" style="text-decoration:none;color:inherit;">
-        <div class="gallery-label">
-          <span class="gallery-title">쫀징어</span>
-          <span class="gallery-sub">쫀징어 브랜드 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <img src="/media/gallery/jjonjingeo.jpg" alt="쫀징어">
-        </div>
-      </a>
-      <div class="gallery-item">
-        <div class="gallery-label">
-          <span class="gallery-title">단백킹</span>
-          <span class="gallery-sub">단백킹 브랜드 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <img src="/media/gallery/danbaekking-1.jpg" alt="단백킹">
-        </div>
-      </div>
-      <div class="gallery-item">
-        <div class="gallery-label">
-          <span class="gallery-title">꼭꼬칩</span>
-          <span class="gallery-sub">꼭꼬칩 브랜드 디자인</span>
-        </div>
-        <div class="gallery-media">
-          <img src="/media/gallery/kkokkozip.jpg" alt="꼭꼬칩">
-        </div>
-      </div>
+      <p class="info-en reveal">We designed the website for CALMLAB+, a daily prescription that lowers irritation and concentrates on results. To bring CALMLAB+'s refined perspective, one that reads nature as evidence rather than sentiment, into a visual language, we lowered the saturation of the user interface and built the palette around neutrals, and we designed motion graphics that make the brand's exacting, error-free targeting visible.</p>
+      <p class="info-ko reveal">자극은 줄이고 효과에 집중한 데일리 처방, 캄랩의 웹사이트를 디자인하였습니다. 자연을 감성이 아닌 근거로 해석하는 캄랩의 정제된 시선을 시각적 언어로 표현하기 위해 유저 인터페이스의 채도를 낮추고 뉴트럴 중심의 컬러로 설계하였으며, 캄랩의 오차 없는 정밀한 타겟팅을 시각적으로 구현하기 위한 모션 그래픽을 디자인하였습니다.</p>
+    </div>
+
+    <div class="hline"></div>
+
+    <!-- 미디어 : 에셋 수령 후 채운다.
+         첫 영상은 고벤처포럼과 동일한 1880:1058 (.media-block 기본값)로 중앙 정렬.
+         Figma 453:14223 은 프레임이 커서 하위 노드를 받을 수 없었고,
+         Figma 의 영상 필은 MCP 로 mp4 추출이 불가하다 → 원본 파일 필요. -->
+    <div class="project-media">
     </div>
   </div>
 
@@ -1075,17 +787,28 @@
 
     // (인트로 전환 코드 없음 — index.html에서 단일 페이지로 처리)
 
+    // 무거운 영상이 늦게 반영되면 Lenis 가 옛 문서 높이로 한계를 잡는다 → 재동기화
+    (function() {
+      function resync() { if (lenis && lenis.resize) lenis.resize(); }
+      document.querySelectorAll('video').forEach(function(v) {
+        v.addEventListener('loadedmetadata', resync);
+        v.addEventListener('loadeddata', resync);
+      });
+      window.addEventListener('load', resync);
+      setTimeout(resync, 1500); setTimeout(resync, 4000);
+    })();
+
     // Scroll reveal — getBoundingClientRect 기반 (body가 스크롤 컨테이너라 IO 대신 사용)
     (function() {
-      var items = document.querySelectorAll('.gallery-item');
-      var isIntro = true;   // 최초 판정에 걸린 행만 인트로 시퀀스를 탄다
+      var items = document.querySelectorAll('.reveal, .hline');
+      var isIntro = true;   // 최초 판정에 걸린 요소만 인트로 지연을 받는다
       function check() {
         var vh = window.innerHeight;
         items.forEach(function(el) {
           if (el.classList.contains('is-visible')) return;
           var r = el.getBoundingClientRect();
           // bottom>0 조건을 빼야 빠른 스크롤로 지나쳐버린 요소도 반드시 등장한다
-          if (r.top < vh * 0.88) {
+          if (r.top < vh * 0.95) {
             if (isIntro) el.classList.add('is-intro');
             el.classList.add('is-visible');
           }
