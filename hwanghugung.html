@@ -710,6 +710,17 @@
       -webkit-text-stroke: 0.008em #000;
     }
     body.is-win.is-dark .header-cta { -webkit-text-stroke: 0.008em #fff; }
+
+    /* 한글은 획이 촘촘해 같은 값에서 더 많이 깎인다 (0.008em 기준 한글 -16% / 영문 -12%).
+       한글이 들어가는 요소는 절반 값으로 낮춘다 (-8%). */
+    body.is-win .marquee-text-ko, body.is-win .gallery-sub,
+    body.is-win .info-desc, body.is-win .info-ko,
+    body.is-win .footer-intro, body.is-win .footer-info, body.is-win .footer-copy,
+    body.is-win.is-dark .marquee-text-ko, body.is-win.is-dark .info-desc,
+    body.is-win.is-dark .info-ko, body.is-win.is-dark .footer-intro,
+    body.is-win.is-dark .footer-info, body.is-win.is-dark .footer-copy {
+      -webkit-text-stroke-width: 0.004em;
+    }
 </style>
 </head>
 <body>
