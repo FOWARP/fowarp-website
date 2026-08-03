@@ -335,7 +335,8 @@
       pointer-events: auto;
     }
 
-    .mobile-menu a {
+    .mobile-menu a,
+    .mobile-menu span {
       position: relative;
       z-index: 1;            /* 괘선보다 위 — 사이트 전역 규칙과 동일 */
       display: flex;
@@ -536,7 +537,7 @@
     body.is-dark .header-logo-center img { filter: invert(1); }
     body.is-dark .header-cta { background: #fff; color: #000; }
     body.is-dark .mobile-menu { background: #000; border-top-color: #fff; }
-    body.is-dark .mobile-menu a { color: #fff; border-bottom-color: #fff; }
+    body.is-dark .mobile-menu a, body.is-dark .mobile-menu span { color: #fff; border-bottom-color: #fff; }
     body.is-dark .grid-rules i,
     body.is-dark .header-rules i,
     body.is-dark .header::after,
@@ -705,7 +706,7 @@
        두께는 em 단위 — px 고정이면 작은 글자만 과하게 깎인다.
        외곽선 색은 반드시 '글자 뒤 배경색'과 같아야 한다. */
     body.is-win .marquee-text, body.is-win .marquee-text-ko,
-    body.is-win .header-nav a, body.is-win .header-nav > span, body.is-win .menu-toggle, body.is-win .mobile-menu a,
+    body.is-win .header-nav a, body.is-win .header-nav > span, body.is-win .menu-toggle, body.is-win .mobile-menu a, body.is-win .mobile-menu span,
     body.is-win .gallery-title, body.is-win .gallery-sub,
     body.is-win .info-name, body.is-win .info-desc,
     body.is-win .info-en, body.is-win .info-ko,
@@ -715,7 +716,7 @@
     body.is-win .header-cta { -webkit-text-stroke: 0.004em #000; }
     body.is-win.is-dark .marquee-text, body.is-win.is-dark .marquee-text-ko,
     body.is-win.is-dark .header-nav a, body.is-win.is-dark .header-nav > span, body.is-win.is-dark .menu-toggle,
-    body.is-win.is-dark .mobile-menu a,
+    body.is-win.is-dark .mobile-menu a, body.is-win.is-dark .mobile-menu span,
     body.is-win.is-dark .info-name, body.is-win.is-dark .info-desc,
     body.is-win.is-dark .info-en, body.is-win.is-dark .info-ko,
     body.is-win.is-dark .footer-intro, body.is-win.is-dark .footer-info,
@@ -776,7 +777,6 @@
       .flip-a.is-off .fb::after { transition: transform 0.3s ease 0.08s; }
       .flip-a.is-off:hover .fb::after { transform: scaleX(1); }
     }
-    .mobile-menu span.menu-off { cursor: pointer; }
 
     /* ─── About 사이드 패널 ──────────────────────────────────────
        헤더 About 을 누르면 왼쪽에서 밀려 나온다 (레퍼런스 iroje.com 은 오른쪽).
@@ -1248,9 +1248,12 @@
       toggle.addEventListener('click', function() {
         setOpen(!menu.classList.contains('is-open'));
       });
-      menu.querySelectorAll('a').forEach(function(a) {
-        a.addEventListener('click', function() { setOpen(false); });
+      menu.querySelectorAll('a, span').forEach(function(el) {
+        el.addEventListener('click', function() { setOpen(false); });
       });
+      // 드롭다운 아래 빈 화면(오버레이)을 누르면 닫힌다
+      var mo = document.querySelector('.menu-overlay');
+      if (mo) mo.addEventListener('click', function() { setOpen(false); });
     })();
 
 
@@ -1291,7 +1294,7 @@
     var p = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
     if (!/win/i.test(p)) return;
     document.body.classList.add('is-win');
-    var sel = '.marquee-text, .marquee-text-ko, .header-nav a, .header-nav > span, .menu-toggle, .mobile-menu a,'
+    var sel = '.marquee-text, .marquee-text-ko, .header-nav a, .header-nav > span, .menu-toggle, .mobile-menu a, .mobile-menu span,'
             + '.gallery-title, .gallery-sub, .info-name, .info-desc, .info-en, .info-ko,'
             + '.footer-intro, .footer-info, .footer-copy, .header-cta';
     Array.prototype.forEach.call(document.querySelectorAll(sel), function (el) {

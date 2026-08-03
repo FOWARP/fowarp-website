@@ -243,7 +243,8 @@
       transition: clip-path 0.52s cubic-bezier(0.22, 1, 0.36, 1),
                   visibility 0s;
     }
-    .mobile-menu a {
+    .mobile-menu a,
+    .mobile-menu span {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: 16px;
       text-decoration: none;
@@ -531,7 +532,6 @@
       .flip-a.is-off .fb::after { transition: transform 0.3s ease 0.08s; }
       .flip-a.is-off:hover .fb::after { transform: scaleX(1); }
     }
-    .mobile-menu span.menu-off { cursor: pointer; }
 
     /* ─── About 사이드 패널 ──────────────────────────────────────
        헤더 About 을 누르면 왼쪽에서 밀려 나온다 (레퍼런스 iroje.com 은 오른쪽).
@@ -975,9 +975,12 @@
       toggle.addEventListener('click', function() {
         setOpen(!menu.classList.contains('is-open'));
       });
-      menu.querySelectorAll('a').forEach(function(a) {
-        a.addEventListener('click', function() { setOpen(false); });
+      menu.querySelectorAll('a, span').forEach(function(el) {
+        el.addEventListener('click', function() { setOpen(false); });
       });
+      // 드롭다운 아래 빈 화면(오버레이)을 누르면 닫힌다
+      var mo = document.querySelector('.menu-overlay');
+      if (mo) mo.addEventListener('click', function() { setOpen(false); });
     })();
 
 
