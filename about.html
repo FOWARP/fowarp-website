@@ -704,14 +704,6 @@
 
     /* ─── ABOUT ─────────────────────────────────────────────────
        심볼 로고를 점으로 찍고 마우스에 반응시킨다. */
-    .about-hero {
-      position: relative;
-      margin: 10px 30px 0;
-      aspect-ratio: 1880 / 900;
-      overflow: hidden;
-      background: #fff;
-    }
-    .about-hero canvas { display: block; width: 100%; height: 100%; }
 
     .about-row {
       display: grid;
@@ -738,7 +730,6 @@
     .about-ko { font-size: calc(var(--vwFont) * 0.990); }
 
     @media (max-width: 767px) {
-      .about-hero { margin: 10px 20px 0; aspect-ratio: 1 / 1; }
       .about-row { grid-template-columns: 1fr; margin: 0 10px; }
       .about-no, .about-en, .about-ko { grid-column: span 1; padding: 10px; }
       .about-en { font-size: 13px; }
@@ -815,10 +806,6 @@
 
   <div class="page-body">
     <div class="hline"></div>
-
-    <div class="about-hero reveal">
-      <canvas id="markCanvas"></canvas>
-    </div>
 
     <div class="hline"></div>
     <div class="about-row">
@@ -1043,193 +1030,6 @@
     });
   })();
 
-    // ─── 심볼 3D 파티클 필드 ───────────────────────────────────
-    // 바닥 전체에 점 격자를 깔고 파동으로 계속 흐르게 한다.
-    // 심볼 영역의 점은 위로 솟아 고원(plateau)을 만들고,
-    // 바닥부터 고원까지 점을 세워 기둥처럼 입체가 드러나게 한다.
-    // 카메라는 살짝 위에서 내려다보는 원근 투영.
-    (function () {
-      var cv = document.getElementById('markCanvas');
-      if (!cv) return;
-      var ctx = cv.getContext('2d');
-      var PATH = new Path2D("M292.56,177.63v10.45h-20.9v-31.35h10.45v-10.45h31.35v-10.45h20.9v-20.9h10.45v-10.45h-20.9v10.45h-10.45v10.45h-10.45v-20.9h10.45v-10.45h10.45v-10.45h10.45v-20.9h10.45v-10.45h10.45v-10.45h10.45V10.45h-10.45V0h-62.69v10.45h-10.45v10.45h-20.9v10.45h-10.45v10.45h-10.45v10.45h-10.45v10.45h-10.45v10.45h-10.45v10.45h-10.45v10.45h-31.35v-10.45H41.79v10.45h-20.9v10.45h-10.45v20.9H0v62.69h10.45v10.45h10.45v10.45h83.59v-10.45h20.9v-10.45h20.9v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h20.9v10.45h31.35v10.45h-10.45v52.24h10.45v10.45h41.79v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h-20.9ZM146.28,135.83v10.45h-10.45v10.45h-10.45v10.45h-20.9v10.45h-20.9v10.45H31.35v-10.45h-10.45v-41.79h10.45v-10.45h10.45v-10.45h10.45v-10.45h83.59v10.45h10.45v10.45h10.45v10.45h-10.45ZM240.32,94.04v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h20.9v10.45h-10.45v10.45h-10.45v10.45h-10.45v20.9h-10.45v10.45h-10.45v10.45h-31.35v-10.45h10.45Z");
-      var VB_W = 365.7, VB_H = 219.42;
-
-      var NX = 168, NZ = 86;              // 격자 해상도
-      var SPAN_X = 3.4, SPAN_Z = 2.0;     // 월드 크기
-      var Z0 = 0.62;                      // 카메라에서 가장 가까운 z
-      var CAM_H = 0.34;                   // 카메라 높이
-      var PLATEAU = 0.30;                 // 심볼이 솟는 높이
-      var mask = null, MW = 0, MH = 0;
-      var W = 0, H = 0, dpr = 1, raf, t0 = 0;
-      var mx = -9999, my = -9999;
-
-      function buildMask() {
-        MW = 300; MH = Math.round(MW * VB_H / VB_W);
-        var off = document.createElement('canvas');
-        off.width = MW; off.height = MH;
-        var oc = off.getContext('2d');
-        oc.scale(MW / VB_W, MW / VB_W);
-        oc.fillStyle = '#000'; oc.fill(PATH);
-        var d = oc.getImageData(0, 0, MW, MH).data;
-        mask = new Uint8Array(MW * MH);
-        for (var i = 0; i < MW * MH; i++) mask[i] = d[i * 4 + 3] > 128 ? 1 : 0;
-      }
-
-      function resize() {
-        var r = cv.getBoundingClientRect();
-        dpr = Math.min(window.devicePixelRatio || 1, 1.6);
-        W = Math.round(r.width); H = Math.round(r.height);
-        cv.width = W * dpr; cv.height = H * dpr;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-
-      // 심볼을 월드의 이 영역에 배치 (가운데, 안쪽)
-      var SX0 = -0.95, SX1 = 0.95, SZ0 = 0.30, SZ1 = 1.30;
-
-      function inSymbol(X, Z) {
-        if (X < SX0 || X > SX1 || Z < SZ0 || Z > SZ1) return 0;
-        var u = (X - SX0) / (SX1 - SX0);
-        var v = (Z - SZ0) / (SZ1 - SZ0);
-        var px = (u * MW) | 0, py = (v * MH) | 0;
-        if (px < 0 || py < 0 || px >= MW || py >= MH) return 0;
-        return mask[py * MW + px];
-      }
-
-      function frame(now) {
-        if (!t0) t0 = now;
-        var t = (now - t0) / 1000;
-        ctx.clearRect(0, 0, W, H);
-
-        var cx = W / 2, cy = H * 0.74;
-        var focal = W * 0.62;
-        var dx = SPAN_X / NX, dz = SPAN_Z / NZ;
-
-        for (var j = 0; j < NZ; j++) {
-          var Z = Z0 + j * dz;
-          var s = focal / Z;
-          var rad = Math.max(0.7, s * 0.0042);
-          for (var i = 0; i < NX; i++) {
-            var X = -SPAN_X / 2 + i * dx;
-
-            // 바닥 파동 — 여러 파를 겹쳐 유기적으로
-            var g = Math.sin(X * 2.1 + t * 1.9) * 0.055
-                  + Math.sin(Z * 3.3 - t * 1.4) * 0.040
-                  + Math.sin((X + Z) * 4.4 + t * 2.7) * 0.022
-                  + Math.sin((X - Z * 1.7) * 6.1 - t * 2.0) * 0.014;
-
-            var top = g;
-
-            var sx = cx + X * s;
-            if (sx < -30 || sx > W + 30) continue;
-
-            // 마우스 교란 — 화면 거리로 판정
-            var syTop = cy + (CAM_H - top) * s;
-            var ddx = sx - mx, ddy = syTop - my;
-            var dd = ddx * ddx + ddy * ddy;
-            var push = 0;
-            if (dd < 30000) { var dlen = Math.sqrt(dd); push = (1 - dlen / 173); push = push * push * 26; }
-
-            var sy = syTop - push * 0.6;
-            // 높이가 높을수록 밝게 — 능선이 빛나 보인다
-            var hb = (top + 0.12) / (PLATEAU + 0.2);
-            if (hb < 0) hb = 0; else if (hb > 1) hb = 1;
-            var depth = 1 - (Z - Z0) / SPAN_Z;
-            var mix = hb * 0.6 + depth * 0.4;            // 높고 가까울수록 진하게
-            var v = Math.round(217 - mix * 34);          // #D9D9D9 → #B7B7B7
-            var a = (0.35 + mix * 0.65);
-            ctx.fillStyle = 'rgba(' + v + ',' + v + ',' + v + ',' + a.toFixed(3) + ')';
-            ctx.fillRect(sx, sy, rad, rad);
-          }
-        }
-
-        // ── 심볼: 정면 빌보드 + 아래로 뻗는 기둥 ──
-        // 로고를 25도 눕혀 원근 투영하고, 각 점 아래로 점을 세워 두께를 만든다
-        var LW = W * 0.76, LH = LW * VB_H / VB_W;
-        var lx0 = cx - LW / 2, ly0 = H * 0.08;
-        var stepPx = Math.max(3, Math.round(W / 260));
-        var cosT = Math.cos(25 * Math.PI / 180), sinT = Math.sin(25 * Math.PI / 180);
-        var f2 = W * 0.9;
-        for (var sy2 = 0; sy2 < MH; sy2 += 2) {
-          for (var sx2 = 0; sx2 < MW; sx2 += 2) {
-            if (!mask[sy2 * MW + sx2]) continue;
-            var ux = sx2 / MW, uy = sy2 / MH;
-            var PX = (ux - 0.5) * LW, PY = (uy - 0.5) * LH;
-            var wv = Math.sin(PX * 0.012 + t * 2.4) * 10 + Math.sin(PY * 0.02 - t * 1.8) * 5;
-            var zz = -PY * sinT + wv * 0.5;
-            var ss = f2 / (f2 + zz);
-            var px2 = cx + PX * ss, py2 = ly0 + LH / 2 + (PY * cosT + wv * 0.5) * ss;
-            if (px2 < 0 || px2 > W) continue;
-            var ddx2 = px2 - mx, ddy2 = py2 - my, dd2 = ddx2 * ddx2 + ddy2 * ddy2;
-            var pu = 0;
-            if (dd2 < 42000) { var dl = Math.sqrt(dd2); pu = (1 - dl / 205); pu = pu * pu * 34; }
-            var ang = Math.atan2(ddy2, ddx2);
-            var ox2 = Math.cos(ang) * pu, oy2 = Math.sin(ang) * pu;
-            var r2 = Math.max(1.2, W / 760) * ss;
-            // 기둥
-            var cols = 6, colH = LH * 0.11 * ss;
-            for (var k2 = 1; k2 <= cols; k2++) {
-              var a3 = 0.62 * (1 - k2 / cols);
-              var vc = Math.round(160 + (k2 / cols) * 57);   /* #A0A0A0 → #D9D9D9 */
-              ctx.fillStyle = 'rgba(' + vc + ',' + vc + ',' + vc + ',' + a3.toFixed(3) + ')';
-              ctx.fillRect(px2 + ox2, py2 + oy2 + (colH * k2 / cols), r2, r2);
-            }
-            // 윗면
-            /* 심볼 윗면만 한 단계 진한 회색까지 허용 — 흰 배경에서 지형과 분리 */
-            var zt = (zz + LH * 0.5) / (LH || 1);        /* 0 앞 → 1 뒤 */
-            if (zt < 0) zt = 0; else if (zt > 1) zt = 1;
-            var vt = Math.round(138 + zt * 79);          /* #8A8A8A → #D9D9D9 */
-            ctx.fillStyle = 'rgb(' + vt + ',' + vt + ',' + vt + ')';
-            ctx.fillRect(px2 + ox2, py2 + oy2, r2 * 1.25, r2 * 1.25);
-          }
-        }
-
-        // ── 상단 방사형 점 광선 ──
-        // 중앙 초점에서 위·바깥으로 점이 줄지어 뻗어나간다. 점은 계속 바깥으로 흐른다.
-        var fx = cx, fy = H * 0.95;                 // 초점 (화면 하단)
-        var RAYS = 23, DOTS = 64;
-        var maxR = H * 1.25;
-        for (var ri = 0; ri < RAYS; ri++) {
-          var a0 = (ri / (RAYS - 1) - 0.5) * 2.9;   // 좌우로 벌어지는 각도
-          for (var di = 0; di < DOTS; di++) {
-            var u = ((di / DOTS) + (t * 0.09) % 1) % 1;
-            if (u < 0.06) continue;
-            var ang = a0 * (0.55 + u * 0.85);       // 멀어질수록 더 벌어진다
-            var rr = u * maxR;
-            var rx = fx + Math.sin(ang) * rr;
-            var ry = fy - Math.cos(ang) * rr * 0.92;
-            if (ry < -20 || rx < -20 || rx > W + 20) continue;
-            var fade = Math.min(1, u * 6) * Math.pow(1 - u, 0.75);
-            var vv = Math.round(205 - fade * 22);   // #CDCDCD → #B7B7B7
-            var rs = Math.max(1.6, W / 520) * (1 - u * 0.35);
-            ctx.fillStyle = 'rgba(' + vv + ',' + vv + ',' + vv + ',' + Math.min(1, fade * 2.4).toFixed(3) + ')';
-            ctx.fillRect(rx, ry, rs, rs);
-          }
-        }
-
-        // 가이드 원
-        ctx.strokeStyle = 'rgba(183,183,183,0.35)';
-        ctx.lineWidth = 1;
-        var R1 = H * 0.62;
-        ctx.beginPath(); ctx.arc(cx, cy - H * 0.02, R1, 0, 6.2832); ctx.stroke();
-        ctx.beginPath(); ctx.arc(cx, cy - H * 0.22, R1 * 0.55, 0, 6.2832); ctx.stroke();
-        ctx.beginPath(); ctx.arc(cx, cy - H * 0.40, R1 * 0.22, 0, 6.2832); ctx.stroke();
-
-        raf = requestAnimationFrame(frame);
-      }
-
-      window.addEventListener('pointermove', function (e) {
-        var r = cv.getBoundingClientRect();
-        mx = e.clientX - r.left; my = e.clientY - r.top;
-      }, { passive: true });
-
-      buildMask(); resize();
-      raf = requestAnimationFrame(frame);
-      window.addEventListener('resize', function () {
-        cancelAnimationFrame(raf); t0 = 0;
-        setTimeout(function () { resize(); raf = requestAnimationFrame(frame); }, 60);
-      });
-    })();
 </script>
 </body>
 </html>
