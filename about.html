@@ -698,6 +698,49 @@
       .flip-a:hover .fa { transform: translateY(-0.667em) rotateX(90deg); }
       .flip-a:hover .fb { top: 0; transform: translateZ(0) rotateX(0deg); }
     }
+
+    /* ─── ABOUT ─────────────────────────────────────────────────
+       심볼 로고를 점으로 찍고 마우스에 반응시킨다. */
+    .about-hero {
+      position: relative;
+      margin: 10px 30px 0;
+      aspect-ratio: 1880 / 900;
+      overflow: hidden;
+    }
+    .about-hero canvas { display: block; width: 100%; height: 100%; }
+
+    .about-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      align-items: start;
+      margin: 0 20px;
+    }
+    .about-row > * { padding: 10px; }
+    .about-no {
+      grid-column: span 1;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.833);
+      line-height: 1.2;
+      color: #B7B7B7;
+    }
+    .about-en { grid-column: span 3; }
+    .about-ko { grid-column: span 2; }
+    .about-en, .about-ko {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      line-height: 1.5;
+      color: #000;
+    }
+    .about-en { font-size: calc(var(--vwFont) * 0.938); }
+    .about-ko { font-size: calc(var(--vwFont) * 0.990); }
+
+    @media (max-width: 767px) {
+      .about-hero { margin: 10px 20px 0; aspect-ratio: 1 / 1; }
+      .about-row { grid-template-columns: 1fr; margin: 0 10px; }
+      .about-no, .about-en, .about-ko { grid-column: span 1; padding: 10px; }
+      .about-en { font-size: 13px; }
+      .about-ko { font-size: 14px; }
+      .about-no { font-size: 12px; }
+    }
 </style>
 </head>
 <body>
@@ -975,17 +1018,21 @@
     });
   })();
 
-    // ─── 심볼 점 그래픽 ────────────────────────────────────────
-    // 로고 패스를 오프스크린에 그려 픽셀을 샘플링 → 점의 원위치를 만든다.
-    // 마우스가 가까이 오면 밀어내고, 손을 떼면 스프링으로 제자리에 돌아온다.
+    // ─── 심볼 점 그래픽 (3D) ───────────────────────────────────
+    // 로고 패스를 오프스크린에 그려 픽셀을 샘플링 → 점의 로고좌표를 얻고,
+    // X축으로 25도 눕힌 뒤 원근 투영해 화면좌표(원위치)를 만든다.
+    // 깊이(z)에 따라 점 크기와 농도를 바꿔 입체가 드러나게 한다.
+    // 마우스는 window 에서 받아 캔버스 밖·가장자리에서도 반응한다.
     (function () {
       var cv = document.getElementById('markCanvas');
       if (!cv) return;
       var ctx = cv.getContext('2d');
       var PATH = new Path2D("M292.56,177.63v10.45h-20.9v-31.35h10.45v-10.45h31.35v-10.45h20.9v-20.9h10.45v-10.45h-20.9v10.45h-10.45v10.45h-10.45v-20.9h10.45v-10.45h10.45v-10.45h10.45v-20.9h10.45v-10.45h10.45v-10.45h10.45V10.45h-10.45V0h-62.69v10.45h-10.45v10.45h-20.9v10.45h-10.45v10.45h-10.45v10.45h-10.45v10.45h-10.45v10.45h-10.45v10.45h-10.45v10.45h-31.35v-10.45H41.79v10.45h-20.9v10.45h-10.45v20.9H0v62.69h10.45v10.45h10.45v10.45h83.59v-10.45h20.9v-10.45h20.9v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h20.9v10.45h31.35v10.45h-10.45v52.24h10.45v10.45h41.79v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h-20.9ZM146.28,135.83v10.45h-10.45v10.45h-10.45v10.45h-20.9v10.45h-20.9v10.45H31.35v-10.45h-10.45v-41.79h10.45v-10.45h10.45v-10.45h10.45v-10.45h83.59v10.45h10.45v10.45h10.45v10.45h-10.45ZM240.32,94.04v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h10.45v-10.45h20.9v10.45h-10.45v10.45h-10.45v10.45h-10.45v20.9h-10.45v10.45h-10.45v10.45h-31.35v-10.45h10.45Z");
       var VB_W = 365.7, VB_H = 219.42;
-      var pts = [], dpr = 1, W = 0, H = 0;
+      var TILT = 25 * Math.PI / 180;              // 아래로 숙인 각도
+      var pts = [], W = 0, H = 0, dpr = 1;
       var mx = -9999, my = -9999, raf;
+      var zMin = 0, zMax = 1;
 
       function build() {
         var r = cv.getBoundingClientRect();
@@ -994,60 +1041,73 @@
         cv.width = W * dpr; cv.height = H * dpr;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        // 로고를 캔버스 폭의 72% 로 중앙 배치
-        var scale = (W * 0.72) / VB_W;
-        var ox = (W - VB_W * scale) / 2, oy = (H - VB_H * scale) / 2;
-
+        // 로고를 평면에 한 번 그려 픽셀을 딴다 (샘플 전용, 화면엔 안 보임)
+        var scale = (W * 0.74) / VB_W;
+        var lw = VB_W * scale, lh = VB_H * scale;
         var off = document.createElement('canvas');
-        off.width = W; off.height = H;
+        off.width = Math.ceil(lw); off.height = Math.ceil(lh);
         var oc = off.getContext('2d');
-        oc.save(); oc.translate(ox, oy); oc.scale(scale, scale);
-        oc.fillStyle = '#000'; oc.fill(PATH); oc.restore();
-        var data = oc.getImageData(0, 0, W, H).data;
+        oc.scale(scale, scale);
+        oc.fillStyle = '#000'; oc.fill(PATH);
+        var data = oc.getImageData(0, 0, off.width, off.height).data;
 
-        var step = Math.max(5, Math.round(W / 170));   // 점 간격
-        pts = [];
-        for (var y = 0; y < H; y += step) {
-          for (var x = 0; x < W; x += step) {
-            if (data[(y * W + x) * 4 + 3] > 128) {
-              pts.push({ hx: x, hy: y, x: x, y: y, vx: 0, vy: 0 });
-            }
+        var step = Math.max(4, Math.round(W / 190));
+        var cx = W / 2, cy = H / 2;
+        var f = W * 0.85;                          // 초점거리 — 작을수록 원근이 셈
+        var cosT = Math.cos(TILT), sinT = Math.sin(TILT);
+        pts = []; zMin = 1e9; zMax = -1e9;
+        for (var y = 0; y < off.height; y += step) {
+          for (var x = 0; x < off.width; x += step) {
+            if (data[(y * off.width + x) * 4 + 3] < 128) continue;
+            var X = x - lw / 2, Y = y - lh / 2;
+            var yr = Y * cosT, z = -Y * sinT;      // X축 회전 — 윗변이 뒤로 물러난다
+            var sc = f / (f + z);                  // 원근 투영
+            if (z < zMin) zMin = z;
+            if (z > zMax) zMax = z;
+            pts.push({ hx: cx + X * sc, hy: cy + yr * sc,
+                       x: 0, y: 0, vx: 0, vy: 0, s: sc, z: z });
           }
         }
+        for (var i = 0; i < pts.length; i++) { pts[i].x = pts[i].hx; pts[i].y = pts[i].hy; }
       }
 
       function frame() {
         ctx.clearRect(0, 0, W, H);
-        var R = Math.max(90, W * 0.11), R2 = R * R;
-        var dot = Math.max(1.4, W / 900);
-        ctx.fillStyle = '#000';
+        var R = Math.max(150, W * 0.19), R2 = R * R;   // 반응 반경 (넓게)
+        var base = Math.max(1.5, W / 820);
+        var zr = (zMax - zMin) || 1;
         for (var i = 0; i < pts.length; i++) {
           var p = pts[i];
           var dx = p.x - mx, dy = p.y - my, d2 = dx * dx + dy * dy;
           if (d2 < R2 && d2 > 0.01) {
-            var d = Math.sqrt(d2), f = (1 - d / R) * 2.6;
-            p.vx += (dx / d) * f; p.vy += (dy / d) * f;
+            var d = Math.sqrt(d2), f2 = (1 - d / R);
+            f2 = f2 * f2 * 5.2;                        // 가까울수록 급격히
+            p.vx += (dx / d) * f2; p.vy += (dy / d) * f2;
           }
-          p.vx += (p.hx - p.x) * 0.055;      // 제자리로 당기는 힘
-          p.vy += (p.hy - p.y) * 0.055;
-          p.vx *= 0.86; p.vy *= 0.86;        // 감쇠
+          p.vx += (p.hx - p.x) * 0.05;
+          p.vy += (p.hy - p.y) * 0.05;
+          p.vx *= 0.88; p.vy *= 0.88;
           p.x += p.vx; p.y += p.vy;
-          var off = Math.abs(p.x - p.hx) + Math.abs(p.y - p.hy);
-          ctx.globalAlpha = Math.max(0.28, 1 - off / 90);
+
+          // 깊이 그라데이션 — 가까울수록 진하고 크다
+          var t = (p.z - zMin) / zr;                   // 0 앞 → 1 뒤
+          var g = Math.round(20 + t * 165);            // #141414 → #B9B9B9
+          var off2 = Math.abs(p.x - p.hx) + Math.abs(p.y - p.hy);
+          ctx.globalAlpha = Math.max(0.3, (1 - t * 0.45) * (1 - off2 / 120));
+          ctx.fillStyle = 'rgb(' + g + ',' + g + ',' + g + ')';
           ctx.beginPath();
-          ctx.arc(p.x, p.y, dot, 0, 6.2832);
+          ctx.arc(p.x, p.y, base * p.s, 0, 6.2832);
           ctx.fill();
         }
         ctx.globalAlpha = 1;
         raf = requestAnimationFrame(frame);
       }
 
-      function onMove(e) {
+      // 캔버스 밖에서도 좌표를 받아 가장자리 반응이 끊기지 않게 한다
+      window.addEventListener('pointermove', function (e) {
         var r = cv.getBoundingClientRect();
         mx = e.clientX - r.left; my = e.clientY - r.top;
-      }
-      cv.addEventListener('pointermove', onMove);
-      cv.addEventListener('pointerleave', function () { mx = my = -9999; });
+      }, { passive: true });
 
       build();
       raf = requestAnimationFrame(frame);
