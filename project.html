@@ -48,6 +48,13 @@
        윈도우 DirectWrite 에서는 눈에 띄게 두꺼워진다 → 실제 600 서체 선언 */
     @font-face {
       font-family: 'Karlsbader Grotesk';
+      src: url('/fonts/KarlsbaderGrotesk-500.otf') format('opentype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Karlsbader Grotesk';
       src: url('/fonts/KarlsbaderGrotesk-600.otf') format('opentype');
       font-weight: 600;
       font-style: normal;
@@ -601,6 +608,10 @@
        3열 유지 시 QHD 에서 셀이 820px 까지 커져 썸네일이 과해진다.
        괘선은 5개(0/25/50/75/100%), 가로선은 4열 폭으로 다시 계산한다. */
     @media (min-width: 1920px) {
+      /* 1920 이상에서 T1 이 26px 로 커지면 600 이 과하게 두꺼워 보인다.
+         맥북 14(1512, 20.5px/600)의 시각 굵기에 맞춰 500 으로 낮춘다. */
+      .gallery-title { font-weight: 500; }
+
       .project-gallery { grid-template-columns: repeat(4, 1fr); }
 
       .header-rules i:nth-child(2) { left: 25%; }
