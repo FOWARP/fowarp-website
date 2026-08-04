@@ -758,7 +758,9 @@
     .about-panel {
       position: fixed; top: 0; left: 0; z-index: 301;
       width: calc(var(--vw) * 33.177);   /* Figma 637 */
-      max-width: 92vw; height: 100vh;
+      max-width: 92vw;
+      height: 100vh;
+      height: 100dvh;      /* 모바일 주소창을 뺀 실제 높이 */
       background: #000; color: #fff;
       transform: translateX(-100%);
       transition: transform .42s cubic-bezier(.85,0,.15,1);
@@ -847,7 +849,7 @@
       }
       /* 상단은 헤더 마키가 끝나는 지점(28px)에 맞추고,
          하단은 마지막 줄이 가려지지 않게 넉넉히 */
-      .about-panel-inner { padding: 28px 0 120px; }
+      .about-panel-inner { padding: 28px 0 calc(200px + env(safe-area-inset-bottom)); }
       .ab-block { grid-template-columns: 46px 1fr; padding: 0; }
       .ab-no { padding: calc(10px + 0.075em) 0 10px 20px; }
       .ab-body { padding: 10px 20px 10px 10px; }
