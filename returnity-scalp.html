@@ -760,23 +760,25 @@
       position: fixed; top: 0; left: 0; z-index: 301;
       width: calc(var(--vw) * 33.177);   /* Figma 637 */
       max-width: 92vw; height: 100vh;
-      background: #fff; border-right: 1px solid #D9D9D9;
+      background: #fff;
       transform: translateX(-100%);
       transition: transform .42s cubic-bezier(.85,0,.15,1);
       overflow-y: auto; -webkit-overflow-scrolling: touch;
     }
     body.about-open .about-panel { transform: translateX(0); }
     /* 패널이 페이지 세로 괘선(좌 20px)을 덮으므로 안에서 다시 그린다 */
-    .about-panel::before {
+    .about-panel::before,
+    .about-panel::after {
       content: '';
       position: absolute;
-      left: 20px;
       top: 0;
       bottom: 0;
       width: 1px;
       background: #D9D9D9;
       pointer-events: none;
     }
+    .about-panel::before { left: 20px; }
+    .about-panel::after  { right: 20px; }
     .about-panel-inner { padding: calc(var(--vwFont) * 2.083) 0 60px; }
     .about-block { border-top: 1px solid #D9D9D9; border-bottom: 1px solid #D9D9D9; }
     .about-block + .about-block { margin-top: calc(var(--vw) * 1.042); }
@@ -806,6 +808,7 @@
     @media (max-width: 767px) {
       .about-panel { width: 88vw; max-width: none; }
       .about-panel::before { left: 10px; }
+      .about-panel::after { right: 10px; }
       .about-close { left: 88vw; top: 12px; }
       .about-block p { margin: 0 10px; }
       .about-block .ab-en { font-size: 13px; }
