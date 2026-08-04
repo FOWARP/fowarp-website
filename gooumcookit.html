@@ -776,10 +776,10 @@
       .flip-a.is-off:hover .fb::after { transform: scaleX(1); }
     }
 
-    /* ─── About 사이드 패널 ──────────────────────────────────────
+    /* ─── About 사이드 패널 (Figma 485:4493) ─────────────────────
        헤더 About 을 누르면 왼쪽에서 밀려 나온다 (레퍼런스 iroje.com 은 오른쪽).
-       열려 있는 동안 나머지 화면은 모바일 드롭다운과 같은 방식으로
-       밝아지며 흐려진다. X 버튼은 패널 바깥쪽(오른쪽)에 검정으로 둔다. */
+       열려 있는 동안 나머지 화면은 모바일 드롭다운과 같은 방식으로 흐려진다.
+       패널은 검정 배경 / 흰 글자, 그리드는 다크 전환과 같은 #686868. */
     .about-overlay {
       position: fixed; inset: 0; z-index: 300;
       background: rgba(255,255,255,0);
@@ -797,35 +797,60 @@
       position: fixed; top: 0; left: 0; z-index: 301;
       width: calc(var(--vw) * 33.177);   /* Figma 637 */
       max-width: 92vw; height: 100vh;
-      background: #fff;
+      background: #000; color: #fff;
       transform: translateX(-100%);
       transition: transform .42s cubic-bezier(.85,0,.15,1);
       overflow-y: auto; -webkit-overflow-scrolling: touch;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
     }
     body.about-open .about-panel { transform: translateX(0); }
-    /* 패널이 페이지 세로 괘선(좌 20px)을 덮으므로 안에서 다시 그린다 */
+    /* 세로 그리드 — 대지 좌우 마진 안쪽 */
     .about-panel::before,
     .about-panel::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      width: 1px;
-      background: #D9D9D9;
-      pointer-events: none;
+      content: ''; position: absolute; top: 0; bottom: 0;
+      width: 1px; background: #686868; pointer-events: none;
     }
     .about-panel::before { left: 20px; }
     .about-panel::after  { right: 20px; }
-    .about-panel-inner { padding: calc(var(--vwFont) * 2.083) 0 60px; }
-    .about-block { border-top: 1px solid #D9D9D9; border-bottom: 1px solid #D9D9D9; }
-    .about-block + .about-block { margin-top: calc(var(--vw) * 1.042); }
-    .about-block p {
-      margin: 0 20px; padding: 10px;
-      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      line-height: 1.5; color: #000;
+
+    .about-panel-inner { padding: calc(var(--vwFont) * 2.083) 0 40px; }
+    /* 블록: 번호(74) + 본문(523), 가로 그리드는 패널 폭 전체 */
+    .ab-block {
+      display: grid;
+      grid-template-columns: 74fr 523fr;
+      align-items: start;
+      padding: 0 20px;
+      border-top: 1px solid #686868;
+      border-bottom: 1px solid #686868;
     }
-    .about-block .ab-en { font-size: calc(var(--vwFont) * .938); }
-    .about-block .ab-ko { font-size: calc(var(--vwFont) * .990); }
+    .ab-block + .ab-block { margin-top: 20px; }
+    .ab-no {
+      padding: 10px;
+      font-size: calc(var(--vwFont) * .833);   /* 16 */
+      line-height: 1.5;
+      color: #fff;
+    }
+    .ab-body { padding: 10px; }
+    .ab-body p { margin: 0; line-height: 1.5; color: #fff; }
+    .ab-body .ab-en { font-size: calc(var(--vwFont) * .938); }   /* 18 */
+    .ab-body .ab-ko { font-size: calc(var(--vwFont) * .990); margin-top: 1.5em; }  /* 19 */
+    /* 2x2 영상 */
+    .ab-media {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .ab-media video {
+      display: block; width: 100%; aspect-ratio: 16 / 9;
+      object-fit: cover; background: #000;
+    }
+    .ab-copy {
+      padding: 10px 30px;
+      font-size: calc(var(--vwFont) * .729);   /* 14 */
+      line-height: 1.5;
+      color: #fff;
+    }
     .about-close {
       position: fixed; z-index: 302;
       top: calc(var(--vwFont) * 1.042);
@@ -847,9 +872,11 @@
       .about-panel::before { left: 10px; }
       .about-panel::after { right: 10px; }
       .about-close { left: 88vw; top: 12px; }
-      .about-block p { margin: 0 10px; }
-      .about-block .ab-en { font-size: 13px; }
-      .about-block .ab-ko { font-size: 14px; }
+      .ab-block { grid-template-columns: 44fr 523fr; padding: 0 10px; }
+      .ab-no { font-size: 12px; }
+      .ab-body .ab-en { font-size: 13px; }
+      .ab-body .ab-ko { font-size: 14px; }
+      .ab-copy { padding: 10px 20px; font-size: 12px; }
     }
 </style>
 </head>
@@ -988,8 +1015,38 @@
   <div class="about-overlay" id="aboutOverlay"></div>
   <aside class="about-panel" id="aboutPanel" role="dialog" aria-modal="true" aria-label="About FOWARP" aria-hidden="true">
     <div class="about-panel-inner">
-      <div class="about-block"><p class="ab-en">FOWARP is a brand born from the fusion of "FORWARD" and "WARP". We contemplate the growth of our clients' brands and lead better user experiences through the best brand building.<br><br>Countless brands are born and disappear every day in the market. In this landscape, FOWARP proposes innovative solutions through design for brands to grow.<br><br>A brand can grow through design. FOWARP is waiting for brands to grow with us even now.</p></div>
-      <div class="about-block"><p class="ab-ko">FOWARP는 FORWARD와 WARP의 단어가 만나 탄생한 브랜드입니다. 클라이언트의 브랜드 성장을 위해 고찰하며, 최상의 브랜드 구축을 통해 더 나은 사용자 경험을 이끌어 냅니다.<br><br>하루에도 수 없이 많은 브랜드들이 탄생하고 또한 사라집니다. 이러한 시장 속에서 FOWARP는 디자인을 통해 브랜드가 성장할 수 있는 독창적인 솔루션을 제안합니다.<br><br>브랜드는 디자인을 통해 성장할 수 있습니다. FOWARP는 지금도 우리와 함께 성장할 브랜드를 기다리고 있습니다.</p></div>
+
+      <div class="ab-block">
+        <div class="ab-no">1</div>
+        <div class="ab-body">
+          <p class="ab-en">FOWARP is a brand agency born from the fusion of Forward and Warp. We contemplate the growth of our client’s brands and lead better user experiences through the best brand building.</p>
+          <p class="ab-ko">FOWARP는 Forward와 Warp의 단어가 만나 탄생한 브랜드 에이전시입니다. 클라이언트의 브랜드 성장을 위해 고찰하며, 최상의 브랜드 구축을 통해 더 나은 사용자 경험을 이끌어 냅니다.</p>
+        </div>
+      </div>
+
+      <div class="ab-block">
+        <div class="ab-no">2</div>
+        <div class="ab-body">
+          <div class="ab-media">
+            <video autoplay muted loop playsinline><source src="/media/about/a1.mp4" type="video/mp4"></video>
+            <video autoplay muted loop playsinline><source src="/media/about/a2.mp4" type="video/mp4"></video>
+            <video autoplay muted loop playsinline><source src="/media/about/a3.mp4" type="video/mp4"></video>
+            <video autoplay muted loop playsinline><source src="/media/about/a4.mp4" type="video/mp4"></video>
+          </div>
+          <p class="ab-en">FOWARP’s brand symbol shifts freely across materials and forms. It stands for the way FOWARP approaches each client’s circumstances with flexibility and invention, arriving at the solution that fits.</p>
+          <p class="ab-ko">FOWARP의 브랜드 심볼은 다양한 재질 및 형태로 유연하게 변화합니다. 이는 클라이언트의 다양한 상황에 항상 유연하고 창의적으로 접근하여 최적의 솔루션을 제공하는 FOWARP의 크리에이티브를 상징합니다.</p>
+        </div>
+      </div>
+
+      <div class="ab-block">
+        <div class="ab-no">3</div>
+        <div class="ab-body">
+          <p class="ab-en">Countless brands are born and disappear every day in the market. In this landscape, FOWARP proposes innovative solutions through design for brands to grow. A brand can grow through design. FOWARP is waiting for brands to grow with us even now.</p>
+          <p class="ab-ko">하루에도 수 없이 많은 브랜드들이 탄생하고 또한 사라집니다. 이러한 시장 속에서 FOWARP는 디자인을 통해 브랜드가 성장할 수 있는 독창적인 솔루션을 제안합니다. 브랜드는 디자인을 통해 성장할 수 있습니다. FOWARP는 지금도 우리와 함께 성장할 브랜드를 기다리고 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="ab-copy">Copyright © FOWARP. 모든 권리 보유.</div>
     </div>
   </aside>
   <button class="about-close" id="aboutClose" type="button" aria-label="닫기"><span></span><span></span></button>
