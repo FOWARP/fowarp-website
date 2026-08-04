@@ -769,20 +769,22 @@
     }
     body.about-open .about-panel { transform: translateX(0); }
     .about-panel::-webkit-scrollbar { width: 0; height: 0; }
-    /* 세로 그리드 — 대지 좌우 마진 안쪽 */
-    .about-panel::before,
-    .about-panel::after {
+    /* 세로 그리드 — 스크롤 콘텐츠 전체 높이. 패널(스크롤 컨테이너)에 걸면
+       보이는 높이까지만 그려져 아래로 내리면 끊긴다 → inner 에 건다 */
+    .about-panel-inner { position: relative; }
+    .about-panel-inner::before,
+    .about-panel-inner::after {
       content: ''; position: absolute; top: 0; bottom: 0;
       width: 1px; background: #686868; pointer-events: none;
     }
-    .about-panel::before { left: 20px; }
-    .about-panel::after  { right: 20px; }
+    .about-panel-inner::before { left: 20px; }
+    .about-panel-inner::after  { right: 20px; }
 
     .about-panel-inner { padding: calc(var(--vwFont) * 2.083) 0 40px; }
     /* 블록: 번호(74) + 본문(523), 가로 그리드는 패널 폭 전체 */
     .ab-block {
       display: grid;
-      grid-template-columns: 74fr 523fr;
+      grid-template-columns: calc(var(--vw) * 4.896) 1fr;   /* 1920 기준 94 = 그리드20 + 번호74 */
       align-items: start;
       padding: 0;                      /* 가로 그리드는 마진 없이 폭 전체 */
       border-top: 1px solid #686868;
@@ -790,12 +792,12 @@
     }
     .ab-block + .ab-block { margin-top: 20px; }
     .ab-no {
-      padding: 10px 10px 10px 30px;   /* 세로 그리드(20) 안쪽 10 */
+      padding: calc(var(--vw) * .521) 0 calc(var(--vw) * .521) calc(var(--vw) * 1.563);
       font-size: calc(var(--vwFont) * .833);   /* 16 */
       line-height: 1.5;
       color: #fff;
     }
-    .ab-body { padding: 10px 30px 10px 10px; }
+    .ab-body { padding: calc(var(--vw) * .521) calc(var(--vw) * 1.563) calc(var(--vw) * .521) calc(var(--vw) * .521); }
     .ab-body p { margin: 0; line-height: 1.5; color: #fff; }
     .ab-body .ab-en { font-size: calc(var(--vwFont) * .938); }   /* 18 */
     .ab-body .ab-ko { font-size: calc(var(--vwFont) * .990); margin-top: 0.75em; }  /* 19 */
@@ -811,11 +813,12 @@
       object-fit: cover; background: #000;
     }
     .ab-copy {
-      padding: 10px 30px;
+      padding: calc(var(--vw) * .521) calc(var(--vw) * 1.563) calc(var(--vw) * .521) calc(var(--vw) * 5.417);
       font-size: calc(var(--vwFont) * .729);   /* 14 */
       line-height: 1.5;
       color: #fff;
     }
+    .ab-copy-ko { font-family: 'Pretendard Variable', sans-serif; }
     .about-close {
       position: fixed; z-index: 302;
       top: calc(var(--vwFont) * 1.042);
@@ -834,16 +837,16 @@
     .about-close span:last-child { transform: rotate(-45deg); }
     @media (max-width: 767px) {
       .about-panel { width: 88vw; max-width: none; }
-      .about-panel::before { left: 10px; }
-      .about-panel::after { right: 10px; }
       .about-close { left: 88vw; top: 12px; width: 43px; height: 43px; }
-      .ab-block { grid-template-columns: 44fr 523fr; padding: 0; }
-      .ab-no { padding: 10px 6px 10px 20px; }
-      .ab-body { padding: 10px 20px 10px 6px; }
+      .ab-block { grid-template-columns: 46px 1fr; padding: 0; }
+      .ab-no { padding: 10px 0 10px 20px; }
+      .ab-body { padding: 10px 20px 10px 10px; }
+      .about-panel-inner::before { left: 10px; }
+      .about-panel-inner::after { right: 10px; }
       .ab-no { font-size: 12px; }
       .ab-body .ab-en { font-size: 13px; }
       .ab-body .ab-ko { font-size: 14px; }
-      .ab-copy { padding: 10px 20px; font-size: 12px; }
+      .ab-copy { padding: 10px 20px 10px 56px; font-size: 12px; }
     }
 </style>
 </head>
@@ -976,7 +979,7 @@
         </div>
       </div>
 
-      <div class="ab-copy">Copyright © FOWARP. 모든 권리 보유.</div>
+      <div class="ab-copy">Copyright © FOWARP. <span class="ab-copy-ko">모든 권리 보유.</span></div>
     </div>
   </aside>
   <button class="about-close" id="aboutClose" type="button" aria-label="닫기"><span></span><span></span></button>
