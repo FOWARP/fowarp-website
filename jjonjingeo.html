@@ -739,6 +739,13 @@
        top 값도 함께 전환되기 때문에 두 글자가 위로 이동하면서 눌린다.
        오프셋 10px 은 원본 글자 15px 기준 → 0.667em 으로 환산해 크기에 따라간다. */
     .flip-a { position: relative; display: inline-block; }
+    /* 터치 영역만 확장 — 글자 위치·크기는 그대로 */
+    .header-nav > *::before {
+      content: '';
+      position: absolute;
+      inset: -14px -16px;
+      z-index: 1;
+    }
     .flip-a .fa,
     .flip-a .fb { display: inline-block; white-space: nowrap; }
     .flip-a .fb {
@@ -800,10 +807,13 @@
       background: #000; color: #fff;
       transform: translateX(-100%);
       transition: transform .42s cubic-bezier(.85,0,.15,1);
-      overflow-y: auto; -webkit-overflow-scrolling: touch;
+      overflow-y: auto; overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
     }
     body.about-open .about-panel { transform: translateX(0); }
+    .about-panel::-webkit-scrollbar { width: 0; height: 0; }
     /* 세로 그리드 — 대지 좌우 마진 안쪽 */
     .about-panel::before,
     .about-panel::after {
@@ -819,21 +829,21 @@
       display: grid;
       grid-template-columns: 74fr 523fr;
       align-items: start;
-      padding: 0 20px;
+      padding: 0;                      /* 가로 그리드는 마진 없이 폭 전체 */
       border-top: 1px solid #686868;
       border-bottom: 1px solid #686868;
     }
     .ab-block + .ab-block { margin-top: 20px; }
     .ab-no {
-      padding: 10px;
+      padding: 10px 10px 10px 30px;   /* 세로 그리드(20) 안쪽 10 */
       font-size: calc(var(--vwFont) * .833);   /* 16 */
       line-height: 1.5;
       color: #fff;
     }
-    .ab-body { padding: 10px; }
+    .ab-body { padding: 10px 30px 10px 10px; }
     .ab-body p { margin: 0; line-height: 1.5; color: #fff; }
     .ab-body .ab-en { font-size: calc(var(--vwFont) * .938); }   /* 18 */
-    .ab-body .ab-ko { font-size: calc(var(--vwFont) * .990); margin-top: 1.5em; }  /* 19 */
+    .ab-body .ab-ko { font-size: calc(var(--vwFont) * .990); margin-top: 0.75em; }  /* 19 */
     /* 2x2 영상 */
     .ab-media {
       display: grid;
@@ -855,15 +865,15 @@
       position: fixed; z-index: 302;
       top: calc(var(--vwFont) * 1.042);
       left: calc(var(--vw) * 33.177);
-      width: 36px; height: 36px; margin-left: 10px;
+      width: 43px; height: 43px; margin-left: 10px;
       border: 0; background: transparent; cursor: pointer;
       opacity: 0; pointer-events: none;
       transition: opacity .3s ease .12s;
     }
     body.about-open .about-close { opacity: 1; pointer-events: auto; }
     .about-close span {
-      position: absolute; left: 6px; top: 17px;
-      width: 24px; height: 1.5px; background: #000;
+      position: absolute; left: 7px; top: 21px;
+      width: 29px; height: 1.8px; background: #000;
     }
     .about-close span:first-child { transform: rotate(45deg); }
     .about-close span:last-child { transform: rotate(-45deg); }
@@ -871,8 +881,10 @@
       .about-panel { width: 88vw; max-width: none; }
       .about-panel::before { left: 10px; }
       .about-panel::after { right: 10px; }
-      .about-close { left: 88vw; top: 12px; }
-      .ab-block { grid-template-columns: 44fr 523fr; padding: 0 10px; }
+      .about-close { left: 88vw; top: 12px; width: 43px; height: 43px; }
+      .ab-block { grid-template-columns: 44fr 523fr; padding: 0; }
+      .ab-no { padding: 10px 6px 10px 20px; }
+      .ab-body { padding: 10px 20px 10px 6px; }
       .ab-no { font-size: 12px; }
       .ab-body .ab-en { font-size: 13px; }
       .ab-body .ab-ko { font-size: 14px; }
@@ -1052,7 +1064,7 @@
   
   <!-- About 사이드 패널 -->
   <div class="about-overlay" id="aboutOverlay"></div>
-  <aside class="about-panel" id="aboutPanel" role="dialog" aria-modal="true" aria-label="About FOWARP" aria-hidden="true">
+  <aside class="about-panel" id="aboutPanel" data-lenis-prevent role="dialog" aria-modal="true" aria-label="About FOWARP" aria-hidden="true">
     <div class="about-panel-inner">
 
       <div class="ab-block">
@@ -1305,9 +1317,37 @@
       if (!panel) return;
       var overlay = document.getElementById('aboutOverlay');
       var closeBtn = document.getElementById('aboutClose');
+      // 영상 4개를 같은 시점에 맞춰 동시에 재생 (길이 2.4초로 동일)
+      var vids = [].slice.call(panel.querySelectorAll('video'));
+      function syncPlay() {
+        vids.forEach(function (v) { try { v.pause(); v.currentTime = 0; } catch (e) {} });
+        vids.forEach(function (v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); });
+      }
+      if (vids.length) {
+        var ready = 0;
+        vids.forEach(function (v) {
+          if (v.readyState >= 3) { ready++; }
+          else v.addEventListener('canplay', function once() {
+            v.removeEventListener('canplay', once); ready++;
+            if (ready === vids.length) syncPlay();
+          });
+        });
+        if (ready === vids.length) syncPlay();
+        // 루프 시점이 어긋나면 다시 맞춘다
+        vids[0].addEventListener('seeked', function () {});
+        setInterval(function () {
+          if (!document.body.classList.contains('about-open')) return;
+          var t0 = vids[0].currentTime;
+          for (var i = 1; i < vids.length; i++) {
+            if (Math.abs(vids[i].currentTime - t0) > 0.12) { syncPlay(); break; }
+          }
+        }, 2000);
+      }
+
       function open() {
         document.body.classList.add('about-open');
         panel.setAttribute('aria-hidden', 'false');
+        if (typeof syncPlay === 'function') syncPlay();
         if (typeof lenis !== 'undefined') lenis.stop();
       }
       function close() {
