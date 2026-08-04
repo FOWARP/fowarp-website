@@ -800,7 +800,9 @@
     }
     .ab-block + .ab-block { margin-top: 20px; }
     .ab-no {
-      padding: calc(var(--vw) * .521) 0 calc(var(--vw) * .521) calc(var(--vw) * 1.563);
+      /* 글자 크기가 16 vs 18 이라 같은 패딩이면 번호가 살짝 위로 뜬다.
+         차이만큼(0.075em) 내려 영문 첫 줄과 윗선을 맞춘다 */
+      padding: calc(var(--vw) * .521 + 0.075em) 0 calc(var(--vw) * .521) calc(var(--vw) * 1.563);
       font-size: calc(var(--vwFont) * .833);   /* 16 */
       line-height: 1.5;
       color: #fff;
@@ -847,7 +849,7 @@
       .about-panel { width: 88vw; max-width: none; }
       .about-close { left: 88vw; top: 12px; width: 43px; height: 43px; }
       .ab-block { grid-template-columns: 46px 1fr; padding: 0; }
-      .ab-no { padding: 10px 0 10px 20px; }
+      .ab-no { padding: calc(10px + 0.075em) 0 10px 20px; }
       .ab-body { padding: 10px 20px 10px 10px; }
       .about-panel-inner::before { left: 10px; }
       .about-panel-inner::after { right: 10px; }
