@@ -524,7 +524,8 @@
     .strip {
       position: relative;
       flex: none;
-      height: min(calc(var(--vw) * 13), 30vh);
+      /* 가장자리 카드가 가장 크게 투영되므로 그 높이까지 담아야 잘리지 않는다 */
+      height: min(calc(var(--vw) * 15), 32vh);
       /* 레퍼런스는 스트립 아래에 검은 여백이 남는다 (화면 바닥에 붙지 않는다) */
       margin-bottom: calc(var(--vw) * 6);
       overflow: hidden;
@@ -539,13 +540,14 @@
       left: 0;
       display: flex;
       align-items: center;
-      gap: calc(var(--vw) * 2.6);
+      gap: calc(var(--vw) * 2.2);
       transform-style: preserve-3d;
       will-change: transform;
     }
     .strip-item {
       flex: none;
-      width: calc(var(--vw) * 16);              /* 1920 기준 307 — 레퍼런스 피치 실측 */
+      /* 중앙에서 0.7배로 줄어드는 걸 감안한 원본 크기 — 중앙 투영폭이 레퍼런스와 맞는다 */
+      width: calc(var(--vw) * 20.4);
       aspect-ratio: 3 / 2;                      /* 소재가 480×320 */
       overflow: hidden;
       border-radius: calc(var(--vw) * 0.42);
@@ -597,9 +599,9 @@
       .summary { font-size: 11px; margin-top: 22px; }
       .summary dd { max-width: 46vw; }
       /* --vw 비례로 두면 모바일에서 카드가 찌그러진다 → 고정값 */
-      .strip { height: min(190px, 30vh); perspective: 700px; }
-      .strip-track { gap: 14px; }
-      .strip-item { width: 190px; border-radius: 6px; }
+      .strip { height: min(180px, 26vh); perspective: 620px; }
+      .strip-track { gap: 12px; }
+      .strip-item { width: 240px; border-radius: 6px; }
 
     }
   
@@ -1181,10 +1183,13 @@
       if (!stage || !track) return;
 
       var srcs = [].slice.call(track.children);
-      var items = [], offs = [], setW = 0, iw = 0;
+      var items = [], offs = [], setW = 0, iw = 0, persp = 1728;
       var x = 0, last = null, frame = 0, raf;
-      var MAXDEG = 34;   // 화면 좌우 끝에서의 Y축 회전각
+      var MAXDEG = 26;   // 화면 좌우 끝에서의 Y축 회전각
+      var DEPTH  = 0.42; // 원근거리 대비 '중앙이 물러난 정도' — 클수록 가운데가 더 작아진다
       var PXPS   = 44;   // 흐르는 속도(px/s)
+      var RAD = Math.PI / 180;
+      var kMax = 1 - Math.cos(MAXDEG * RAD);
 
       function build() {
         while (track.firstChild) track.removeChild(track.firstChild);
@@ -1201,6 +1206,7 @@
         items = [].slice.call(track.children);
         offs  = items.map(function (el) { return el.offsetLeft; });
         iw    = items[0].offsetWidth;
+        persp = parseFloat(getComputedStyle(stage).perspective) || 1728;
       }
 
       function draw(t) {
@@ -1218,7 +1224,13 @@
           // 카드 중심의 화면 내 x 좌표는 offsetLeft 로 계산한다 (매 프레임 rect 를 읽지 않는다)
           var c = base + offs[i] + iw / 2;
           var rel = Math.max(-1, Math.min(1, (c - half) / half));
-          items[i].style.transform = 'rotateY(' + (rel * MAXDEG).toFixed(2) + 'deg)';
+          // 카드가 시청자를 감싸는 오목한 호 위에 놓인다 —
+          // 화면 중앙이 가장 멀고(작고), 좌우 끝으로 갈수록 가까워진다(커진다).
+          // 호에 접하므로 각 카드의 바깥쪽 모서리가 안쪽보다 앞으로 나온다.
+          var a = rel * MAXDEG;
+          var z = -DEPTH * persp * (1 - (1 - Math.cos(a * RAD)) / kMax);
+          items[i].style.transform =
+            'translateZ(' + z.toFixed(1) + 'px) rotateY(' + (-a).toFixed(2) + 'deg)';
 
           if (check) {
             var v = items[i].firstElementChild;
