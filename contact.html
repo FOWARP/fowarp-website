@@ -524,7 +524,8 @@
     .strip {
       /* JS 가 읽어 쓰는 값. 커스텀 속성의 calc() 는 getComputedStyle 이 px 로
          계산해 주지 않으므로(파싱하면 NaN) 전부 단위 없는 '비율·각도'로 둔다. */
-      --strip-gap: 0.095;   /* 카드 사이 간격 = 카드폭 × 이 값 (피치 = 폭 × 1.095) */
+      --strip-gap: 0.20;    /* 카드 사이 여백 = 카드폭 × 이 값. 화면 어디서나 이 값으로 고정된다 */
+      --strip-skew: 0.09;   /* 기울어진 카드의 외접폭 증가분(실측). 여백 계산에 반영한다 */
       --strip-depth: 0.62;  /* 가운데가 뒤로 물러난 깊이(원근거리 대비). 그대로 크기 차이가 된다 */
       --strip-turn: 28;     /* 화면 좌우 끝에서의 Y축 회전각(도) */
       --strip-vis: 0.68;    /* 마스크로 사라지는 지점. 크기·회전 변화를 이 안에서 다 쓴다 */
@@ -609,7 +610,8 @@
       .strip {
         height: min(150px, 24vh);
         perspective: 560px;
-        --strip-gap: 0.08;
+        --strip-gap: 0.16;
+        --strip-skew: 0.06;
         --strip-depth: 0.30;
         --strip-turn: 20;
         --strip-vis: 0.80;
@@ -1187,11 +1189,15 @@
 
     // ─── 하단 포트폴리오 — 원호 캐러셀 ──────────────────────────
     // 하단 스트립 — 레퍼런스(mux3.mp4) 실측 구조.
-    //  · 카드 간격과 흐르는 속도는 화면 어디서나 일정하다 (레퍼런스 피치 실측 편차 ±7%)
+    //  · 카드 사이 여백은 화면 어디서나 똑같다 (붙었다 벌어지지 않는다)
     //  · 크기는 가운데가 가장 작고 좌우 끝으로 갈수록 커진다 — 시청자를 감싸는 오목한 호
     //  · 각 카드의 바깥쪽 모서리가 안쪽보다 앞으로 나온다 (실측: 좌/우 모서리비 1.12 → 0.80)
-    // 화면상의 목표 x 를 먼저 정하고 translateX 를 역산하기 때문에,
-    // 원근을 아무리 세게 줘도 간격과 속도는 흐트러지지 않는다.
+    //
+    // 여백을 고정하면 '중심 간격'은 그 자리 카드 크기를 따라 달라져야 한다.
+    // 그래서 위치를 x 로 직접 잡지 않고 흐름 좌표 u 로 잡는다 —
+    //   du = dx / (그 자리 카드폭 + 고정여백)
+    // u 를 1 늘리면 화면상으로 딱 '카드 한 장 + 여백'만큼 이동한다.
+    // u 를 등간격·등속으로 돌리면 여백이 항상 일정하게 유지된다.
     (function () {
       var stage = document.getElementById('strip');
       var track = document.getElementById('stripTrack');
@@ -1199,47 +1205,102 @@
 
       var items = [].slice.call(track.children);
       var N = items.length;
-      var PXPS = 120;                       // 흐르는 속도(px/s) — 화면 어디서나 동일
-      var P, PITCH, SPAN, half, reach, DEPTH, TURN;
+      var EDGE_PXPS = 120;              // 가장 큰(좌우 끝) 카드 기준 속도(px/s)
+      var P, half, reach, DEPTH, TURN, SKEW, W0, GAP;
+      var tblU = [], tblX = [];
       var base = 0, last = null, frame = 0, raf;
+
+      // 가운데가 1, 바깥으로 갈수록 0 으로 부드럽게 떨어지는 프로파일.
+      // rel 을 ±1 에서 자르면 그 지점에서 기울기가 꺾여 여백이 튄다(실측 60→80px).
+      // 지수함수라 어디서도 꺾이지 않는다.
+      function fAt(x) { var r = x / reach; return Math.exp(-2.2 * r * r); }
+      function kAt(x) { return 1 + DEPTH * fAt(x); }   // 깊이 계수 — 클수록 뒤로 밀려 작아진다
+      // rotateY 로 기울면 카드의 외접 사각형이 조금 넓어진다(실측 +9%).
+      // 눈에 보이는 여백을 맞추려면 그 몫까지 폭으로 쳐야 한다.
+      function wAt(x) {
+        var f = fAt(x);
+        return W0 / (1 + DEPTH * f) * (1 + SKEW * (1 - f));
+      }
 
       function measure() {
         var cs = getComputedStyle(stage);
         P     = parseFloat(cs.perspective) || 1728;
         DEPTH = parseFloat(cs.getPropertyValue('--strip-depth')) || 0.6;
         TURN  = parseFloat(cs.getPropertyValue('--strip-turn'))  || 28;
-        PITCH = items[0].offsetWidth * (1 + (parseFloat(cs.getPropertyValue('--strip-gap')) || 0));
+        SKEW  = parseFloat(cs.getPropertyValue('--strip-skew'))  || 0.09;
+        W0    = items[0].offsetWidth;
+        GAP   = W0 * (parseFloat(cs.getPropertyValue('--strip-gap')) || 0.2);
         half  = stage.clientWidth / 2;
-        // 크기·회전이 화면 밖에서 다 소모되지 않도록, 마스크로 사라지는 지점을
-        // 변화의 끝으로 잡는다. 그래야 보이는 구간 안에서 차이가 크게 난다.
         reach = half * (parseFloat(cs.getPropertyValue('--strip-vis')) || 0.68);
-        // 화면을 덮고도 좌우로 한 장씩 여유가 있어야 되감을 때 빈틈이 안 보인다
-        SPAN  = Math.max(N * PITCH, stage.clientWidth + PITCH * 2);
+        buildTable();
+      }
+
+      // u ↔ x 대응표. 양쪽으로 N/2 만큼 쌓으면 카드 N 장이 한 바퀴를 정확히 채운다.
+      //
+      // 우리가 원하는 조건은 '이웃한 두 카드의 여백이 항상 GAP' —
+      //   x(u+1) - x(u) = (폭(u) + 폭(u+1)) / 2 + GAP
+      // 이건 미분방정식이 아니라 한 칸 건너뛰는 관계식이라 한 번에 못 푼다.
+      // 그래서 먼저 제자리 폭만으로 거칠게 풀고(1차), 그 결과로 이웃 폭을 알아내
+      // 다시 푸는 과정을 몇 번 돌린다. 실측 여백 편차 21% → 2% 로 떨어진다.
+      function integrate(rate) {
+        var STEP = 2, lim = N / 2;
+        var uR = [0], xR = [0], u = 0, x = 0;
+        while (u < lim && x < 40000) { u += STEP / rate(x, u); x += STEP; uR.push(u); xR.push(x); }
+        var uL = [], xL = [];
+        u = 0; x = 0;
+        while (u > -lim && x > -40000) { u -= STEP / rate(x, u); x -= STEP; uL.push(u); xL.push(x); }
+        uL.reverse(); xL.reverse();
+        return { U: uL.concat(uR), X: xL.concat(xR) };
+      }
+
+      function buildTable() {
+        var t = integrate(function (x) { return wAt(x) + GAP; });
+        for (var pass = 0; pass < 3; pass++) {
+          tblU = t.U; tblX = t.X;                     // xAt 이 직전 결과를 보게 한다
+          // 한쪽 이웃만 보면(전진차분) 좌우가 서로 반대로 틀어진다 — 양옆 반 칸씩 본다
+          t = integrate(function (x, u) {
+            return (wAt(xAt(u - 0.5)) + wAt(xAt(u + 0.5))) / 2 + GAP;
+          });
+        }
+        tblU = t.U; tblX = t.X;
+      }
+
+      function xAt(u) {
+        var lo = 0, hi = tblU.length - 1;
+        if (u <= tblU[0])  return tblX[0];
+        if (u >= tblU[hi]) return tblX[hi];
+        while (hi - lo > 1) { var m = (lo + hi) >> 1; if (tblU[m] <= u) lo = m; else hi = m; }
+        var t = (u - tblU[lo]) / (tblU[hi] - tblU[lo]);
+        return tblX[lo] + t * (tblX[hi] - tblX[lo]);
       }
 
       function draw(t) {
         if (last === null) last = t;
-        base = (base + PXPS * Math.min((t - last) / 1000, 0.05)) % SPAN;
+        // 가장 큰 카드 자리에서 EDGE_PXPS 가 되도록 흐름 속도를 잡는다
+        var flow = EDGE_PXPS / (W0 + GAP);
+        base = (base + flow * Math.min((t - last) / 1000, 0.05)) % N;
         last = t;
         var check = (frame++ % 12) === 0;
 
         for (var i = 0; i < N; i++) {
           var el = items[i];
-          var d  = ((base + i * PITCH) % SPAN) - PITCH - half; // 화면 중앙 기준 목표 위치
-          var on = Math.abs(d) < half + PITCH;
+          var d  = xAt(((base + i) % N) - N / 2);   // 화면 중앙 기준 목표 위치
+          var on = Math.abs(d) < half + W0;
 
           if (!on) {
             if (el.style.visibility !== 'hidden') el.style.visibility = 'hidden';
           } else {
             if (el.style.visibility) el.style.visibility = '';
-            var rel = Math.max(-1, Math.min(1, d / reach));
-            var k   = 1 + DEPTH * (1 - rel * rel);   // 가운데일수록 크다 = 그만큼 뒤로 민다
+            var f   = fAt(d);
+            var k   = 1 + DEPTH * f;
+            // 회전도 같은 프로파일을 쓴다 — 가운데 0°, 바깥으로 갈수록 TURN 에 수렴
+            var a   = (d < 0 ? -1 : 1) * TURN * Math.sqrt(1 - f);
             // translateZ 로 뒤로 밀면 화면상 위치도 중앙으로 딸려 들어가므로
-            // translateX 를 k 배로 미리 부풀려 목표 위치에 정확히 앉힌다 (등간격·등속 유지)
+            // translateX 를 k 배로 미리 부풀려 목표 위치에 정확히 앉힌다
             el.style.transform =
               'translate3d(' + (d * k).toFixed(1) + 'px,-50%,0)' +
               ' translateZ(' + (-(k - 1) * P).toFixed(1) + 'px)' +
-              ' rotateY(' + (-rel * TURN).toFixed(2) + 'deg)';
+              ' rotateY(' + (-a).toFixed(2) + 'deg)';
           }
 
           if (check) {
