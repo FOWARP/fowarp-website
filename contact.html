@@ -282,16 +282,35 @@
     .mobile-menu.is-open a:nth-child(4) { transition-delay: 0.21s; }
     .mobile-menu a:last-child { border-bottom: none; }
 
-    /* ─── CONTACT (Figma node 361:1153 기준) ────────────────────
-       흰 배경 + 중앙 단일 컬럼. 한 번에 한 질문만 묻고,
-       상단 진행 바가 Name/Email/Budget/Context 네 단계를 표시한다. */
+    /* ─── DARK (상세페이지의 is-dark 규칙 그대로) ────────────────
+       컨택트는 항상 검정이라 토글 없이 body 에 고정으로 걸어 둔다. */
+    body.is-dark { background: #000; }
+    body.is-dark .header { background: #000; }
+    body.is-dark .marquee-text { color: #fff; }
+    body.is-dark .header-nav a, body.is-dark .header-nav > span { color: #B7B7B7; }
+    body.is-dark .header-nav a.active, body.is-dark .header-nav > span.active { color: #fff; }
+    body.is-dark .menu-toggle { color: #fff; }
+    body.is-dark .header-logo-center img { filter: invert(1); }
+    body.is-dark .header-cta { background: #fff; color: #000; }
+    body.is-dark .mobile-menu { background: #000; border-top-color: #fff; }
+    body.is-dark .mobile-menu a, body.is-dark .mobile-menu span { color: #fff; border-bottom-color: #fff; }
+    body.is-dark .header::after,
+    body.is-dark .marquee-bar-inner::after { background: #686868; }
+
+    /* ─── CONTACT (레퍼런스 mux3.mp4 구성 기준) ──────────────────
+       검정 배경 + 중앙 대형 입력 한 줄. 한 번에 한 질문만 묻고,
+       값이 채워지면 질문이 뒤로 물러나며 버튼이 떠오른다.
+       레퍼런스 실측 색 — 배경 #000 / 플레이스홀더 #343434 /
+       아이콘 원 #323232 / 버튼 #252525 + 글자 #ECECEC. */
 
     .contact {
       height: 100vh;
+      height: 100dvh;
       overflow: hidden;           /* 스크롤 없이 한 화면에 */
       display: flex;
       flex-direction: column;
       padding-top: calc(var(--vwFont) * 5.208); /* 헤더(마키 40 + 바 60) */
+      background: #000;
     }
 
     .contact-stage {
@@ -300,60 +319,87 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;    /* 남는 높이의 한가운데에 폼 */
-      padding: 0 40px;
+      justify-content: center;
+      /* 레퍼런스는 폼이 화면 정중앙보다 위에 앉는다 → 아래쪽에만 여백을 준다 */
+      padding: 0 40px calc(var(--vwFont) * 3);
       text-align: center;
     }
 
-    /* 단계 표시(진행 바 + 라벨)는 제거됨 — 질문 위치는 Figma 시안(y=491) 유지 */
     .form-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: calc(var(--vwFont) * 9.948);
+      width: 100%;
     }
 
+    /* 질문 — 레퍼런스의 고정 헤드라인 자리 */
     .step-q {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      font-size: calc(var(--vwFont) * 2.5);
+      font-size: calc(var(--vwFont) * 2.4);
       font-weight: 400;
-      color: #000;
+      line-height: 1.3;
+      color: #fff;
     }
 
+    /* 아이콘이 글자 크기를 따라가도록 .field 에 기준 크기를 두고 아래는 em 으로 건다 */
     .field {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: calc(var(--vwFont) * 1.354); /* Figma gap 26 */
+      gap: 0.22em;
+      margin-top: calc(var(--vwFont) * 2.2);
       max-width: 100%;
+      font-size: calc(var(--vwFont) * 4);
     }
+    /* 문의 내용은 여러 줄이라 같은 크기로 두면 화면을 넘는다 */
+    .contact.is-area .field { font-size: calc(var(--vwFont) * 2.1); }
+
+    /* 값이 들어오면 원이 회색 → 흰색으로 채워진다 (레퍼런스 동작 그대로) */
+    .f-ico {
+      flex: none;
+      width: 0.78em;
+      height: 0.78em;
+      border-radius: 50%;
+      background: #323232;
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease;
+    }
+    .f-ico svg { width: 52%; height: 52%; display: block; }
+    .f-ico span {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: 0.42em;
+      font-weight: 500;
+      line-height: 1;
+    }
+    .contact.is-typing .f-ico { background: #fff; }
+    .contact.is-area .f-ico { align-self: flex-start; margin-top: 0.08em; }
 
     .field input,
     .field textarea {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      font-size: calc(var(--vwFont) * 2.917);
-      font-weight: 600;
-      font-style: italic;
-      line-height: 1.25;
-      color: #000;
+      font-size: 1em;
+      font-weight: 400;
+      line-height: 1.22;
+      color: #fff;
       background: none;
       border: none;
       outline: none;
       padding: 0;
       text-align: center;
-      caret-color: #000;
+      caret-color: #fff;
       /* 폭은 JS 가 내용(또는 플레이스홀더) 길이에 맞춰 지정해 항상 중앙에 둔다 */
       width: 40px;
-      --ph-size: calc(var(--vwFont) * 2.917);
     }
-    .field textarea { resize: none; overflow: hidden; }
+    .field textarea { resize: none; overflow: hidden; text-align: left; }
+    /* 레퍼런스는 플레이스홀더와 입력값이 같은 크기다 (색만 다르다) */
     .field input::placeholder,
-    .field textarea::placeholder { color: #c7c8c7; font-size: var(--ph-size); }
+    .field textarea::placeholder { color: #343434; }
 
-    /* 1단계에서는 Back 이 display:none 이라 Next 가 그대로 중앙에 선다 */
-    /* 단계 전환 텍스트 모션 (레퍼런스 mux3.mp4)
-       나갈 때: 위로 살짝 밀리며 사라짐 / 들어올 때: 아래에서 떠오름.
-       레퍼런스 실측 — 페이드아웃 약 0.18s, 빈 화면 약 0.06s, 페이드인 약 0.26s. */
+    /* 단계 전환 — 나갈 때 위로 밀리며 사라지고, 들어올 때 아래에서 떠오른다.
+       레퍼런스 실측: 페이드아웃 0.18s, 빈 화면 0.06s, 페이드인 0.26s. */
     .step-q, .field {
       transition: opacity 0.26s ease,
                   transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
@@ -372,51 +418,61 @@
       transition-duration: 0s;
     }
 
-    /* 입력 중에는 질문이 뒤로 물러난다 (레퍼런스의 피사계심도) */
-    .contact.is-typing .step-q { opacity: 0.3; filter: blur(3px); }
-    .step-q { filter: blur(0); transition: opacity 0.26s ease, transform 0.26s cubic-bezier(0.22, 1, 0.36, 1), filter 0.4s ease; }
+    /* 값이 채워지면 질문이 뒤로 물러난다 — 레퍼런스에서 흰 글자가 #353535 까지 죽는다 */
+    .step-q {
+      filter: blur(0);
+      transition: opacity 0.3s ease,
+                  transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                  filter 0.45s ease;
+    }
+    .contact.is-typing .step-q { opacity: 0.21; filter: blur(3px); transform: translateY(-6px); }
 
+    /* 버튼은 값이 들어와야 떠오른다 (레퍼런스: 빈 칸에는 버튼이 없다) */
     .actions {
       display: flex;
       align-items: center;
-      gap: calc(var(--vwFont) * 0.625);
-      margin-top: calc(var(--vwFont) * 2.813); /* Figma gap 54 */
+      gap: calc(var(--vwFont) * 0.9);
+      margin-top: calc(var(--vwFont) * 2.6);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
+    .contact.is-typing .actions { opacity: 1; transform: none; pointer-events: auto; }
 
     .back {
       background: none;
-      color: #000;
-      border: 1px solid #000;
-      border-radius: calc(var(--vwFont) * 0.417);
+      color: #6a6a6a;
+      border: none;
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      font-size: calc(var(--vwFont) * 0.729);
-      text-transform: capitalize;
-      padding: calc(var(--vwFont) * 0.625) calc(var(--vwFont) * 0.729);
+      font-size: calc(var(--vwFont) * 0.833);
+      padding: calc(var(--vwFont) * 0.5) 0;
       cursor: pointer;
-      transition: background 0.2s ease, color 0.2s ease;
+      transition: color 0.2s ease;
     }
-    .back:hover { background: #000; color: #fff; }
+    .back:hover { color: #fff; }
     .contact.is-first .back { display: none; }
 
     .next {
       position: relative;
       overflow: hidden;
-      background: #000;
-      color: #fff;
+      background: #252525;
+      color: #ECECEC;
       border: none;
-      border-radius: calc(var(--vwFont) * 0.417);
+      border-radius: 999px;
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
-      font-size: calc(var(--vwFont) * 0.729);
-      text-transform: capitalize;
-      padding: calc(var(--vwFont) * 0.625) calc(var(--vwFont) * 0.729);
+      font-size: calc(var(--vwFont) * 1.042);
+      padding: calc(var(--vwFont) * 0.85) calc(var(--vwFont) * 1.9);
       cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
     }
+    .next:hover { background: #fff; color: #000; }
     .next:disabled { opacity: 0.45; cursor: default; }
 
     .err {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.677);
-      color: #d64545;
+      color: #ff6b6b;
       margin-top: calc(var(--vwFont) * 0.7);
       min-height: calc(var(--vwFont) * 1);
     }
@@ -424,14 +480,14 @@
     /* ─── 완료 화면 ─── */
     .done { display: none; flex-direction: column; align-items: center; }
     .contact.is-done .form-wrap { display: none; }
-    .contact.is-done .done { display: flex; margin-top: calc(var(--vwFont) * 9.948); }
+    .contact.is-done .done { display: flex; }
 
     .check {
       width: calc(var(--vwFont) * 2.6);
       height: calc(var(--vwFont) * 2.6);
       border-radius: 50%;
-      background: #000;
-      color: #fff;
+      background: #fff;
+      color: #000;
       display: flex; align-items: center; justify-content: center;
     }
     .check svg { width: 52%; height: 52%; }
@@ -439,13 +495,13 @@
     .done-t {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 1.6);
-      color: #000;
+      color: #fff;
       margin-top: calc(var(--vwFont) * 1);
     }
     .done-s {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.833);
-      color: #999796;
+      color: #6a6a6a;
       margin-top: calc(var(--vwFont) * 0.6);
     }
     .summary {
@@ -457,46 +513,49 @@
       font-size: calc(var(--vwFont) * 0.677);
       text-align: left;
     }
-    .summary dt { color: #999796; }
-    .summary dd { color: #000; max-width: calc(var(--vw) * 22); }
+    .summary dt { color: #6a6a6a; }
+    .summary dd { color: #fff; max-width: calc(var(--vw) * 22); }
 
-    /* ─── 하단 포트폴리오 원호 캐러셀 ─────────────────────────────
-       카드가 큰 원의 둘레에 놓이고 원 중심을 축으로 회전한다.
-       각 카드는 자기 각도만큼 함께 기울어져 접선 방향을 향한다.
-       원 중심은 화면 아래에 있어 위쪽 호만 보인다 (부채꼴).
-       반지름·각도는 JS 가 카드 폭에서 계산해 넣는다. */
-    .orbit {
+    /* ─── 하단 포트폴리오 — 원기둥 원근 스트립 ────────────────────
+       레퍼런스와 같이 카드가 좌 → 우로 흐르고, 화면 중앙에서 벗어날수록
+       Y축으로 돌아 바깥쪽 모서리가 뒤로 물러난다.
+       좌우 끝은 마스크로 검정에 녹여 시작·끝을 감춘다.
+       회전각과 재생 여부는 JS 가 카드 중심 좌표에서 계산한다. */
+    .strip {
       position: relative;
-      overflow: hidden;
       flex: none;
-      margin-top: 0;
-      height: min(calc(var(--vw) * 29), 50vh);
-      touch-action: pan-y;
-      cursor: grab;
-    }
-    .orbit.is-drag { cursor: grabbing; }
-    .orbit-ring {
-      position: absolute;
-      left: 50%;
-      width: 0;
-      height: 0;
-    }
-    .orbit-item {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: calc(var(--vw) * 12);              /* 1920 기준 230 */
-      aspect-ratio: 200 / 260;
-      margin-left: calc(var(--vw) * -6);        /* 카드 중심을 원 중심에 */
+      height: min(calc(var(--vw) * 13), 30vh);
+      /* 레퍼런스는 스트립 아래에 검은 여백이 남는다 (화면 바닥에 붙지 않는다) */
+      margin-bottom: calc(var(--vw) * 6);
       overflow: hidden;
-      border-radius: calc(var(--vw) * 0.417);
+      /* 원근 거리가 짧으면 바깥 카드가 과하게 일그러진다 — 레퍼런스는 훨씬 완만하다 */
+      perspective: calc(var(--vw) * 90);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 20%, #000 80%, transparent 100%);
+              mask-image: linear-gradient(90deg, transparent 0, #000 20%, #000 80%, transparent 100%);
+    }
+    .strip-track {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      display: flex;
+      align-items: center;
+      gap: calc(var(--vw) * 2.6);
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .strip-item {
+      flex: none;
+      width: calc(var(--vw) * 16);              /* 1920 기준 307 — 레퍼런스 피치 실측 */
+      aspect-ratio: 3 / 2;                      /* 소재가 480×320 */
+      overflow: hidden;
+      border-radius: calc(var(--vw) * 0.42);
       line-height: 0;
+      backface-visibility: hidden;
       will-change: transform;
       transition: opacity 0.3s ease;
-      backface-visibility: hidden;
     }
-    .orbit-item > img,
-    .orbit-item > video {
+    .strip-item > img,
+    .strip-item > video {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -504,7 +563,7 @@
       display: block;
       pointer-events: none;
     }
-    a.orbit-item:hover { opacity: 0.75; }
+    a.strip-item:hover { opacity: 0.75; }
 
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
@@ -525,22 +584,22 @@
       .header-cta { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; }
 
       .contact { padding-top: 80px; }
-      .contact-stage { padding: 48px 16px 0; }
-      .form-wrap { margin-top: 56px; }
-      .step-q { font-size: 20px; }
-      .field { margin-top: 16px; max-width: none; }
-      .field input, .field textarea { font-size: 24px; --ph-size: 15px; }
-      .actions { gap: 8px; margin-top: 28px; }
-      .back, .next { font-size: 12px; padding: 10px 14px; border-radius: 8px; }
+      .contact-stage { padding: 0 16px 24px; }
+      .step-q { font-size: 17px; }
+      .field { margin-top: 18px; max-width: none; font-size: 34px; }
+      .contact.is-area .field { font-size: 20px; }
+      .actions { gap: 14px; margin-top: 24px; }
+      .back { font-size: 12px; }
+      .next { font-size: 14px; padding: 11px 24px; }
       .err { font-size: 11px; margin-top: 10px; min-height: 16px; }
-      .contact.is-done .done { margin-top: 56px; }
       .done-t { font-size: 22px; }
       .done-s { font-size: 12px; }
       .summary { font-size: 11px; margin-top: 22px; }
       .summary dd { max-width: 46vw; }
-      /* --vw 비례로 두면 모바일에서 아이템이 48px 로 찌그러진다 → 고정값 */
-      .orbit { margin-top: 0; height: min(300px, 38vh); }
-      .orbit-item { width: 116px; margin-left: -58px; border-radius: 6px; }
+      /* --vw 비례로 두면 모바일에서 카드가 찌그러진다 → 고정값 */
+      .strip { height: min(190px, 30vh); perspective: 700px; }
+      .strip-track { gap: 14px; }
+      .strip-item { width: 190px; border-radius: 6px; }
 
     }
   
@@ -721,7 +780,7 @@
     }
 </style>
 </head>
-<body>
+<body class="is-dark">
 
   <header class="header">
     <div class="marquee-section">
@@ -769,6 +828,7 @@
         <div class="step-q" id="stepQ">브랜드명을 입력해 주세요.</div>
 
         <div class="field">
+          <span class="f-ico" id="fIco" aria-hidden="true"></span>
           <input id="stepInput" type="text" placeholder="Please enter your brand name"
                  autocomplete="off" spellcheck="false" aria-labelledby="stepQ">
         </div>
@@ -796,24 +856,24 @@
 
     </div>
 
-    <!-- 하단 포트폴리오 — 원호 캐러셀 -->
-    <div class="orbit" id="orbit">
-      <div class="orbit-ring" id="orbitRing">
-        <a class="orbit-item" href="/goventure"><video src="/media/contact-marquee/goventure.mp4" autoplay muted loop playsinline preload="auto" aria-label="GoVenture Forum"></video></a>
-        <a class="orbit-item" href="/starbucks"><video src="/media/contact-marquee/starbucks.mp4" autoplay muted loop playsinline preload="auto" aria-label="Starbucks®"></video></a>
-        <a class="orbit-item" href="/returnity-skinhealer"><img src="/media/contact-marquee/returnity.jpg" alt="RETURNITY" loading="lazy"></a>
-        <a class="orbit-item" href="/nosugaradded"><video src="/media/contact-marquee/nosugar.mp4" autoplay muted loop playsinline preload="auto" aria-label="NO SUGAR ADDED"></video></a>
-        <a class="orbit-item" href="/kohonjin"><video src="/media/contact-marquee/kohonjin.mp4" autoplay muted loop playsinline preload="auto" aria-label="KOHONJIN"></video></a>
-        <span class="orbit-item"><video src="/media/contact-marquee/calmlab.mp4" autoplay muted loop playsinline preload="auto" aria-label="CALMLAB+"></video></span>
-        <a class="orbit-item" href="/hwanghugung"><video src="/media/contact-marquee/hwanghugung.mp4" autoplay muted loop playsinline preload="auto" aria-label="황후궁 삼계탕"></video></a>
-        <span class="orbit-item"><img src="/media/contact-marquee/antursolais.jpg" alt="An Túr Solais" loading="lazy"></span>
-        <a class="orbit-item" href="/gonyakjelly"><img src="/media/contact-marquee/gonyakjelly.jpg" alt="단백질 곤약젤리" loading="lazy"></a>
-        <span class="orbit-item"><video src="/media/contact-marquee/souptoppokki.mp4" autoplay muted loop playsinline preload="auto" aria-label="SOUP TOPPOKKI"></video></span>
-        <a class="orbit-item" href="/gooumcookit"><img src="/media/contact-marquee/gooumcookit.jpg" alt="구움쿠킷" loading="lazy"></a>
-        <a class="orbit-item" href="/unknot"><video src="/media/contact-marquee/unknot.mp4" autoplay muted loop playsinline preload="auto" aria-label="Unknot"></video></a>
-        <a class="orbit-item" href="/jjonjingeo"><img src="/media/contact-marquee/jjonjingeo.jpg" alt="쫀징어" loading="lazy"></a>
-        <span class="orbit-item"><img src="/media/contact-marquee/danbaekking.jpg" alt="단백킹" loading="lazy"></span>
-        <span class="orbit-item"><img src="/media/contact-marquee/kkokkochip.jpg" alt="꼭꼬칩" loading="lazy"></span>
+    <!-- 하단 포트폴리오 — 원기둥 원근 스트립 (레퍼런스 mux3.mp4) -->
+    <div class="strip" id="strip">
+      <div class="strip-track" id="stripTrack">
+      <a class="strip-item" href="/goventure"><video src="/media/contact-marquee/goventure.mp4" muted loop playsinline preload="auto" aria-label="GoVenture Forum"></video></a>
+      <a class="strip-item" href="/starbucks"><video src="/media/contact-marquee/starbucks.mp4" muted loop playsinline preload="auto" aria-label="Starbucks®"></video></a>
+      <a class="strip-item" href="/returnity-skinhealer"><img src="/media/contact-marquee/returnity.jpg" alt="RETURNITY" loading="lazy"></a>
+      <a class="strip-item" href="/nosugaradded"><video src="/media/contact-marquee/nosugar.mp4" muted loop playsinline preload="auto" aria-label="NO SUGAR ADDED"></video></a>
+      <a class="strip-item" href="/kohonjin"><video src="/media/contact-marquee/kohonjin.mp4" muted loop playsinline preload="auto" aria-label="KOHONJIN"></video></a>
+      <span class="strip-item"><video src="/media/contact-marquee/calmlab.mp4" muted loop playsinline preload="auto" aria-label="CALMLAB+"></video></span>
+      <a class="strip-item" href="/hwanghugung"><video src="/media/contact-marquee/hwanghugung.mp4" muted loop playsinline preload="auto" aria-label="황후궁 삼계탕"></video></a>
+      <span class="strip-item"><img src="/media/contact-marquee/antursolais.jpg" alt="An Túr Solais" loading="lazy"></span>
+      <a class="strip-item" href="/gonyakjelly"><img src="/media/contact-marquee/gonyakjelly.jpg" alt="단백질 곤약젤리" loading="lazy"></a>
+      <span class="strip-item"><video src="/media/contact-marquee/souptoppokki.mp4" muted loop playsinline preload="auto" aria-label="SOUP TOPPOKKI"></video></span>
+      <a class="strip-item" href="/gooumcookit"><img src="/media/contact-marquee/gooumcookit.jpg" alt="구움쿠킷" loading="lazy"></a>
+      <a class="strip-item" href="/unknot"><video src="/media/contact-marquee/unknot.mp4" muted loop playsinline preload="auto" aria-label="Unknot"></video></a>
+      <a class="strip-item" href="/jjonjingeo"><img src="/media/contact-marquee/jjonjingeo.jpg" alt="쫀징어" loading="lazy"></a>
+      <span class="strip-item"><img src="/media/contact-marquee/danbaekking.jpg" alt="단백킹" loading="lazy"></span>
+      <span class="strip-item"><img src="/media/contact-marquee/kkokkochip.jpg" alt="꼭꼬칩" loading="lazy"></span>
       </div>
     </div>
 
@@ -874,6 +934,14 @@
 
     // ─── 대화형 폼 (한 번에 한 질문) ──────────────────────────
     (function() {
+      // 레퍼런스처럼 입력 앞에 단계별 원형 아이콘을 둔다 (빈 칸이면 회색, 값이 들어오면 흰색)
+      var ICO = {
+        brand:   '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 3 6.5v11L12 22l9-4.5v-11L12 2Zm0 2.3 6.6 3.3L12 10.9 5.4 7.6 12 4.3ZM5 9.3l6 3v7.2l-6-3V9.3Zm8 10.2v-7.2l6-3v7.2l-6 3Z"/></svg>',
+        email:   '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 5.5A1.5 1.5 0 0 1 3.5 4h17A1.5 1.5 0 0 1 22 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 18.5v-13Zm2.4.5L12 12.2 19.6 6H4.4ZM20 7.8l-7.4 6a1 1 0 0 1-1.2 0L4 7.8V18h16V7.8Z"/></svg>',
+        budget:  '<span>₩</span>',
+        message: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5.5A1.5 1.5 0 0 1 4.5 4h15A1.5 1.5 0 0 1 21 5.5v10a1.5 1.5 0 0 1-1.5 1.5H9l-4.2 3.4A1 1 0 0 1 3 19.6V5.5Z"/></svg>'
+      };
+
       var STEPS = [
         { key:'brand',   ko:'브랜드명을 입력해 주세요.',      ph:'Please enter your brand name', area:false,
           check:function(v){ return v ? '' : '브랜드명을 입력해 주세요.'; } },
@@ -892,6 +960,7 @@
       var btn    = document.getElementById('next');
       var backBtn = document.getElementById('back');
       var hp     = document.getElementById('hp');
+      var icoEl  = document.getElementById('fIco');
       var input  = document.getElementById('stepInput');
 
       var i = 0, data = {}, sending = false;
@@ -919,27 +988,44 @@
       sizer.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre';
       document.body.appendChild(sizer);
 
-      function availWidth() {
+      var field = document.querySelector('.field');
+
+      function availWidth(icoW) {
         var stage = document.querySelector('.contact-stage');
         var cs = getComputedStyle(stage);
+        // 아이콘 + 사이 간격도 같은 줄을 쓰므로 입력이 쓸 수 있는 폭에서 빼 준다
         return stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
-               - 20;
+               - icoW - 20;
       }
 
       function fitWidth() {
+        field.style.fontSize = '';   // CSS 기준 크기로 되돌린 뒤 다시 잰다
         var cs = getComputedStyle(input);
-        var empty = !input.value;
+        var fcs = getComputedStyle(field);
         sizer.style.fontFamily    = cs.fontFamily;
         sizer.style.fontWeight    = cs.fontWeight;
         sizer.style.fontStyle     = cs.fontStyle;
         sizer.style.letterSpacing = cs.letterSpacing;
-        // 값이 없을 때는 플레이스홀더 크기로 재야 정확하다
-        sizer.style.fontSize = empty
-          ? (cs.getPropertyValue('--ph-size').trim() || cs.fontSize)
-          : cs.fontSize;
-        sizer.textContent = empty ? input.placeholder : input.value;
-        var w = sizer.offsetWidth + 12; // 이탤릭 오른쪽 기울기 + 캐럿 여유
-        input.style.width = Math.min(Math.max(w, 40), availWidth()) + 'px';
+        // 레퍼런스는 플레이스홀더와 입력값이 같은 크기라 따로 잴 필요가 없다
+        sizer.style.fontSize = cs.fontSize;
+        sizer.textContent = input.value || input.placeholder;
+
+        var gap   = parseFloat(fcs.columnGap) || 0;
+        var avail = availWidth(icoEl.offsetWidth + gap);
+        var w = sizer.offsetWidth + 8; // 캐럿 여유
+
+        // textarea 는 알아서 줄바꿈하므로 폭만 제한한다
+        if (input.tagName === 'TEXTAREA') {
+          input.style.width = Math.min(Math.max(w, 40), Math.max(avail, 40)) + 'px';
+          return;
+        }
+        // 한 줄이 가용 폭을 넘으면 글자를 줄인다 — 모바일의 긴 플레이스홀더·이메일이 잘리지 않게
+        if (w > avail && avail > 0) {
+          var k = Math.max(avail / w, 0.34);
+          field.style.fontSize = (parseFloat(fcs.fontSize) * k) + 'px';
+          w = w * k;
+        }
+        input.style.width = Math.min(Math.max(w, 40), Math.max(avail, 40)) + 'px';
       }
 
       function autoGrow() {
@@ -994,6 +1080,8 @@
         var s = STEPS[i];
         qEl.textContent = s.ko;
         wrap.classList.toggle('is-first', i === 0);
+        wrap.classList.toggle('is-area', !!s.area);   // 문의 내용만 글자 크기를 줄인다
+        icoEl.innerHTML = ICO[s.key] || '';
         btn.textContent = (i === STEPS.length - 1) ? 'Send' : 'Next';
         errEl.textContent = '';
         mountInput(s);
@@ -1083,88 +1171,83 @@
     })();
 
     // ─── 하단 포트폴리오 — 원호 캐러셀 ──────────────────────────
-    // 카드를 원 둘레에 균등 배치하고 원 중심을 축으로 돌린다.
-    // transform: rotate(θ) translateY(-R) — 회전이 카드 기울기까지 겸한다.
-    // 원본 세트를 2배로 복제해 한 바퀴를 촘촘히 채운다.
+    // 하단 스트립 — 카드가 좌 → 우로 흐르는 원기둥 원근 마키 (레퍼런스 mux3.mp4).
+    // 한 세트 폭만큼 밀리면 0 으로 되감아 이음매 없이 순환하고,
+    // 카드마다 화면 중앙에서 벗어난 정도에 비례해 rotateY 를 줘서
+    // 바깥쪽 모서리가 뒤로 물러나게 한다.
     (function () {
-      var ring = document.getElementById('orbitRing');
-      var stage = document.getElementById('orbit');
-      if (!ring || !stage) return;
+      var stage = document.getElementById('strip');
+      var track = document.getElementById('stripTrack');
+      if (!stage || !track) return;
 
-      var sources = [].slice.call(ring.children);
-      var TARGET = 20;                          // 한 바퀴에 놓을 카드 수 (적을수록 호가 조인다)
-      for (var k = sources.length; k < TARGET; k++) ring.appendChild(sources[k % sources.length].cloneNode(true));
-      while (ring.children.length > TARGET) ring.removeChild(ring.lastChild);
-      var items = [].slice.call(ring.children);
-      var N = items.length;
-      var STEP = 360 / N;                       // 카드 간 각도
-      var VISIBLE = 70;                         // 이 각도 밖은 숨긴다
-      var DEG_PER_SEC = 3.2;
-      var base = 0, R = 0, last = null, raf, frame = 0;
-      var dragging = false, lastX = 0, vel = 0;
+      var srcs = [].slice.call(track.children);
+      var items = [], offs = [], setW = 0, iw = 0;
+      var x = 0, last = null, frame = 0, raf;
+      var MAXDEG = 34;   // 화면 좌우 끝에서의 Y축 회전각
+      var PXPS   = 44;   // 흐르는 속도(px/s)
 
-      function layout() {
-        var w = items[0].getBoundingClientRect().width;
-        var gap = w * 0.12;
-        // 현(chord)이 카드 폭+간격이 되도록 반지름을 정한다
-        R = (w + gap) / (2 * Math.sin(Math.PI / N));
-        var h = items[0].getBoundingClientRect().height;
-        ring.style.top = (R + h / 2 + h * 0.08) + 'px';
+      function build() {
+        while (track.firstChild) track.removeChild(track.firstChild);
+        srcs.forEach(function (n) { track.appendChild(n); });
+
+        var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+        setW = track.scrollWidth + gap;   // 마지막 카드 뒤 간격까지가 한 세트
+        // 화면 + 한 세트를 덮을 만큼 세트를 통째로 복제해야 좌우에 빈틈이 안 생긴다
+        var need = Math.ceil((stage.clientWidth + setW) / setW) + 1;
+        for (var c = 1; c < need; c++) {
+          srcs.forEach(function (n) { track.appendChild(n.cloneNode(true)); });
+        }
+
+        items = [].slice.call(track.children);
+        offs  = items.map(function (el) { return el.offsetLeft; });
+        iw    = items[0].offsetWidth;
       }
 
-      function norm(d) { d = d % 360; if (d > 180) d -= 360; if (d < -180) d += 360; return d; }
+      function draw(t) {
+        if (last === null) last = t;
+        var dt = Math.min((t - last) / 1000, 0.05);
+        last = t;
+        x = (x + PXPS * dt) % setW;
 
-      function draw() {
-        var check = (frame++ % 10) === 0;
-        for (var i = 0; i < N; i++) {
-          var a = norm(base + i * STEP);
-          var el = items[i];
-          var on = Math.abs(a) <= VISIBLE;
-          if (on) {
-            el.style.display = '';
-            el.style.transform = 'rotate(' + a.toFixed(2) + 'deg) translateY(' + (-R) + 'px)';
-          } else if (el.style.display !== 'none') {
-            el.style.display = 'none';
-          }
+        var base = x - setW;                  // 한 세트 왼쪽에서 시작해 오른쪽으로 흐른다
+        var half = stage.clientWidth / 2;
+        var check = (frame++ % 12) === 0;
+        track.style.transform = 'translate3d(' + base.toFixed(2) + 'px,-50%,0)';
+
+        for (var i = 0; i < items.length; i++) {
+          // 카드 중심의 화면 내 x 좌표는 offsetLeft 로 계산한다 (매 프레임 rect 를 읽지 않는다)
+          var c = base + offs[i] + iw / 2;
+          var rel = Math.max(-1, Math.min(1, (c - half) / half));
+          items[i].style.transform = 'rotateY(' + (rel * MAXDEG).toFixed(2) + 'deg)';
+
           if (check) {
-            var v = el.querySelector('video');
-            if (v) { if (on && v.paused) { var p = v.play(); if (p && p.catch) p.catch(function(){}); }
-                     else if (!on && !v.paused) v.pause(); }
+            var v = items[i].firstElementChild;
+            if (v && v.tagName === 'VIDEO') {
+              // 브라우저 동시 디코딩 한도가 있어 화면 밖 영상은 반드시 멈춘다
+              if (Math.abs(c - half) < half * 1.15) {
+                if (v.paused) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+              } else if (!v.paused) {
+                v.pause();
+              }
+            }
           }
         }
+        raf = requestAnimationFrame(draw);
       }
 
-      function tick(t) {
-        if (last === null) last = t;
-        var dt = Math.min((t - last) / 1000, 0.05); last = t;
-        if (dragging) { /* 드래그 중에는 관성만 */ }
-        else if (Math.abs(vel) > 0.01) { base += vel * dt; vel *= 0.94; }
-        else { base += DEG_PER_SEC * dt; }
-        draw();
-        raf = requestAnimationFrame(tick);
-      }
+      build();
+      raf = requestAnimationFrame(draw);
 
-      stage.addEventListener('pointerdown', function (e) {
-        dragging = true; lastX = e.clientX; vel = 0;
-        stage.classList.add('is-drag');
-        stage.setPointerCapture && stage.setPointerCapture(e.pointerId);
-      });
-      stage.addEventListener('pointermove', function (e) {
-        if (!dragging) return;
-        var dx = e.clientX - lastX; lastX = e.clientX;
-        var d = dx / (R || 600) * (180 / Math.PI);
-        base += d; vel = d * 60; draw();
-      });
-      function endDrag() { dragging = false; stage.classList.remove('is-drag'); }
-      stage.addEventListener('pointerup', endDrag);
-      stage.addEventListener('pointercancel', endDrag);
-      stage.addEventListener('pointerleave', endDrag);
-
-      layout(); draw();
-      raf = requestAnimationFrame(tick);
+      var rt;
       window.addEventListener('resize', function () {
-        cancelAnimationFrame(raf); updateVW();
-        setTimeout(function () { last = null; layout(); draw(); raf = requestAnimationFrame(tick); }, 50);
+        clearTimeout(rt);
+        rt = setTimeout(function () {
+          cancelAnimationFrame(raf);
+          updateVW();
+          x = 0; last = null;
+          build();
+          raf = requestAnimationFrame(draw);
+        }, 120);
       });
     })();
 
