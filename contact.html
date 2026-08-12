@@ -522,32 +522,36 @@
        좌우 끝은 마스크로 검정에 녹여 시작·끝을 감춘다.
        회전각과 재생 여부는 JS 가 카드 중심 좌표에서 계산한다. */
     .strip {
+      /* JS 가 읽어 쓰는 값. 커스텀 속성의 calc() 는 getComputedStyle 이 px 로
+         계산해 주지 않으므로(파싱하면 NaN) 전부 단위 없는 '비율·각도'로 둔다. */
+      --strip-gap: 0.095;   /* 카드 사이 간격 = 카드폭 × 이 값 (피치 = 폭 × 1.095) */
+      --strip-depth: 0.62;  /* 가운데가 뒤로 물러난 깊이(원근거리 대비). 그대로 크기 차이가 된다 */
+      --strip-turn: 28;     /* 화면 좌우 끝에서의 Y축 회전각(도) */
+      --strip-vis: 0.68;    /* 마스크로 사라지는 지점. 크기·회전 변화를 이 안에서 다 쓴다 */
+
       position: relative;
       flex: none;
       /* 가장자리 카드가 가장 크게 투영되므로 그 높이까지 담아야 잘리지 않는다 */
-      height: min(calc(var(--vw) * 15), 32vh);
+      height: min(calc(var(--vw) * 13.5), 30vh);
       /* 레퍼런스는 스트립 아래에 검은 여백이 남는다 (화면 바닥에 붙지 않는다) */
       margin-bottom: calc(var(--vw) * 6);
       overflow: hidden;
       /* 원근 거리가 짧으면 바깥 카드가 과하게 일그러진다 — 레퍼런스는 훨씬 완만하다 */
       perspective: calc(var(--vw) * 90);
-      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 20%, #000 80%, transparent 100%);
-              mask-image: linear-gradient(90deg, transparent 0, #000 20%, #000 80%, transparent 100%);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+              mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
     }
-    .strip-track {
-      position: absolute;
-      top: 50%;
-      left: 0;
-      display: flex;
-      align-items: center;
-      gap: calc(var(--vw) * 2.2);
-      transform-style: preserve-3d;
-      will-change: transform;
-    }
+    /* 카드를 flex 로 늘어놓으면 원근이 '위치'까지 중앙으로 끌어당겨
+       가운데 간격만 좁아지고 속도도 달라진다 (레퍼런스는 간격이 일정하다).
+       그래서 전부 절대배치하고 화면상의 목표 위치를 JS 가 직접 지정한다. */
+    .strip-track { position: absolute; inset: 0; transform-style: preserve-3d; }
     .strip-item {
-      flex: none;
-      /* 중앙에서 0.7배로 줄어드는 걸 감안한 원본 크기 — 중앙 투영폭이 레퍼런스와 맞는다 */
-      width: calc(var(--vw) * 20.4);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      /* 좌우 끝(가장 큰) 기준 크기. 가운데에서는 1/(1+depth) 배로 줄어든다 */
+      width: calc(var(--vw) * 16);
+      margin-left: calc(var(--vw) * -8);        /* 카드 중심을 원근 원점에 맞춘다 */
       aspect-ratio: 3 / 2;                      /* 소재가 480×320 */
       overflow: hidden;
       border-radius: calc(var(--vw) * 0.42);
@@ -598,10 +602,19 @@
       .done-s { font-size: 12px; }
       .summary { font-size: 11px; margin-top: 22px; }
       .summary dd { max-width: 46vw; }
-      /* --vw 비례로 두면 모바일에서 카드가 찌그러진다 → 고정값 */
-      .strip { height: min(180px, 26vh); perspective: 620px; }
-      .strip-track { gap: 12px; }
-      .strip-item { width: 240px; border-radius: 6px; }
+      /* --vw 비례로 두면 모바일에서 카드가 찌그러진다 → 고정값.
+         화면이 좁아 깊이를 그대로 쓰면 가운데 카드가 너무 작아진다 → 약하게 */
+      /* 화면이 좁아 카드가 크면 두세 장밖에 안 들어와 호로 안 읽힌다.
+         카드를 줄여 네 장 이상 보이게 하고 깊이도 약하게 간다. */
+      .strip {
+        height: min(150px, 24vh);
+        perspective: 560px;
+        --strip-gap: 0.08;
+        --strip-depth: 0.30;
+        --strip-turn: 20;
+        --strip-vis: 0.80;
+      }
+      .strip-item { width: 158px; margin-left: -79px; border-radius: 6px; }
 
     }
   
@@ -1173,71 +1186,68 @@
     })();
 
     // ─── 하단 포트폴리오 — 원호 캐러셀 ──────────────────────────
-    // 하단 스트립 — 카드가 좌 → 우로 흐르는 원기둥 원근 마키 (레퍼런스 mux3.mp4).
-    // 한 세트 폭만큼 밀리면 0 으로 되감아 이음매 없이 순환하고,
-    // 카드마다 화면 중앙에서 벗어난 정도에 비례해 rotateY 를 줘서
-    // 바깥쪽 모서리가 뒤로 물러나게 한다.
+    // 하단 스트립 — 레퍼런스(mux3.mp4) 실측 구조.
+    //  · 카드 간격과 흐르는 속도는 화면 어디서나 일정하다 (레퍼런스 피치 실측 편차 ±7%)
+    //  · 크기는 가운데가 가장 작고 좌우 끝으로 갈수록 커진다 — 시청자를 감싸는 오목한 호
+    //  · 각 카드의 바깥쪽 모서리가 안쪽보다 앞으로 나온다 (실측: 좌/우 모서리비 1.12 → 0.80)
+    // 화면상의 목표 x 를 먼저 정하고 translateX 를 역산하기 때문에,
+    // 원근을 아무리 세게 줘도 간격과 속도는 흐트러지지 않는다.
     (function () {
       var stage = document.getElementById('strip');
       var track = document.getElementById('stripTrack');
       if (!stage || !track) return;
 
-      var srcs = [].slice.call(track.children);
-      var items = [], offs = [], setW = 0, iw = 0, persp = 1728;
-      var x = 0, last = null, frame = 0, raf;
-      var MAXDEG = 26;   // 화면 좌우 끝에서의 Y축 회전각
-      var DEPTH  = 0.42; // 원근거리 대비 '중앙이 물러난 정도' — 클수록 가운데가 더 작아진다
-      var PXPS   = 44;   // 흐르는 속도(px/s)
-      var RAD = Math.PI / 180;
-      var kMax = 1 - Math.cos(MAXDEG * RAD);
+      var items = [].slice.call(track.children);
+      var N = items.length;
+      var PXPS = 120;                       // 흐르는 속도(px/s) — 화면 어디서나 동일
+      var P, PITCH, SPAN, half, reach, DEPTH, TURN;
+      var base = 0, last = null, frame = 0, raf;
 
-      function build() {
-        while (track.firstChild) track.removeChild(track.firstChild);
-        srcs.forEach(function (n) { track.appendChild(n); });
-
-        var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-        setW = track.scrollWidth + gap;   // 마지막 카드 뒤 간격까지가 한 세트
-        // 화면 + 한 세트를 덮을 만큼 세트를 통째로 복제해야 좌우에 빈틈이 안 생긴다
-        var need = Math.ceil((stage.clientWidth + setW) / setW) + 1;
-        for (var c = 1; c < need; c++) {
-          srcs.forEach(function (n) { track.appendChild(n.cloneNode(true)); });
-        }
-
-        items = [].slice.call(track.children);
-        offs  = items.map(function (el) { return el.offsetLeft; });
-        iw    = items[0].offsetWidth;
-        persp = parseFloat(getComputedStyle(stage).perspective) || 1728;
+      function measure() {
+        var cs = getComputedStyle(stage);
+        P     = parseFloat(cs.perspective) || 1728;
+        DEPTH = parseFloat(cs.getPropertyValue('--strip-depth')) || 0.6;
+        TURN  = parseFloat(cs.getPropertyValue('--strip-turn'))  || 28;
+        PITCH = items[0].offsetWidth * (1 + (parseFloat(cs.getPropertyValue('--strip-gap')) || 0));
+        half  = stage.clientWidth / 2;
+        // 크기·회전이 화면 밖에서 다 소모되지 않도록, 마스크로 사라지는 지점을
+        // 변화의 끝으로 잡는다. 그래야 보이는 구간 안에서 차이가 크게 난다.
+        reach = half * (parseFloat(cs.getPropertyValue('--strip-vis')) || 0.68);
+        // 화면을 덮고도 좌우로 한 장씩 여유가 있어야 되감을 때 빈틈이 안 보인다
+        SPAN  = Math.max(N * PITCH, stage.clientWidth + PITCH * 2);
       }
 
       function draw(t) {
         if (last === null) last = t;
-        var dt = Math.min((t - last) / 1000, 0.05);
+        base = (base + PXPS * Math.min((t - last) / 1000, 0.05)) % SPAN;
         last = t;
-        x = (x + PXPS * dt) % setW;
-
-        var base = x - setW;                  // 한 세트 왼쪽에서 시작해 오른쪽으로 흐른다
-        var half = stage.clientWidth / 2;
         var check = (frame++ % 12) === 0;
-        track.style.transform = 'translate3d(' + base.toFixed(2) + 'px,-50%,0)';
 
-        for (var i = 0; i < items.length; i++) {
-          // 카드 중심의 화면 내 x 좌표는 offsetLeft 로 계산한다 (매 프레임 rect 를 읽지 않는다)
-          var c = base + offs[i] + iw / 2;
-          var rel = Math.max(-1, Math.min(1, (c - half) / half));
-          // 카드가 시청자를 감싸는 오목한 호 위에 놓인다 —
-          // 화면 중앙이 가장 멀고(작고), 좌우 끝으로 갈수록 가까워진다(커진다).
-          // 호에 접하므로 각 카드의 바깥쪽 모서리가 안쪽보다 앞으로 나온다.
-          var a = rel * MAXDEG;
-          var z = -DEPTH * persp * (1 - (1 - Math.cos(a * RAD)) / kMax);
-          items[i].style.transform =
-            'translateZ(' + z.toFixed(1) + 'px) rotateY(' + (-a).toFixed(2) + 'deg)';
+        for (var i = 0; i < N; i++) {
+          var el = items[i];
+          var d  = ((base + i * PITCH) % SPAN) - PITCH - half; // 화면 중앙 기준 목표 위치
+          var on = Math.abs(d) < half + PITCH;
+
+          if (!on) {
+            if (el.style.visibility !== 'hidden') el.style.visibility = 'hidden';
+          } else {
+            if (el.style.visibility) el.style.visibility = '';
+            var rel = Math.max(-1, Math.min(1, d / reach));
+            var k   = 1 + DEPTH * (1 - rel * rel);   // 가운데일수록 크다 = 그만큼 뒤로 민다
+            // translateZ 로 뒤로 밀면 화면상 위치도 중앙으로 딸려 들어가므로
+            // translateX 를 k 배로 미리 부풀려 목표 위치에 정확히 앉힌다 (등간격·등속 유지)
+            el.style.transform =
+              'translate3d(' + (d * k).toFixed(1) + 'px,-50%,0)' +
+              ' translateZ(' + (-(k - 1) * P).toFixed(1) + 'px)' +
+              ' rotateY(' + (-rel * TURN).toFixed(2) + 'deg)';
+          }
 
           if (check) {
-            var v = items[i].firstElementChild;
+            var v = el.firstElementChild;
             if (v && v.tagName === 'VIDEO') {
               // 브라우저 동시 디코딩 한도가 있어 화면 밖 영상은 반드시 멈춘다
-              if (Math.abs(c - half) < half * 1.15) {
-                if (v.paused) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+              if (on) {
+                if (v.paused) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); }
               } else if (!v.paused) {
                 v.pause();
               }
@@ -1247,7 +1257,7 @@
         raf = requestAnimationFrame(draw);
       }
 
-      build();
+      measure();
       raf = requestAnimationFrame(draw);
 
       var rt;
@@ -1256,8 +1266,7 @@
         rt = setTimeout(function () {
           cancelAnimationFrame(raf);
           updateVW();
-          x = 0; last = null;
-          build();
+          last = null; measure();
           raf = requestAnimationFrame(draw);
         }, 120);
       });
