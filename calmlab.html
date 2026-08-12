@@ -796,12 +796,12 @@
     .ab-no {
       /* 글자 크기가 16 vs 18 이라 같은 패딩이면 번호가 살짝 위로 뜬다.
          차이만큼(0.075em) 내려 영문 첫 줄과 윗선을 맞춘다 */
-      padding: calc(var(--vw) * .521 + 0.075em) 0 calc(var(--vw) * .521) calc(var(--vw) * 1.563);
+      padding: calc(10px + 0.075em) 0 10px 30px;   /* 좌 30 = 그리드 20 + 10 */
       font-size: calc(var(--vwFont) * .833);   /* 16 */
       line-height: 1.5;
       color: #fff;
     }
-    .ab-body { padding: calc(var(--vw) * .521) calc(var(--vw) * 1.563) calc(var(--vw) * .521) calc(var(--vw) * .521); }
+    .ab-body { padding: 10px 30px 10px 10px; }   /* 우 30 = 그리드 20 + 10 */
     .ab-body p { margin: 0; line-height: 1.5; color: #fff; }
     .ab-body .ab-en { font-size: calc(var(--vwFont) * .938); }   /* 18 */
     .ab-body .ab-ko { font-size: calc(var(--vwFont) * .990); margin-top: 0.75em; }  /* 19 */
@@ -817,7 +817,7 @@
       object-fit: cover; background: #000;
     }
     .ab-copy {
-      padding: calc(var(--vw) * .521) calc(var(--vw) * 1.563) calc(var(--vw) * .521) calc(var(--vw) * 5.417);
+      padding: 10px 30px 10px calc(var(--vw) * 4.896 + 10px);   /* 본문 시작점과 동일 */
       font-size: calc(var(--vwFont) * .938);   /* 18 — 본문 영문과 동일 */
       line-height: 1.5;
       color: #fff;
