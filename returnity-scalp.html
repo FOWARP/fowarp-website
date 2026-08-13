@@ -31,6 +31,7 @@
   <link rel="preload" href="/fonts/KarlsbaderGrotesk-400.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="/fonts/KarlsbaderGrotesk-600.otf" as="font" type="font/otf" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+  <link rel="prefetch" href="/contact">
   <script src="/js/lenis.min.js"></script>
   <style>
     /*
@@ -876,24 +877,29 @@
        갉아먹으므로 요소를 화면보다 위·좌우로 넉넉히 키워 둔다. */
     .veil {
       position: fixed;
-      top: -20vh;
+      top: -10vh;
       left: -10vw;
       width: 120vw;
-      height: 220vh;
+      height: 180vh;
       z-index: 400;
       pointer-events: none;
+      /* 검정 110vh + 흐려지는 꼬리 70vh.
+         꼬리 끝을 화면 맨 위에 붙여 놓고 출발하므로 누르는 즉시 어두워지기 시작하고,
+         끝나는 순간 정확히 화면이 다 덮인다 (죽은 시간 없음). */
       background: linear-gradient(to bottom,
-        #000 0%, #000 62%,
-        rgba(0, 0, 0, 0.92) 76%,
-        rgba(0, 0, 0, 0.55) 89%,
+        #000 0%, #000 61%,
+        rgba(0, 0, 0, 0.72) 74%,
+        rgba(0, 0, 0, 0.32) 88%,
         rgba(0, 0, 0, 0) 100%);
       filter: blur(30px);
-      transform: translate3d(0, -220vh, 0);
+      transform: translate3d(0, -170vh, 0);
       will-change: transform;
     }
     body.veil-on .veil {
       transform: translate3d(0, 0, 0);
-      transition: transform 1.05s cubic-bezier(0.62, 0, 0.36, 1);
+      /* 곡선이 앞쪽에 몰리면 중간에 '쿵' 하고 덮고 남은 시간을 검정으로 서 있게 된다.
+         거의 등속(완만한 S)이라야 커튼처럼 고르게 내려온다. */
+      transition: transform 0.85s cubic-bezier(0.45, 0.05, 0.55, 0.95);
     }
     @media (prefers-reduced-motion: reduce) {
       body.veil-on .veil { transition-duration: 0.01s; }
@@ -1331,7 +1337,7 @@
         if (going) return;
         going = true;
         document.body.classList.add('veil-on');
-        setTimeout(function () { location.href = '/contact'; }, slow ? 60 : 1030);
+        setTimeout(function () { location.href = '/contact'; }, slow ? 60 : 900);
       }
       el.addEventListener('click', go);
       el.addEventListener('keydown', function (e) {
