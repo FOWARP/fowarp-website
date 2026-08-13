@@ -326,6 +326,9 @@
       flex-direction: column;
       position: relative;
       background: #fff;
+      /* 시안 440:1394 — 항목(4×30) 아래 14px 여백 뒤 닫는 선 */
+      padding-bottom: 14px;
+      border-bottom: 1px solid #D9D9D9;
       transform: translateY(-100%);
       transition: transform 0.42s cubic-bezier(0.85, 0, 0.15, 1);
     }
@@ -340,8 +343,8 @@
       z-index: 1;            /* 괘선보다 위 — 사이트 전역 규칙과 동일 */
       display: flex;
       align-items: center;
-      height: 40px;
-      padding: 0 20px;
+      height: 30px;
+      padding: 0 30px;
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: 14px;
       line-height: 1;
