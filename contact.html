@@ -882,7 +882,7 @@
 
         <div class="field">
           <span class="f-ico" id="fIco" aria-hidden="true"></span>
-          <input id="stepInput" type="text" placeholder="your brand name"
+          <input id="stepInput" type="text" placeholder="your brand"
                  autocomplete="off" spellcheck="false" aria-labelledby="stepQ">
         </div>
 
@@ -1000,14 +1000,14 @@
       };
 
       var STEPS = [
-        { key:'brand',   ko:'브랜드명을 입력해 주세요.',      ph:'your brand name', area:false,
+        { key:'brand',   ko:'브랜드명을 입력해 주세요.',      ph:'your brand', area:false,
           check:function(v){ return v ? '' : '브랜드명을 입력해 주세요.'; } },
         { key:'email',   ko:'이메일 주소를 입력해 주세요.',    ph:'your email',  area:false, inputType:'email',
           check:function(v){ if(!v) return '이메일 주소를 입력해 주세요.';
                              return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : '이메일 형식을 확인해 주세요.'; } },
         { key:'budget',  ko:'프로젝트 예산을 입력해 주세요.',  ph:'your budget',   area:false, money:true,
           check:function(v){ return /\d/.test(v) ? '' : '예산을 입력해 주세요.'; } },
-        { key:'message', ko:'문의 내용을 입력해 주세요.',      ph:'Please tell us what you need',  area:true,
+        { key:'message', ko:'문의 내용을 입력해 주세요.',      ph:'your message',  area:true,
           check:function(v){ return v ? '' : '문의 내용을 입력해 주세요.'; } }
       ];
 
@@ -1254,7 +1254,7 @@
       var NUDGE     = 4.0;              // 글자 한 자당 찍는 최고 속도(u/s)
       var NUDGE_MAX = 7;                // 드래그 관성까지 포함한 상한
       var DECAY     = 0.01;             // 얹은 속도가 1초에 이만큼으로 준다
-      var P, half, reach, DEPTH, TURN, SKEW, W0, GAP;
+      var P, half, reach, DEPTH, TURN, SKEW, W0, GAP, flow;
       var tblU = [], tblX = [];
       var base = 0, last = null, frame = 0, raf;
       var boost = 0;                    // 타이핑·드래그가 얹는 추가 속도
@@ -1283,6 +1283,7 @@
         W0    = items[0].offsetWidth;
         GAP   = W0 * (parseFloat(cs.getPropertyValue('--strip-gap')) || 0.2);
         half  = stage.clientWidth / 2;
+        flow  = EDGE_PXPS / (W0 + GAP);   // 평상시 흐름 속도(u/s)
         reach = half * (parseFloat(cs.getPropertyValue('--strip-vis')) || 0.68);
         buildTable();
       }
@@ -1329,7 +1330,6 @@
       function draw(t) {
         if (last === null) last = t;
         // 가장 큰 카드 자리에서 EDGE_PXPS 가 되도록 흐름 속도를 잡는다
-        var flow = EDGE_PXPS / (W0 + GAP);
         var dt = Math.min((t - last) / 1000, 0.05);
         last = t;
         if (!dragging) {
@@ -1380,8 +1380,12 @@
       // 느리다가 빨라지는(ease-in) 느낌이 된다. 여기서는 매번 즉시 최고속을 찍고
       // 지수적으로 감쇠하므로 한 자마다 빠르게 튀었다가 점점 느려진다(ease-out).
       document.addEventListener('strip-nudge', function (e) {
+        // 최종 속도가 정확히 ±NUDGE 가 되도록 평상시 흐름만큼 빼고 얹는다.
+        // 그냥 더하면 좌→우 흐름이 이미 깔려 있어 입력은 flow+NUDGE,
+        // 백스페이스는 flow-NUDGE 가 돼서 뒤로 갈 때만 약해진다.
         var dir = (e.detail && e.detail.dir < 0) ? -1 : 1;
-        boost = dir > 0 ? Math.max(boost, NUDGE) : Math.min(boost, -NUDGE);
+        var want = dir * NUDGE - flow;
+        boost = dir > 0 ? Math.max(boost, want) : Math.min(boost, want);
       });
 
       // 드래그 — 화면 이동량을 그 자리 피치로 나눠 흐름 좌표로 환산한다
