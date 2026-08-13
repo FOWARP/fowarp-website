@@ -882,6 +882,36 @@
       .ab-body .ab-ko { font-size: 14px; }
       .ab-copy { padding: 10px 20px 10px 56px; font-size: 13px; }
     }
+
+    /* ─── Get in Touch 전환 베일 ──────────────────────────
+       흰 페이지 위로 검정이 위에서 아래로 덮으며 컨택트로 넘어간다.
+       경계선이 보이면 안 되므로 아래쪽을 긴 그라데이션으로 흘리고
+       가우시안 블러로 한 번 더 뭉갠다. 블러가 가장자리를 반투명하게
+       갉아먹으므로 요소를 화면보다 위·좌우로 넉넉히 키워 둔다. */
+    .veil {
+      position: fixed;
+      top: -20vh;
+      left: -10vw;
+      width: 120vw;
+      height: 220vh;
+      z-index: 400;
+      pointer-events: none;
+      background: linear-gradient(to bottom,
+        #000 0%, #000 62%,
+        rgba(0, 0, 0, 0.92) 76%,
+        rgba(0, 0, 0, 0.55) 89%,
+        rgba(0, 0, 0, 0) 100%);
+      filter: blur(30px);
+      transform: translate3d(0, -220vh, 0);
+      will-change: transform;
+    }
+    body.veil-on .veil {
+      transform: translate3d(0, 0, 0);
+      transition: transform 1.05s cubic-bezier(0.62, 0, 0.36, 1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      body.veil-on .veil { transition-duration: 0.01s; }
+    }
 </style>
 </head>
 <body>
@@ -1311,6 +1341,35 @@
         if (e.key === 'Escape' && document.body.classList.contains('about-open')) close();
       });
     })();
+</script>
+
+<script>
+  /* Get in Touch — 검정 베일이 다 덮은 뒤에 컨택트로 넘어간다.
+     넘어간 쪽도 검정으로 시작하므로 이음매가 안 보인다. */
+  (function () {
+    var veil = document.createElement('div');
+    veil.className = 'veil';
+    document.body.appendChild(veil);
+
+    var going = false;
+    var slow = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    document.querySelectorAll('.header-cta').forEach(function (el) {
+      el.style.cursor = 'pointer';
+      el.setAttribute('role', 'link');
+      el.setAttribute('tabindex', '0');
+      function go() {
+        if (going) return;
+        going = true;
+        document.body.classList.add('veil-on');
+        setTimeout(function () { location.href = '/contact'; }, slow ? 60 : 1030);
+      }
+      el.addEventListener('click', go);
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+      });
+    });
+  })();
 </script>
 </body>
 </html>

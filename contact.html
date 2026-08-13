@@ -58,6 +58,7 @@
     :root { --vw: 19.2px; --vwFont: 19.2px; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
+    html { background: #000; }   /* 베일에서 넘어올 때 흰 프레임이 스치지 않게 */
     body {
       background: #fff;
       overflow-x: hidden;
@@ -296,6 +297,24 @@
     body.is-dark .mobile-menu a, body.is-dark .mobile-menu span { color: #fff; border-bottom-color: #fff; }
     body.is-dark .header::after,
     body.is-dark .marquee-bar-inner::after { background: #686868; }
+
+    /* ─── 진입 인트로 — 오브젝트가 순서대로 나타난다 ──────────────
+       Get in Touch 의 검정 베일이 덮은 직후 이어지는 연출.
+       fill-mode 를 backwards 로 둬서 끝나면 원래 스타일로 되돌아간다
+       (.step-q / .field 는 단계 전환용 transform 을 따로 쓰기 때문에
+        forwards 로 두면 그 transform 을 덮어버린다).
+       헤더는 translateX(-50%) 로 가운데 정렬돼 있어 키프레임에 같이 써야 한다. */
+    @keyframes introRise { from { opacity: 0; transform: translateY(18px); } }
+    @keyframes introDrop { from { opacity: 0; transform: translateX(-50%) translateY(-16px); } }
+
+    body.intro .header { animation: introDrop 0.80s cubic-bezier(0.22, 1, 0.36, 1) 0.06s backwards; }
+    body.intro .step-q { animation: introRise 0.80s cubic-bezier(0.22, 1, 0.36, 1) 0.34s backwards; }
+    body.intro .field  { animation: introRise 0.80s cubic-bezier(0.22, 1, 0.36, 1) 0.50s backwards; }
+    body.intro .strip  { animation: introRise 0.90s cubic-bezier(0.22, 1, 0.36, 1) 0.66s backwards; }
+    @media (prefers-reduced-motion: reduce) {
+      body.intro .header, body.intro .step-q,
+      body.intro .field,  body.intro .strip { animation: none; }
+    }
 
     /* ─── CONTACT (레퍼런스 mux3.mp4 구성 기준) ──────────────────
        검정 배경 + 중앙 대형 입력 한 줄. 한 번에 한 질문만 묻고,
@@ -814,7 +833,7 @@
     }
 </style>
 </head>
-<body class="is-dark">
+<body class="is-dark intro">
 
   <header class="header">
     <div class="marquee-section">
@@ -955,6 +974,10 @@
   <button class="about-close" id="aboutClose" type="button" aria-label="닫기"><span></span><span></span></button>
 
 <script>
+    // 인트로가 끝나면 클래스를 뗀다 — 안 그러면 .step-q 의 단계 전환
+    // transform 이 인트로 애니메이션에 계속 눌린다
+    setTimeout(function () { document.body.classList.remove('intro'); }, 1700);
+
     function updateVW() {
       var w = window.innerWidth;
       document.documentElement.style.setProperty('--vw', (Math.min(w, 2560) / 100) + 'px');
@@ -1228,9 +1251,9 @@
       var items = [].slice.call(track.children);
       var N = items.length;
       var EDGE_PXPS = 120;              // 가장 큰(좌우 끝) 카드 기준 속도(px/s)
-      var NUDGE     = 0.42;             // 글자 한 자당 얹는 속도(u/s)
-      var NUDGE_MAX = 3.2;              // 연타해도 이 이상은 안 빨라진다
-      var DECAY     = 0.03;             // 얹은 속도가 1초에 이만큼으로 준다
+      var NUDGE     = 4.0;              // 글자 한 자당 찍는 최고 속도(u/s)
+      var NUDGE_MAX = 7;                // 드래그 관성까지 포함한 상한
+      var DECAY     = 0.01;             // 얹은 속도가 1초에 이만큼으로 준다
       var P, half, reach, DEPTH, TURN, SKEW, W0, GAP;
       var tblU = [], tblX = [];
       var base = 0, last = null, frame = 0, raf;
@@ -1352,10 +1375,13 @@
         raf = requestAnimationFrame(draw);
       }
 
-      // 글자를 칠 때마다 좌→우로, 지울 때마다 우→좌로 한 번씩 밀어 준다
+      // 글자를 칠 때마다 좌→우로, 지울 때마다 우→좌로 한 번씩 튕긴다.
+      // 더하지 않고 '최고 속도를 다시 찍는' 방식 — 더하면 연타할수록 속도가 쌓여
+      // 느리다가 빨라지는(ease-in) 느낌이 된다. 여기서는 매번 즉시 최고속을 찍고
+      // 지수적으로 감쇠하므로 한 자마다 빠르게 튀었다가 점점 느려진다(ease-out).
       document.addEventListener('strip-nudge', function (e) {
-        boost += (e.detail && e.detail.dir < 0 ? -1 : 1) * NUDGE;
-        boost = Math.max(-NUDGE_MAX, Math.min(NUDGE_MAX, boost));
+        var dir = (e.detail && e.detail.dir < 0) ? -1 : 1;
+        boost = dir > 0 ? Math.max(boost, NUDGE) : Math.min(boost, -NUDGE);
       });
 
       // 드래그 — 화면 이동량을 그 자리 피치로 나눠 흐름 좌표로 환산한다
