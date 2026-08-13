@@ -533,7 +533,7 @@
       position: relative;
       flex: none;
       /* 가장자리 카드가 가장 크게 투영되므로 그 높이까지 담아야 잘리지 않는다 */
-      height: min(calc(var(--vw) * 13.5), 30vh);
+      height: min(calc(var(--vw) * 19.5), 38vh);
       /* 레퍼런스는 스트립 아래에 검은 여백이 남는다 (화면 바닥에 붙지 않는다) */
       margin-bottom: calc(var(--vw) * 6);
       overflow: hidden;
@@ -551,9 +551,9 @@
       left: 50%;
       top: 50%;
       /* 좌우 끝(가장 큰) 기준 크기. 가운데에서는 1/(1+depth) 배로 줄어든다 */
-      width: calc(var(--vw) * 16);
-      margin-left: calc(var(--vw) * -8);        /* 카드 중심을 원근 원점에 맞춘다 */
-      aspect-ratio: 3 / 2;                      /* 소재가 480×320 */
+      width: calc(var(--vw) * 14.6);
+      margin-left: calc(var(--vw) * -7.3);      /* 카드 중심을 원근 원점에 맞춘다 */
+      aspect-ratio: 606.667 / 758;              /* 메인 갤러리 썸네일과 동일한 4:5 */
       overflow: hidden;
       border-radius: calc(var(--vw) * 0.42);
       line-height: 0;
@@ -608,7 +608,7 @@
       /* 화면이 좁아 카드가 크면 두세 장밖에 안 들어와 호로 안 읽힌다.
          카드를 줄여 네 장 이상 보이게 하고 깊이도 약하게 간다. */
       .strip {
-        height: min(150px, 24vh);
+        height: min(200px, 28vh);
         perspective: 560px;
         --strip-gap: 0.16;
         --strip-skew: 0.06;
@@ -616,7 +616,7 @@
         --strip-turn: 20;
         --strip-vis: 0.80;
       }
-      .strip-item { width: 158px; margin-left: -79px; border-radius: 6px; }
+      .strip-item { width: 150px; margin-left: -75px; border-radius: 6px; }
 
     }
   
