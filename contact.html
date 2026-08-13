@@ -341,12 +341,14 @@
       color: #fff;
     }
 
-    /* 아이콘이 글자 크기를 따라가도록 .field 에 기준 크기를 두고 아래는 em 으로 건다 */
+    /* 아이콘이 글자 크기를 따라가도록 .field 에 기준 크기를 두고 아래는 em 으로 건다.
+       아이콘을 흐름에서 빼내(absolute) 글자 바깥에 매단다 — 안 그러면 아이콘이
+       왼쪽 자리를 먹어서 '아이콘+글자' 덩어리만 중앙에 오고 글자는 오른쪽으로 밀린다. */
     .field {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.22em;
       margin-top: calc(var(--vwFont) * 2.2);
       max-width: 100%;
       font-size: calc(var(--vwFont) * 4);
@@ -356,6 +358,11 @@
 
     /* 값이 들어오면 원이 회색 → 흰색으로 채워진다 (레퍼런스 동작 그대로) */
     .f-ico {
+      position: absolute;
+      right: 100%;                 /* 글자 왼쪽 바깥에 건다 */
+      margin-right: 0.22em;        /* 아이콘 ↔ 글자 간격 */
+      top: 50%;
+      transform: translateY(-50%);
       flex: none;
       width: 0.78em;
       height: 0.78em;
@@ -375,7 +382,7 @@
       line-height: 1;
     }
     .contact.is-typing .f-ico { background: #fff; }
-    .contact.is-area .f-ico { align-self: flex-start; margin-top: 0.08em; }
+    .contact.is-area .f-ico { top: 0.08em; transform: none; }   /* 여러 줄일 땐 첫 줄에 맞춘다 */
 
     .field input,
     .field textarea {
@@ -1027,8 +1034,10 @@
         sizer.style.fontSize = cs.fontSize;
         sizer.textContent = input.value || input.placeholder;
 
-        var gap   = parseFloat(fcs.columnGap) || 0;
-        var avail = availWidth(icoEl.offsetWidth + gap);
+        // 글자가 중앙에 서고 아이콘은 그 왼쪽에 매달리므로,
+        // 아이콘이 화면 밖으로 나가지 않으려면 양쪽에서 그만큼씩 빼야 한다
+        var icoW  = icoEl.offsetWidth + (parseFloat(getComputedStyle(icoEl).marginRight) || 0);
+        var avail = availWidth(icoW * 2);
         var w = sizer.offsetWidth + 8; // 캐럿 여유
 
         // textarea 는 알아서 줄바꿈하므로 폭만 제한한다
