@@ -279,7 +279,7 @@
       display: flex;
       align-items: center;
       height: 30px;
-      padding: 0 30px;
+      padding: 0 20px;   /* 메인 헤더 모바일 좌우 마진(20px)과 통일 */
       font-size: 14px;
       line-height: 1;
       text-decoration: none;
@@ -706,7 +706,6 @@
       display: block;
       pointer-events: none;
     }
-    a.strip-item:hover { opacity: 0.75; }
 
     /* ─── MOBILE ──────────────────────────────── */
     @media (max-width: 767px) {
@@ -717,7 +716,7 @@
       .marquee-logo { height: 13px; }
       .marquee-set { gap: calc(var(--vwFont) * 10.416); padding-right: calc(var(--vwFont) * 10.416); } /* 데스크탑 대비 2배 */
 
-      .header-main { height: 52px; padding: 0 16px; }
+      .header-main { height: 52px; padding: 0 20px; }
       .header-logo-center img { height: 16px; }
       .header-nav { display: none; }
       .menu-toggle { display: flex; }
@@ -1027,19 +1026,19 @@
     <!-- 하단 포트폴리오 — 원기둥 원근 스트립 (레퍼런스 mux3.mp4) -->
     <div class="strip" id="strip">
       <div class="strip-track" id="stripTrack">
-      <a class="strip-item" href="/goventure"><video src="/media/contact-marquee/goventure.mp4" muted loop playsinline preload="auto" aria-label="GoVenture Forum"></video></a>
-      <a class="strip-item" href="/starbucks"><video src="/media/contact-marquee/starbucks.mp4" muted loop playsinline preload="auto" aria-label="Starbucks®"></video></a>
-      <a class="strip-item" href="/returnity-skinhealer"><img src="/media/contact-marquee/returnity.jpg" alt="RETURNITY" loading="lazy"></a>
-      <a class="strip-item" href="/nosugaradded"><video src="/media/contact-marquee/nosugar.mp4" muted loop playsinline preload="auto" aria-label="NO SUGAR ADDED"></video></a>
-      <a class="strip-item" href="/kohonjin"><video src="/media/contact-marquee/kohonjin.mp4" muted loop playsinline preload="auto" aria-label="KOHONJIN"></video></a>
+      <span class="strip-item"><video src="/media/contact-marquee/goventure.mp4" muted loop playsinline preload="auto" aria-label="GoVenture Forum"></video></span>
+      <span class="strip-item"><video src="/media/contact-marquee/starbucks.mp4" muted loop playsinline preload="auto" aria-label="Starbucks®"></video></span>
+      <span class="strip-item"><img src="/media/contact-marquee/returnity.jpg" alt="RETURNITY" loading="lazy"></span>
+      <span class="strip-item"><video src="/media/contact-marquee/nosugar.mp4" muted loop playsinline preload="auto" aria-label="NO SUGAR ADDED"></video></span>
+      <span class="strip-item"><video src="/media/contact-marquee/kohonjin.mp4" muted loop playsinline preload="auto" aria-label="KOHONJIN"></video></span>
       <span class="strip-item"><video src="/media/contact-marquee/calmlab.mp4" muted loop playsinline preload="auto" aria-label="CALMLAB+"></video></span>
-      <a class="strip-item" href="/hwanghugung"><video src="/media/contact-marquee/hwanghugung.mp4" muted loop playsinline preload="auto" aria-label="황후궁 삼계탕"></video></a>
+      <span class="strip-item"><video src="/media/contact-marquee/hwanghugung.mp4" muted loop playsinline preload="auto" aria-label="황후궁 삼계탕"></video></span>
       <span class="strip-item"><img src="/media/contact-marquee/antursolais.jpg" alt="An Túr Solais" loading="lazy"></span>
-      <a class="strip-item" href="/gonyakjelly"><img src="/media/contact-marquee/gonyakjelly.jpg" alt="단백질 곤약젤리" loading="lazy"></a>
+      <span class="strip-item"><img src="/media/contact-marquee/gonyakjelly.jpg" alt="단백질 곤약젤리" loading="lazy"></span>
       <span class="strip-item"><video src="/media/contact-marquee/souptoppokki.mp4" muted loop playsinline preload="auto" aria-label="SOUP TOPPOKKI"></video></span>
-      <a class="strip-item" href="/gooumcookit"><img src="/media/contact-marquee/gooumcookit.jpg" alt="구움쿠킷" loading="lazy"></a>
-      <a class="strip-item" href="/unknot"><video src="/media/contact-marquee/unknot.mp4" muted loop playsinline preload="auto" aria-label="Unknot"></video></a>
-      <a class="strip-item" href="/jjonjingeo"><img src="/media/contact-marquee/jjonjingeo.jpg" alt="쫀징어" loading="lazy"></a>
+      <span class="strip-item"><img src="/media/contact-marquee/gooumcookit.jpg" alt="구움쿠킷" loading="lazy"></span>
+      <span class="strip-item"><video src="/media/contact-marquee/unknot.mp4" muted loop playsinline preload="auto" aria-label="Unknot"></video></span>
+      <span class="strip-item"><img src="/media/contact-marquee/jjonjingeo.jpg" alt="쫀징어" loading="lazy"></span>
       <span class="strip-item"><img src="/media/contact-marquee/danbaekking.jpg" alt="단백킹" loading="lazy"></span>
       <span class="strip-item"><img src="/media/contact-marquee/kkokkochip.jpg" alt="꼭꼬칩" loading="lazy"></span>
       </div>
@@ -1384,7 +1383,7 @@
       var tblU = [], tblX = [];
       var base = 0, last = null, frame = 0, raf;
       var boost = 0;                    // 타이핑·드래그가 얹는 추가 속도
-      var dragging = false, pending = false, startX = 0, lastX = 0, vel = 0, moved = 0, pid = null;
+      var dragging = false, pending = false, startX = 0, lastX = 0, vel = 0, pid = null;
 
       function norm(v) { v %= N; return v < 0 ? v + N : v; }
 
@@ -1520,12 +1519,11 @@
       }
       stage.addEventListener('pointerdown', function (e) {
         pending = true; dragging = false;
-        startX = lastX = e.clientX; moved = 0; vel = 0; pid = e.pointerId;
+        startX = lastX = e.clientX; vel = 0; pid = e.pointerId;
       });
       stage.addEventListener('pointermove', function (e) {
         if (!pending && !dragging) return;
         var dx = e.clientX - lastX; lastX = e.clientX;
-        moved += Math.abs(dx);
         if (!dragging) {
           // 문턱을 넘기 전에는 포인터를 잡지 않는다 —
           // pointerdown 에서 바로 setPointerCapture 하면 클릭 대상이 .strip 으로
@@ -1550,12 +1548,6 @@
       stage.addEventListener('pointerup', endDrag);
       stage.addEventListener('pointercancel', endDrag);
       stage.addEventListener('pointerleave', endDrag);
-      // 끌고 나서 손을 떼면 링크로 넘어가면 안 된다
-      stage.addEventListener('click', function (e) {
-        if (moved > 6) { e.preventDefault(); e.stopPropagation(); }
-        moved = 0;
-      }, true);
-
       measure();
       raf = requestAnimationFrame(draw);
 
