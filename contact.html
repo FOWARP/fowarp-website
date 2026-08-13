@@ -539,20 +539,29 @@
 
       position: relative;
       flex: none;
+      cursor: grab;
+      touch-action: pan-y;        /* 세로 스와이프는 페이지에 넘긴다 */
       /* 가장자리 카드가 가장 크게 투영되므로 그 높이까지 담아야 잘리지 않는다 */
       height: min(calc(var(--vw) * 19.5), 38vh);
       /* 레퍼런스는 스트립 아래에 검은 여백이 남는다 (화면 바닥에 붙지 않는다) */
       margin-bottom: calc(var(--vw) * 6);
       overflow: hidden;
-      /* 원근 거리가 짧으면 바깥 카드가 과하게 일그러진다 — 레퍼런스는 훨씬 완만하다 */
-      perspective: calc(var(--vw) * 90);
+      /* 원근은 .strip-track 에 건다 — 여기 걸고 트랙에 preserve-3d 를 주면
+         크로미움에서 3D 변환된 카드가 히트테스트를 못 받아 링크가 안 눌린다.
+         트랙에 직접 걸면 카드가 '직계 자식'이라 preserve-3d 자체가 필요 없다. */
       -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
               mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
     }
     /* 카드를 flex 로 늘어놓으면 원근이 '위치'까지 중앙으로 끌어당겨
        가운데 간격만 좁아지고 속도도 달라진다 (레퍼런스는 간격이 일정하다).
        그래서 전부 절대배치하고 화면상의 목표 위치를 JS 가 직접 지정한다. */
-    .strip-track { position: absolute; inset: 0; transform-style: preserve-3d; }
+    .strip.is-drag { cursor: grabbing; }
+    .strip-track {
+      position: absolute;
+      inset: 0;
+      /* 원근 거리가 짧으면 바깥 카드가 과하게 일그러진다 — 레퍼런스는 훨씬 완만하다 */
+      perspective: calc(var(--vw) * 90);
+    }
     .strip-item {
       position: absolute;
       left: 50%;
@@ -616,13 +625,14 @@
          카드를 줄여 네 장 이상 보이게 하고 깊이도 약하게 간다. */
       .strip {
         height: min(200px, 28vh);
-        perspective: 560px;
+        /* 원근은 트랙에 (위 주석 참고) */
         --strip-gap: 0.16;
         --strip-skew: 0.06;
         --strip-depth: 0.30;
         --strip-turn: 20;
         --strip-vis: 0.80;
       }
+      .strip-track { perspective: 560px; }
       .strip-item { width: 150px; margin-left: -75px; border-radius: 6px; }
 
     }
@@ -853,7 +863,7 @@
 
         <div class="field">
           <span class="f-ico" id="fIco" aria-hidden="true"></span>
-          <input id="stepInput" type="text" placeholder="Please enter your brand name"
+          <input id="stepInput" type="text" placeholder="your brand name"
                  autocomplete="off" spellcheck="false" aria-labelledby="stepQ">
         </div>
 
@@ -967,12 +977,12 @@
       };
 
       var STEPS = [
-        { key:'brand',   ko:'브랜드명을 입력해 주세요.',      ph:'Please enter your brand name', area:false,
+        { key:'brand',   ko:'브랜드명을 입력해 주세요.',      ph:'your brand name', area:false,
           check:function(v){ return v ? '' : '브랜드명을 입력해 주세요.'; } },
-        { key:'email',   ko:'이메일 주소를 입력해 주세요.',    ph:'Please enter your email address',  area:false, inputType:'email',
+        { key:'email',   ko:'이메일 주소를 입력해 주세요.',    ph:'your email',  area:false, inputType:'email',
           check:function(v){ if(!v) return '이메일 주소를 입력해 주세요.';
                              return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : '이메일 형식을 확인해 주세요.'; } },
-        { key:'budget',  ko:'프로젝트 예산을 입력해 주세요.',  ph:'Please enter your project budget',   area:false, money:true,
+        { key:'budget',  ko:'프로젝트 예산을 입력해 주세요.',  ph:'your budget',   area:false, money:true,
           check:function(v){ return /\d/.test(v) ? '' : '예산을 입력해 주세요.'; } },
         { key:'message', ko:'문의 내용을 입력해 주세요.',      ph:'Please tell us what you need',  area:true,
           check:function(v){ return v ? '' : '문의 내용을 입력해 주세요.'; } }
@@ -1081,7 +1091,10 @@
       }
 
       function bind() {
-        input.addEventListener('input', function() {
+        input.addEventListener('input', function(e) {
+          // inputType 이 삽입인지 삭제인지 정확히 알려준다 (포맷 때문에 길이 비교는 못 쓴다)
+          var back = !!(e.inputType && e.inputType.indexOf('delete') === 0);
+          document.dispatchEvent(new CustomEvent('strip-nudge', { detail: { dir: back ? -1 : 1 } }));
           if (STEPS[i].money) formatMoney();
           wrap.classList.toggle('is-typing', input.value.length > 0);
           if (errEl.textContent) errEl.textContent = '';
@@ -1215,9 +1228,16 @@
       var items = [].slice.call(track.children);
       var N = items.length;
       var EDGE_PXPS = 120;              // 가장 큰(좌우 끝) 카드 기준 속도(px/s)
+      var NUDGE     = 0.42;             // 글자 한 자당 얹는 속도(u/s)
+      var NUDGE_MAX = 3.2;              // 연타해도 이 이상은 안 빨라진다
+      var DECAY     = 0.03;             // 얹은 속도가 1초에 이만큼으로 준다
       var P, half, reach, DEPTH, TURN, SKEW, W0, GAP;
       var tblU = [], tblX = [];
       var base = 0, last = null, frame = 0, raf;
+      var boost = 0;                    // 타이핑·드래그가 얹는 추가 속도
+      var dragging = false, pending = false, startX = 0, lastX = 0, vel = 0, moved = 0, pid = null;
+
+      function norm(v) { v %= N; return v < 0 ? v + N : v; }
 
       // 가운데가 1, 바깥으로 갈수록 0 으로 부드럽게 떨어지는 프로파일.
       // rel 을 ±1 에서 자르면 그 지점에서 기울기가 꺾여 여백이 튄다(실측 60→80px).
@@ -1233,7 +1253,7 @@
 
       function measure() {
         var cs = getComputedStyle(stage);
-        P     = parseFloat(cs.perspective) || 1728;
+        P     = parseFloat(getComputedStyle(track).perspective) || 1728;
         DEPTH = parseFloat(cs.getPropertyValue('--strip-depth')) || 0.6;
         TURN  = parseFloat(cs.getPropertyValue('--strip-turn'))  || 28;
         SKEW  = parseFloat(cs.getPropertyValue('--strip-skew'))  || 0.09;
@@ -1287,8 +1307,13 @@
         if (last === null) last = t;
         // 가장 큰 카드 자리에서 EDGE_PXPS 가 되도록 흐름 속도를 잡는다
         var flow = EDGE_PXPS / (W0 + GAP);
-        base = (base + flow * Math.min((t - last) / 1000, 0.05)) % N;
+        var dt = Math.min((t - last) / 1000, 0.05);
         last = t;
+        if (!dragging) {
+          base = norm(base + (flow + boost) * dt);
+          boost *= Math.pow(DECAY, dt);   // 얹은 속도는 지수적으로 사그라든다
+          if (Math.abs(boost) < 0.001) boost = 0;
+        }
         var check = (frame++ % 12) === 0;
 
         for (var i = 0; i < N; i++) {
@@ -1326,6 +1351,54 @@
         }
         raf = requestAnimationFrame(draw);
       }
+
+      // 글자를 칠 때마다 좌→우로, 지울 때마다 우→좌로 한 번씩 밀어 준다
+      document.addEventListener('strip-nudge', function (e) {
+        boost += (e.detail && e.detail.dir < 0 ? -1 : 1) * NUDGE;
+        boost = Math.max(-NUDGE_MAX, Math.min(NUDGE_MAX, boost));
+      });
+
+      // 드래그 — 화면 이동량을 그 자리 피치로 나눠 흐름 좌표로 환산한다
+      function localPitch(clientX) {
+        return wAt(clientX - stage.getBoundingClientRect().left - half) + GAP;
+      }
+      stage.addEventListener('pointerdown', function (e) {
+        pending = true; dragging = false;
+        startX = lastX = e.clientX; moved = 0; vel = 0; pid = e.pointerId;
+      });
+      stage.addEventListener('pointermove', function (e) {
+        if (!pending && !dragging) return;
+        var dx = e.clientX - lastX; lastX = e.clientX;
+        moved += Math.abs(dx);
+        if (!dragging) {
+          // 문턱을 넘기 전에는 포인터를 잡지 않는다 —
+          // pointerdown 에서 바로 setPointerCapture 하면 클릭 대상이 .strip 으로
+          // 바뀌어 카드 링크가 안 눌린다.
+          if (Math.abs(e.clientX - startX) < 5) return;
+          dragging = true; boost = 0;
+          stage.classList.add('is-drag');
+          if (stage.setPointerCapture) stage.setPointerCapture(pid);
+        }
+        var du = dx / localPitch(e.clientX);
+        base = norm(base + du);
+        vel = du * 60;                    // 놓았을 때 이어질 관성
+      });
+      function endDrag() {
+        pending = false;
+        if (!dragging) return;
+        dragging = false;
+        stage.classList.remove('is-drag');
+        boost = Math.max(-NUDGE_MAX, Math.min(NUDGE_MAX, vel));
+        vel = 0;
+      }
+      stage.addEventListener('pointerup', endDrag);
+      stage.addEventListener('pointercancel', endDrag);
+      stage.addEventListener('pointerleave', endDrag);
+      // 끌고 나서 손을 떼면 링크로 넘어가면 안 된다
+      stage.addEventListener('click', function (e) {
+        if (moved > 6) { e.preventDefault(); e.stopPropagation(); }
+        moved = 0;
+      }, true);
 
       measure();
       raf = requestAnimationFrame(draw);
