@@ -89,12 +89,28 @@
     .marquee-bar { width: 100%; overflow-x: hidden; }
 
     .marquee-bar-inner {
-      background: #000;
+      /* 배경을 두면 헤더 세로 그리드를 가린다. 헤더가 이미 검정이라 불필요.
+         ::after 가로선의 기준점이 되도록 relative. */
+      position: relative;
       width: 100%;
       height: calc(var(--vwFont) * 2.083);
       border-radius: 0;
       display: flex;
       align-items: center;
+    }
+
+    /* 헤더 가로선 2개(마키바 아래·헤더 아래).
+       border 는 애니메이션이 안 되고 레이아웃 높이도 먹으므로 pseudo-element 로 그린다.
+       컨택트는 항상 검정이라 상세페이지의 다크 색(#686868)을 바로 쓴다. */
+    .header::after,
+    .marquee-bar-inner::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: #686868;
     }
 
     .marquee-track {
@@ -295,8 +311,6 @@
     body.is-dark .header-cta { background: #fff; color: #000; }
     body.is-dark .mobile-menu { background: #000; border-top-color: #fff; }
     body.is-dark .mobile-menu a, body.is-dark .mobile-menu span { color: #fff; border-bottom-color: #fff; }
-    body.is-dark .header::after,
-    body.is-dark .marquee-bar-inner::after { background: #686868; }
 
 
     /* ─── 세로 그리드 (상세페이지 다크 상태와 동일) ─────────────────
@@ -351,7 +365,8 @@
        (.step-q / .field 는 단계 전환용 transform 을 따로 쓰기 때문에
         forwards 로 두면 그 transform 을 덮어버린다).
        헤더는 translateX(-50%) 로 가운데 정렬돼 있어 키프레임에 같이 써야 한다. */
-    @keyframes introLine { from { transform: scaleY(0); } }
+    @keyframes introLine  { from { transform: scaleY(0); } }
+    @keyframes introLineX { from { transform: scaleX(0); } }
     @keyframes introRise { from { opacity: 0; transform: translateY(18px); } }
     @keyframes introDrop { from { opacity: 0; transform: translateX(-50%) translateY(-16px); } }
 
@@ -360,6 +375,11 @@
       transform-origin: top;
       animation: introLine 0.62s cubic-bezier(0.85, 0, 0.15, 1) backwards;
     }
+    body.intro .header::after,
+    body.intro .marquee-bar-inner::after {
+      transform-origin: left center;
+      animation: introLineX 0.62s cubic-bezier(0.7, 0, 0.84, 0) backwards;
+    }
     body.intro .header { animation: introDrop 0.70s cubic-bezier(0.22, 1, 0.36, 1) 0.04s backwards; }
     body.intro .step-q { animation: introRise 0.70s cubic-bezier(0.22, 1, 0.36, 1) 0.20s backwards; }
     body.intro .field  { animation: introRise 0.70s cubic-bezier(0.22, 1, 0.36, 1) 0.32s backwards; }
@@ -367,7 +387,8 @@
     @media (prefers-reduced-motion: reduce) {
       body.intro .header, body.intro .step-q,
       body.intro .field,  body.intro .strip,
-      body.intro .grid-rules i, body.intro .header-rules i { animation: none; }
+      body.intro .grid-rules i, body.intro .header-rules i,
+      body.intro .header::after, body.intro .marquee-bar-inner::after { animation: none; }
     }
 
     /* ─── CONTACT (레퍼런스 mux3.mp4 구성 기준) ──────────────────
