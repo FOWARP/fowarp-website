@@ -313,51 +313,72 @@
     body.is-dark .mobile-menu a, body.is-dark .mobile-menu span { color: #fff; border-bottom-color: #fff; }
 
 
-    /* ─── 세로 그리드 (상세페이지 다크 상태와 동일) ─────────────────
-       1920 기준 좌우 마진 20, 6열 · 7줄. 컨택트는 항상 검정이라
-       상세페이지의 body.is-dark 색(#686868)을 바로 쓴다.
+    /* ─── 세로 그리드 (메인 페이지와 동일) ────────────────────────
+       1920 미만 3열(4줄) · 1920 이상 4열(5줄) · 767 이하 2열(3줄).
+       컨택트는 항상 검정이라 색은 다크값(#686868)을 바로 쓴다.
        .header 는 fixed + z-index 로 자체 스택 컨텍스트라 바깥 그리드를
-       배경 위에 끼워 넣을 수 없다 → 헤더 안에 같은 선을 따로 그린다. */
-    .grid-rules,
-    .header-rules {
+       배경 위에 못 끼운다 → 헤더 안에 같은 선을 따로 그린다.
+       i 를 100vh 로 두고 컨테이너에서 잘라내 바깥 선과 그어지는 속도를 맞춘다. */
+    .grid-rules {
       position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 20px;
+      width: calc(100% - 40px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .header-rules {
+      position: absolute;
       top: 0;
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
       width: calc(100% - 40px);
       max-width: calc(2560px - 40px);
+      overflow: hidden;
       pointer-events: none;
-      z-index: 0;
     }
-    .header-rules { position: absolute; overflow: hidden; }
-    .grid-rules i,
-    .header-rules i {
+    .grid-rules i {
       position: absolute;
       top: 0;
       bottom: 0;
       width: 1px;
       background: #686868;
     }
-    .header-rules i { bottom: auto; height: 100vh; }
-    .grid-rules i:nth-child(1) { left: 0; }
-    .grid-rules i:nth-child(2) { left: 16.6667%; }
-    .grid-rules i:nth-child(3) { left: 33.3333%; }
-    .grid-rules i:nth-child(4) { left: 50%; }
-    .grid-rules i:nth-child(5) { left: 66.6667%; }
-    .grid-rules i:nth-child(6) { left: 83.3333%; }
-    .grid-rules i:nth-child(7) { left: 100%; margin-left: -1px; }
+    .header-rules i {
+      position: absolute;
+      top: 0;
+      height: 100vh;
+      width: 1px;
+      background: #686868;
+    }
+    .grid-rules i:nth-child(1),
     .header-rules i:nth-child(1) { left: 0; }
-    .header-rules i:nth-child(2) { left: 16.6667%; }
-    .header-rules i:nth-child(3) { left: 33.3333%; }
-    .header-rules i:nth-child(4) { left: 50%; }
-    .header-rules i:nth-child(5) { left: 66.6667%; }
-    .header-rules i:nth-child(6) { left: 83.3333%; }
-    .header-rules i:nth-child(7) { left: 100%; margin-left: -1px; }
+    .grid-rules i:nth-child(2),
+    .header-rules i:nth-child(2) { left: 33.3333%; }
+    .grid-rules i:nth-child(3),
+    .header-rules i:nth-child(3) { left: 66.6667%; }
+    .grid-rules i:nth-child(4),
+    .header-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
+    .grid-rules i:nth-child(5),
+    .header-rules i:nth-child(5) { display: none; }   /* 4열에서만 사용 */
 
     /* 그리드가 콘텐츠를 덮지 않도록 본문을 한 단 위로 올린다.
        .contact 에 배경을 두면 그리드를 가리므로 배경은 body 가 낸다. */
     .contact { position: relative; z-index: 1; }
+
+    /* 1920 이상은 메인과 같이 4열로 벌어진다 */
+    @media (min-width: 1920px) {
+      .grid-rules i:nth-child(2),
+      .header-rules i:nth-child(2) { left: 25%; }
+      .grid-rules i:nth-child(3),
+      .header-rules i:nth-child(3) { left: 50%; }
+      .grid-rules i:nth-child(4),
+      .header-rules i:nth-child(4) { left: 75%; margin-left: 0; }
+      .grid-rules i:nth-child(5),
+      .header-rules i:nth-child(5) { display: block; left: 100%; margin-left: -1px; }
+    }
 
     /* ─── 진입 인트로 — 오브젝트가 순서대로 나타난다 ──────────────
        Get in Touch 의 검정 베일이 덮은 직후 이어지는 연출.
@@ -699,11 +720,16 @@
       .header-nav > span { font-size: 11px; }
       .header-cta { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; }
 
-      .grid-rules, .header-rules { width: calc(100% - 20px); }
-      .grid-rules i:nth-child(2), .grid-rules i:nth-child(3),
-      .grid-rules i:nth-child(5), .grid-rules i:nth-child(6),
-      .header-rules i:nth-child(2), .header-rules i:nth-child(3),
-      .header-rules i:nth-child(5), .header-rules i:nth-child(6) { display: none; }
+      .header-rules { width: calc(100% - 20px); }
+      .grid-rules { left: 10px; right: 10px; }
+      .grid-rules i:nth-child(2),
+      .header-rules i:nth-child(2) { left: 50%; }
+      .grid-rules i:nth-child(3),
+      .header-rules i:nth-child(3) { display: none; }
+      .grid-rules i:nth-child(4),
+      .header-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
+      .grid-rules i:nth-child(5),
+      .header-rules i:nth-child(5) { display: none; }
 
       .contact { padding-top: 80px; }
       .contact-stage { padding: 0 16px 24px; }
@@ -915,10 +941,10 @@
 </head>
 <body class="is-dark intro">
 
-  <div class="grid-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="grid-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 
   <header class="header">
-    <div class="header-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="header-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
     <div class="marquee-section">
       <div class="marquee-bar">
         <div class="marquee-bar-inner">
@@ -1066,8 +1092,19 @@
       document.documentElement.style.setProperty('--vw', (Math.min(w, 2560) / 100) + 'px');
       document.documentElement.style.setProperty('--vwFont', (Math.min(w, 1920) / 100) + 'px');
     }
+    // 그리드는 fixed 라 뷰포트 기준이 된다. body(max-width 2560, 중앙정렬) 와
+    // 어긋나지 않도록 실제 body 박스를 재서 맞춘다. (메인 페이지와 동일)
+    function syncRules() {
+      var el = document.querySelector('.grid-rules');
+      if (!el) return;
+      var r = document.body.getBoundingClientRect();
+      var inset = window.innerWidth <= 767 ? 10 : 20;   // 모바일은 10px
+      el.style.left  = (r.left + inset) + 'px';
+      el.style.width = (r.width - inset * 2) + 'px';
+    }
     updateVW();
-    window.addEventListener('resize', updateVW);
+    syncRules();
+    window.addEventListener('resize', function () { updateVW(); syncRules(); });
 
         var lenis = new Lenis({ duration: 0.9, easing: function(t) { return 1 - Math.pow(1 - t, 4); }, smoothWheel: true });
     (function lenisLoop(t) { lenis.raf(t); requestAnimationFrame(lenisLoop); })(0);
