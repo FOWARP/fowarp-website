@@ -756,6 +756,11 @@
       /* 화면이 좁아 카드가 크면 두세 장밖에 안 들어와 호로 안 읽힌다.
          카드를 줄여 네 장 이상 보이게 하고 깊이도 약하게 간다. */
       .strip {
+        /* 모바일은 카드가 커서 잘림이 화면 21% 에서 끝난다 → 리빌 지점도 그만큼 안쪽 */
+        -webkit-mask-image: linear-gradient(90deg,
+          transparent 0, transparent 16%, #000 21%, #000 79%, transparent 84%, transparent 100%);
+                mask-image: linear-gradient(90deg,
+          transparent 0, transparent 16%, #000 21%, #000 79%, transparent 84%, transparent 100%);
         height: min(200px, 28vh);
         /* 원근은 트랙에 (위 주석 참고) */
         --strip-gap: 0.16;
