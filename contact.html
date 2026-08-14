@@ -319,9 +319,9 @@
     body.is-dark .mobile-menu a, body.is-dark .mobile-menu span { color: #fff; border-bottom-color: #fff; }
 
 
-    /* ─── 세로 그리드 (메인 페이지와 동일) ────────────────────────
-       1920 미만 3열(4줄) · 1920 이상 4열(5줄) · 767 이하 2열(3줄).
-       컨택트는 항상 검정이라 색은 다크값(#686868)을 바로 쓴다.
+    /* ─── 세로 그리드 (프로젝트 페이지와 동일) ──────────────────────
+       1920 기준 좌우 마진 20, 6열(313.33), 괘선 7줄 — 뷰포트 폭과 무관하게
+       항상 % 기반 6열 고정(상세페이지와 동일 규칙, 메인의 반응형 3~4열과 다르다).
        .header 는 fixed + z-index 로 자체 스택 컨텍스트라 바깥 그리드를
        배경 위에 못 끼운다 → 헤더 안에 같은 선을 따로 그린다.
        i 를 100vh 로 두고 컨테이너에서 잘라내 바깥 선과 그어지는 속도를 맞춘다. */
@@ -362,29 +362,21 @@
     .grid-rules i:nth-child(1),
     .header-rules i:nth-child(1) { left: 0; }
     .grid-rules i:nth-child(2),
-    .header-rules i:nth-child(2) { left: 33.3333%; }
+    .header-rules i:nth-child(2) { left: 16.6667%; }
     .grid-rules i:nth-child(3),
-    .header-rules i:nth-child(3) { left: 66.6667%; }
+    .header-rules i:nth-child(3) { left: 33.3333%; }
     .grid-rules i:nth-child(4),
-    .header-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
+    .header-rules i:nth-child(4) { left: 50%; }
     .grid-rules i:nth-child(5),
-    .header-rules i:nth-child(5) { display: none; }   /* 4열에서만 사용 */
+    .header-rules i:nth-child(5) { left: 66.6667%; }
+    .grid-rules i:nth-child(6),
+    .header-rules i:nth-child(6) { left: 83.3333%; }
+    .grid-rules i:nth-child(7),
+    .header-rules i:nth-child(7) { left: 100%; margin-left: -1px; }
 
     /* 그리드가 콘텐츠를 덮지 않도록 본문을 한 단 위로 올린다.
        .contact 에 배경을 두면 그리드를 가리므로 배경은 body 가 낸다. */
     .contact { position: relative; z-index: 1; }
-
-    /* 1920 이상은 메인과 같이 4열로 벌어진다 */
-    @media (min-width: 1920px) {
-      .grid-rules i:nth-child(2),
-      .header-rules i:nth-child(2) { left: 25%; }
-      .grid-rules i:nth-child(3),
-      .header-rules i:nth-child(3) { left: 50%; }
-      .grid-rules i:nth-child(4),
-      .header-rules i:nth-child(4) { left: 75%; margin-left: 0; }
-      .grid-rules i:nth-child(5),
-      .header-rules i:nth-child(5) { display: block; left: 100%; margin-left: -1px; }
-    }
 
     /* ─── 진입 인트로 — 오브젝트가 순서대로 나타난다 ──────────────
        Get in Touch 의 검정 베일이 덮은 직후 이어지는 연출.
@@ -711,14 +703,11 @@
 
       .header-rules { width: calc(100% - 20px); }
       .grid-rules { left: 10px; right: 10px; }
-      .grid-rules i:nth-child(2),
-      .header-rules i:nth-child(2) { left: 50%; }
-      .grid-rules i:nth-child(3),
-      .header-rules i:nth-child(3) { display: none; }
-      .grid-rules i:nth-child(4),
-      .header-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
-      .grid-rules i:nth-child(5),
-      .header-rules i:nth-child(5) { display: none; }
+      /* 6열 → 2열: 가운데(4번)만 남기고 나머지 내부 괘선 숨김 (프로젝트 페이지와 동일) */
+      .grid-rules i:nth-child(2), .grid-rules i:nth-child(3),
+      .grid-rules i:nth-child(5), .grid-rules i:nth-child(6),
+      .header-rules i:nth-child(2), .header-rules i:nth-child(3),
+      .header-rules i:nth-child(5), .header-rules i:nth-child(6) { display: none; }
 
       .contact { padding-top: 80px; }
       .contact-stage { padding: 0 16px 24px; }
@@ -933,10 +922,10 @@
 </head>
 <body class="is-dark intro">
 
-  <div class="grid-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="grid-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
   <header class="header">
-    <div class="header-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="header-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="marquee-section">
       <div class="marquee-bar">
         <div class="marquee-bar-inner">
@@ -1003,8 +992,8 @@
                stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>
         </span>
         <div class="done-t">문의해 주셔서 감사합니다.<br>검토 후 기재해 주신 연락처로 답변 드리겠습니다.</div>
-        <a href="/" class="home-btn">Home</a>
         <dl class="summary" id="summary"></dl>
+        <a href="/" class="home-btn">Home</a>
       </div>
 
     </div>

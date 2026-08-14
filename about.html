@@ -768,35 +768,6 @@
        경계선이 보이면 안 되므로 아래쪽을 긴 그라데이션으로 흘리고
        가우시안 블러로 한 번 더 뭉갠다. 블러가 가장자리를 반투명하게
        갉아먹으므로 요소를 화면보다 위·좌우로 넉넉히 키워 둔다. */
-    .veil {
-      position: fixed;
-      top: -10vh;
-      left: -10vw;
-      width: 120vw;
-      height: 180vh;
-      z-index: 400;
-      pointer-events: none;
-      /* 검정 110vh + 흐려지는 꼬리 70vh.
-         꼬리 끝을 화면 맨 위에 붙여 놓고 출발하므로 누르는 즉시 어두워지기 시작하고,
-         끝나는 순간 정확히 화면이 다 덮인다 (죽은 시간 없음). */
-      background: linear-gradient(to bottom,
-        #000 0%, #000 61%,
-        rgba(0, 0, 0, 0.72) 74%,
-        rgba(0, 0, 0, 0.32) 88%,
-        rgba(0, 0, 0, 0) 100%);
-      filter: blur(30px);
-      transform: translate3d(0, -170vh, 0);
-      will-change: transform;
-    }
-    body.veil-on .veil {
-      transform: translate3d(0, 0, 0);
-      /* 곡선이 앞쪽에 몰리면 중간에 '쿵' 하고 덮고 남은 시간을 검정으로 서 있게 된다.
-         거의 등속(완만한 S)이라야 커튼처럼 고르게 내려온다. */
-      transition: transform 0.85s cubic-bezier(0.45, 0.05, 0.55, 0.95);
-    }
-    @media (prefers-reduced-motion: reduce) {
-      body.veil-on .veil { transition-duration: 0.01s; }
-    }
 </style>
 </head>
 <body>
@@ -1076,26 +1047,14 @@
 </script>
 
 <script>
-  /* Get in Touch — 검정 베일이 다 덮은 뒤에 컨택트로 넘어간다.
-     넘어간 쪽도 검정으로 시작하므로 이음매가 안 보인다. */
+  /* Get in Touch — 라이트 버전으로 검토 중이라 검정 베일 없이 바로 넘어간다.
+     도착한 페이지가 스스로 프로젝트 페이지와 같은 진입 모션을 재생한다. */
   (function () {
-    var veil = document.createElement('div');
-    veil.className = 'veil';
-    document.body.appendChild(veil);
-
-    var going = false;
-    var slow = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
     document.querySelectorAll('.header-cta').forEach(function (el) {
       el.style.cursor = 'pointer';
       el.setAttribute('role', 'link');
       el.setAttribute('tabindex', '0');
-      function go() {
-        if (going) return;
-        going = true;
-        document.body.classList.add('veil-on');
-        setTimeout(function () { location.href = '/contact-light'; }, slow ? 60 : 900);
-      }
+      function go() { location.href = '/contact-light'; }
       el.addEventListener('click', go);
       el.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
