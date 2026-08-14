@@ -634,6 +634,14 @@
       /* 크기가 최대에 도달하는 지점(화면 반폭 대비). 1.0 = 화면 좌우 끝.
          이보다 작게 두면 그 안쪽에서 이미 최대가 돼 바깥 카드들이 다 같아 보인다. */
       --strip-vis: 1.0;
+      /* 좌우 가장자리 카드에 거는 실제 블러(px). 0 이면 끄기 — 데스크탑은
+         마스크 페이드만으로 충분해서 0, 모바일에서만 값을 준다 */
+      --strip-blur: 0;
+      /* 마스크 페이드가 차지하는 폭(화면 폭 대비). 블러도 같은 구간에서
+         0 → 최대로 올라가야 해서 JS 가 이 값을 읽어 쓴다 */
+      --strip-fade: 0.14;
+      /* 스트립이 화면 밖으로 넓혀진 한쪽 폭(px). 모바일에서만 200 */
+      --strip-bleed: 0;
 
       position: relative;
       flex: none;
@@ -736,24 +744,24 @@
          카드를 줄여 네 장 이상 보이게 하고 깊이도 약하게 간다. */
       .strip {
         /* 스트립을 좌우 200px씩 화면 밖까지 넓혀 카드가 원래 크기(150px)로
-           화면 좌우 끝까지 흐르게 한다. 그 위에 데스크탑과 똑같은 비율의
-           페이드를 화면 가장자리 기준으로 얹는다 — 데스크탑 마스크가 화면
-           폭의 14%/86% 지점에서 녹는데, 모바일은 그 2배 세기로 요청받아
-           28% 를 쓴다. 화면 끝(200px)에서 투명 → 화면폭의 28% 안쪽에서
-           완전 불투명. 화면폭은 넓힌 만큼
-           뺀 calc(100% - 400px). body 의 overflow-x:hidden 이 넘친 부분을
-           잘라 가로 스크롤은 생기지 않는다 */
+           화면 좌우 끝까지 흐르게 한다. 그 위에 데스크탑과 똑같은 비율(화면
+           폭의 14%/86%)의 페이드를 화면 가장자리 기준으로 얹는다. 화면
+           끝(200px)에서 투명 → 화면폭의 14% 안쪽에서 완전 불투명. 화면폭은
+           넓힌 만큼 뺀 calc(100% - 400px). body 의 overflow-x:hidden 이
+           넘친 부분을 잘라 가로 스크롤은 생기지 않는다.
+           페이드만으로는 흐려지는 세기가 약해서, 같은 구간에 실제 blur
+           오버레이(::before/::after)를 겹쳐 강도를 올린다 */
         margin-left: -200px;
         margin-right: -200px;
         -webkit-mask-image: linear-gradient(90deg,
           transparent 0, transparent 200px,
-          #000 calc(200px + (100% - 400px) * 0.28),
-          #000 calc(100% - 200px - (100% - 400px) * 0.28),
+          #000 calc(200px + (100% - 400px) * 0.14),
+          #000 calc(100% - 200px - (100% - 400px) * 0.14),
           transparent calc(100% - 200px), transparent 100%);
                 mask-image: linear-gradient(90deg,
           transparent 0, transparent 200px,
-          #000 calc(200px + (100% - 400px) * 0.28),
-          #000 calc(100% - 200px - (100% - 400px) * 0.28),
+          #000 calc(200px + (100% - 400px) * 0.14),
+          #000 calc(100% - 200px - (100% - 400px) * 0.14),
           transparent calc(100% - 200px), transparent 100%);
         height: min(200px, 28vh);
         /* 원근은 트랙에 (위 주석 참고) */
@@ -762,9 +770,12 @@
         --strip-depth: 0.30;
         --strip-turn: 20;
         --strip-vis: 1.0;
+        --strip-blur: 12;
+        --strip-bleed: 200;
       }
       .strip-track { perspective: 560px; }
       .strip-item { width: 150px; margin-left: -75px; border-radius: 6px; }
+
 
     }
 
@@ -835,7 +846,7 @@
     }
     body.about-open .about-overlay {
       background: rgba(255,255,255,.8);
-      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       pointer-events: auto;
     }
     .about-panel {
@@ -1385,7 +1396,7 @@
       var NUDGE     = 4.0;              // 글자 한 자당 찍는 최고 속도(u/s)
       var NUDGE_MAX = 7;                // 드래그 관성까지 포함한 상한
       var DECAY     = 0.01;             // 얹은 속도가 1초에 이만큼으로 준다
-      var P, half, reach, DEPTH, TURN, SKEW, W0, GAP, flow;
+      var P, half, reach, DEPTH, TURN, SKEW, W0, GAP, flow, BLUR, viewHalf, blurFrom;
       var tblU = [], tblX = [];
       var base = 0, last = null, frame = 0, raf;
       var boost = 0;                    // 타이핑·드래그가 얹는 추가 속도
@@ -1420,6 +1431,15 @@
         W0    = items[0].offsetWidth;
         GAP   = W0 * (parseFloat(cs.getPropertyValue('--strip-gap')) || 0.2);
         half  = stage.clientWidth / 2;
+        // 화면 밖으로 넓힌 몫을 뺀 '실제로 보이는' 반폭. 블러는 이 안에서만 걸린다
+        BLUR  = parseFloat(cs.getPropertyValue('--strip-blur')) || 0;
+        var bleed = parseFloat(cs.getPropertyValue('--strip-bleed')) || 0;
+        var fade  = parseFloat(cs.getPropertyValue('--strip-fade')) || 0.14;
+        viewHalf  = half - bleed;
+        // 페이드 시작 지점을 카드 반폭만큼 안쪽으로 당긴다 — 판정이 카드 '중심'
+        // 좌표라, 그냥 페이드 시작점을 쓰면 카드 대부분이 이미 화면 밖으로
+        // 나간 뒤에야 blur 가 걸려서 사실상 안 보인다
+        blurFrom  = Math.max(0, viewHalf * (1 - fade) - W0 / 2);
         flow  = EDGE_PXPS / (W0 + GAP);   // 평상시 흐름 속도(u/s)
         reach = half * (parseFloat(cs.getPropertyValue('--strip-vis')) || 0.68);
         buildTable();
@@ -1495,6 +1515,16 @@
               'translate3d(' + (d * k).toFixed(1) + 'px,-50%,0)' +
               ' translateZ(' + (-(k - 1) * P).toFixed(1) + 'px)' +
               ' rotateY(' + (-a).toFixed(2) + 'deg)';
+
+            // 마스크 페이드와 같은 구간에서 0 → BLUR 로 올라간다.
+            // 페이드만으로는 흐려지는 세기가 약해 실제 blur 를 겹친다.
+            if (BLUR) {
+              var e = (Math.abs(d) - blurFrom) / (viewHalf - blurFrom);
+              e = e < 0 ? 0 : (e > 1 ? 1 : e);
+              var bpx = e * BLUR;
+              var want = bpx > 0.05 ? 'blur(' + bpx.toFixed(2) + 'px)' : '';
+              if (el.style.filter !== want) el.style.filter = want;
+            }
           }
 
           if (check) {
