@@ -714,20 +714,18 @@
       .contact { padding-top: 80px; }
       .contact-stage { padding: 0 16px 24px; }
       .step-q { font-size: 17px; }
-      /* 질문↔입력 간격 — 기존 18px 에 같은 폭으로 두 칸 더(총 3배) */
-      .field { margin-top: 54px; max-width: none; font-size: 34px; }
+      /* 질문↔입력 간격 — 54px 로도 안 떨어져 보인다는 피드백 → 큰 폭으로 확대 */
+      .field { margin-top: 90px; max-width: none; font-size: 34px; }
       .actions { gap: 14px; margin-top: 24px; }
-      .back { font-size: 12px; }
-      .next { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; } /* header-cta 모바일과 동일 */
+      /* Back/Next/Home 전부 Get in Touch(.header-cta) 모바일 크기와 동일 */
+      .back { font-size: 9.6px; padding: 6.4px 9.6px; }
+      .next { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; }
       .err { font-size: 11px; margin-top: 10px; min-height: 16px; }
       .done-t { font-size: 19px; }
       .done-t .mobile-br { display: block; }
-      /* 완료 화면 체크 원 — 데스크탑 비율(calc(vwFont*2.6))이 모바일에선
-         10px 로 뭉개져서 고정값으로 다시 잡는다 */
-      .check { width: 40px; height: 40px; }
-      /* 홈 버튼도 같은 이유로 고정값 — Back(12px)보다 눈에 띄어야 하는
-         주요 액션이라 조금 더 크게 */
-      .home-btn { font-size: 14px; padding: 10px 22px; border-radius: 8px; }
+      /* 완료 화면 체크 원 — 40px 도 크다는 피드백으로 절반인 20px 로 */
+      .check { width: 20px; height: 20px; }
+      .home-btn { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; }
       .summary { font-size: 14px; margin-top: 22px; }
       .summary dd { max-width: 46vw; }
       /* --vw 비례로 두면 모바일에서 카드가 찌그러진다 → 고정값.
@@ -735,12 +733,15 @@
       /* 화면이 좁아 카드가 크면 두세 장밖에 안 들어와 호로 안 읽힌다.
          카드를 줄여 네 장 이상 보이게 하고 깊이도 약하게 간다. */
       .strip {
-        /* 실측(잘리지 않는 최소 지점) 좌 18.5% / 우 81.7% 바로 안쪽까지 당겨서
-           중앙 쪽에 남던 여백을 줄인다. 4% 폭 페이드는 유지 */
+        /* 카드가 화면 밖으로 물리적으로 잘리는 지점(안전선) 자체가 카드 폭에
+           비례한다 — 폭을 줄이지 않고는 마스크만으로 화면 끝까지 밀 수 없다.
+           110px에서도 안전선이 27%/73%까지 밀려 화면 끝까지 밀기엔 부족했다.
+           카드를 50px까지 줄여 안전선을 13%/87%대로 당기고 그 지점 바로
+           안쪽까지 마스크를 밀었다(DOM 실측 기준 위험 표본 0건 확인) */
         -webkit-mask-image: linear-gradient(90deg,
-          transparent 0, transparent 12%, #000 17%, #000 83%, transparent 88%, transparent 100%);
+          transparent 0, transparent 10%, #000 13%, #000 87%, transparent 90%, transparent 100%);
                 mask-image: linear-gradient(90deg,
-          transparent 0, transparent 12%, #000 17%, #000 83%, transparent 88%, transparent 100%);
+          transparent 0, transparent 10%, #000 13%, #000 87%, transparent 90%, transparent 100%);
         height: min(200px, 28vh);
         /* 원근은 트랙에 (위 주석 참고) */
         --strip-gap: 0.16;
@@ -750,10 +751,10 @@
         --strip-vis: 1.0;
       }
       .strip-track { perspective: 560px; }
-      .strip-item { width: 150px; margin-left: -75px; border-radius: 6px; }
+      .strip-item { width: 50px; margin-left: -25px; border-radius: 6px; }
 
     }
-  
+
     /* ─── 링크 hover 플립 (rayraylab.com 헤더 CONTACT 규칙 그대로) ───
        .menu_text2 { position:absolute; top:10px;
                      transform: translateZ(20px) rotateX(90deg);
