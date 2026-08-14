@@ -6,7 +6,7 @@
   <title>FOWARP</title>
   <link rel="preload" href="/fonts/KarlsbaderGrotesk-400.otf" as="font" type="font/otf" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
-  <link rel="prefetch" href="/contact">
+  <link rel="prefetch" href="/contact-light">
   <script src="/js/lenis.min.js"></script>
   <style>
     @font-face {
@@ -674,7 +674,7 @@
         if (going) return;
         going = true;
         document.body.classList.add('veil-on');
-        setTimeout(function () { location.href = '/contact'; }, slow ? 60 : 900);
+        setTimeout(function () { location.href = '/contact-light'; }, slow ? 60 : 900);
       }
       el.addEventListener('click', go);
       el.addEventListener('keydown', function (e) {
