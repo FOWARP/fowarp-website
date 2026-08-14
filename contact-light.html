@@ -738,21 +738,22 @@
         /* 스트립을 좌우 200px씩 화면 밖까지 넓혀 카드가 원래 크기(150px)로
            화면 좌우 끝까지 흐르게 한다. 그 위에 데스크탑과 똑같은 비율의
            페이드를 화면 가장자리 기준으로 얹는다 — 데스크탑 마스크가 화면
-           폭의 14%/86% 지점에서 녹으므로, 여기서도 화면 끝(200px)에서
-           투명 → 화면폭의 14% 안쪽에서 완전 불투명. 화면폭은 넓힌 만큼
+           폭의 14%/86% 지점에서 녹는데, 모바일은 그 2배 세기로 요청받아
+           28% 를 쓴다. 화면 끝(200px)에서 투명 → 화면폭의 28% 안쪽에서
+           완전 불투명. 화면폭은 넓힌 만큼
            뺀 calc(100% - 400px). body 의 overflow-x:hidden 이 넘친 부분을
            잘라 가로 스크롤은 생기지 않는다 */
         margin-left: -200px;
         margin-right: -200px;
         -webkit-mask-image: linear-gradient(90deg,
           transparent 0, transparent 200px,
-          #000 calc(200px + (100% - 400px) * 0.14),
-          #000 calc(100% - 200px - (100% - 400px) * 0.14),
+          #000 calc(200px + (100% - 400px) * 0.28),
+          #000 calc(100% - 200px - (100% - 400px) * 0.28),
           transparent calc(100% - 200px), transparent 100%);
                 mask-image: linear-gradient(90deg,
           transparent 0, transparent 200px,
-          #000 calc(200px + (100% - 400px) * 0.14),
-          #000 calc(100% - 200px - (100% - 400px) * 0.14),
+          #000 calc(200px + (100% - 400px) * 0.28),
+          #000 calc(100% - 200px - (100% - 400px) * 0.28),
           transparent calc(100% - 200px), transparent 100%);
         height: min(200px, 28vh);
         /* 원근은 트랙에 (위 주석 참고) */
