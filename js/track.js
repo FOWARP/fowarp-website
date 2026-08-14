@@ -12,6 +12,15 @@
   // 로컬 개발 중에는 알림을 보내지 않는다
   if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') return;
 
+  // 내 기기 제외 — fowarp.com/?mute 로 한 번 들어가면 그 브라우저는
+  // 이후 알림을 만들지 않는다(?unmute 로 해제). 오누리가 사이트를 확인할
+  // 때마다 자기 방문 알림이 오는 걸 막는 용도. 기기·브라우저마다 한 번씩.
+  try {
+    if (/[?&]unmute/.test(location.search)) localStorage.removeItem('fw_mute');
+    else if (/[?&]mute/.test(location.search)) localStorage.setItem('fw_mute', '1');
+    if (localStorage.getItem('fw_mute')) return;
+  } catch (e) {}
+
   var LS = 'fw_visit';
   var SS = 'fw_session';
   var COOLDOWN = 30 * 60 * 1000; // 같은 방문자는 30분에 한 번만 1차 알림
