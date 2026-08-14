@@ -84,10 +84,36 @@
     });
   }
 
+  // ── 사이트 안에서의 이동은 '이탈'이 아니다 ──────────
+  // 페이지를 옮길 때도 pagehide 가 뜨기 때문에, 그대로 두면 컨택트 페이지로
+  // 넘어가는 순간 "방문 종료" 알림이 나간다. 이동을 유발하는 클릭을 미리
+  // 잡아 두고 그때는 2차 알림을 보내지 않는다.
+  var navigating = false;
+  function markNav() {
+    navigating = true;
+    // 클릭했는데 실제로는 안 옮겨간 경우(preventDefault 등) 진짜 이탈까지
+    // 막아버리지 않도록 되돌린다. 실제로 이동하면 이 타이머째 사라진다.
+    setTimeout(function () { navigating = false; }, 3000);
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var a = t.closest('a[href]');
+    if (a) {
+      var u;
+      try { u = new URL(a.getAttribute('href'), location.href); } catch (err) { return; }
+      // 새 탭으로 열리는 링크는 이 페이지를 떠나는 게 아니다
+      if (u.host === location.host && a.target !== '_blank') markNav();
+      return;
+    }
+    // Get in Touch 는 a 가 아니라 span + location.href 라 따로 잡는다
+    if (t.closest('.header-cta')) markNav();
+  }, true);
+
   // ── 2차: 탭을 닫거나 백그라운드로 보낼 때 요약 ──────
   var sent = false;
   function leave() {
-    if (sent) return;
+    if (sent || navigating) return;
     var cur = read(sessionStorage, SS) || s;
     var dwell = Math.round((Date.now() - cur.start) / 1000);
     if (dwell < 30) return;   // 서버에서도 한 번 더 거르지만 트래픽을 아낀다
