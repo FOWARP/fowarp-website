@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# 방문 알림 등록 페이지 — 오누리 전용이라 색인 대상이 아니다
+Disallow: /notify
+
+Sitemap: https://fowarp.com/sitemap.xml
