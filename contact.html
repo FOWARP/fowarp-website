@@ -520,9 +520,7 @@
     }
     .contact.is-typing .step-q { opacity: 0.21; filter: blur(3px); transform: translateY(-6px); }
 
-    /* Back 은 첫 단계만 아니면 항상 떠 있다(값 입력 여부와 무관) — 그래야 아직
-       아무것도 안 쓴 채로 마지막 단계에 도착했을 때도 뒤로 갈 수 있다.
-       Next/Send 만 값이 들어와야 떠오른다 (레퍼런스: 빈 칸에는 버튼이 없다). */
+    /* Back 도 Next 처럼 값이 들어와야 떠오른다 (레퍼런스: 빈 칸에는 버튼이 없다). */
     .actions {
       display: flex;
       align-items: center;
@@ -538,8 +536,12 @@
       font-size: calc(var(--vwFont) * 0.833);
       padding: calc(var(--vwFont) * 0.5) 0;
       cursor: pointer;
-      transition: color 0.2s ease;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
     }
+    .contact.is-typing .back { opacity: 1; transform: none; pointer-events: auto; }
     .back:hover { color: #fff; }
     .contact.is-first .back { display: none; }
 
