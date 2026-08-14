@@ -572,22 +572,11 @@
     .contact.is-done .form-wrap { display: none; }
     .contact.is-done .done { display: flex; }
 
-    .check {
-      width: calc(var(--vwFont) * 2.6);
-      height: calc(var(--vwFont) * 2.6);
-      border-radius: 50%;
-      background: #fff;
-      color: #000;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .check svg { width: 52%; height: 52%; }
-
     .done-t {
       font-family: 'Pretendard Variable', sans-serif;
       font-size: calc(var(--vwFont) * 1.354); /* 26px */
       line-height: 1.4;
       color: #fff;
-      margin-top: calc(var(--vwFont) * 1);
     }
     /* 모바일에서만 "연락처로" 뒤에 한 줄 더 띈다 */
     .done-t .mobile-br { display: none; }
@@ -634,9 +623,10 @@
       /* 크기가 최대에 도달하는 지점(화면 반폭 대비). 1.0 = 화면 좌우 끝.
          이보다 작게 두면 그 안쪽에서 이미 최대가 돼 바깥 카드들이 다 같아 보인다. */
       --strip-vis: 1.0;
-      /* 좌우 가장자리 카드에 거는 실제 블러(px). 0 이면 끄기 — 데스크탑은
-         마스크 페이드만으로 충분해서 0, 모바일에서만 값을 준다 */
-      --strip-blur: 0;
+      /* 좌우 가장자리 카드에 거는 실제 블러(px). 0 이면 끄기.
+         모바일(카드 150px)의 12px 와 같은 카드폭 대비 8% 를 데스크탑
+         카드폭(280px)에 적용해 22px */
+      --strip-blur: 22;
       /* 마스크 페이드가 차지하는 폭(화면 폭 대비). 블러도 같은 구간에서
          0 → 최대로 올라가야 해서 JS 가 이 값을 읽어 쓴다 */
       --strip-fade: 0.14;
@@ -722,8 +712,10 @@
       .contact { padding-top: 80px; }
       .contact-stage { padding: 0 16px 24px; }
       .step-q { font-size: 17px; }
-      /* 질문↔입력 간격 — 54px 로도 안 떨어져 보인다는 피드백 → 큰 폭으로 확대 */
-      .field { margin-top: 90px; max-width: none; font-size: 34px; }
+      /* 질문↔입력 간격 — PC 와 같은 시각 비율로 맞춘다.
+         PC 는 간격 42.24px / 질문폰트 26px = 1.62 배. 모바일 질문폰트 17px 에
+         같은 배율을 적용해 28px (vwFont 비례로 두면 8px 대로 뭉개진다) */
+      .field { margin-top: 28px; max-width: none; font-size: 34px; }
       .actions { gap: 14px; margin-top: 24px; }
       /* Back/Next/Home 전부 Get in Touch(.header-cta) 모바일 크기와 동일 */
       .back { font-size: 9.6px; padding: 6.4px 9.6px; }
@@ -731,8 +723,6 @@
       .err { font-size: 11px; margin-top: 10px; min-height: 16px; }
       .done-t { font-size: 19px; }
       .done-t .mobile-br { display: block; }
-      /* 완료 화면 체크 원 — 40px 도 크다는 피드백으로 절반인 20px 로 */
-      .check { width: 20px; height: 20px; }
       /* 요약↔Home 간격을 완료문구↔요약 간격(22px)과 같게 */
       .home-btn { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; margin-top: 22px; }
       /* vwFont 비례 gap 이 모바일에선 2.7px 로 뭉개져 라벨과 값이 붙는다 → 고정값 */
@@ -1023,10 +1013,6 @@
       </div>
 
       <div class="done">
-        <span class="check" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"
-               stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>
-        </span>
         <div class="done-t">문의해 주셔서 감사합니다.<br>검토 후 기재해 주신 연락처로<br class="mobile-br"> 답변 드리겠습니다.</div>
         <dl class="summary" id="summary"></dl>
         <a href="/" class="home-btn">Home</a>
