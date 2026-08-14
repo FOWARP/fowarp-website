@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact by FOWARP</title>
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <meta name="description" content="프로젝트 문의를 남겨주세요. Get in touch with FOWARP.">
+  <link rel="canonical" href="https://fowarp.vercel.app/contact">
+
+  <!-- Open Graph (카카오톡·페이스북·슬랙) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="FOWARP">
+  <meta property="og:locale" content="ko_KR">
+  <meta property="og:title" content="Contact by FOWARP">
+  <meta property="og:description" content="프로젝트 문의를 남겨주세요. Get in touch with FOWARP.">
+  <meta property="og:url" content="https://fowarp.vercel.app/contact">
+  <meta property="og:image" content="https://fowarp.vercel.app/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="FOWARP">
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Contact by FOWARP">
+  <meta name="twitter:description" content="프로젝트 문의를 남겨주세요. Get in touch with FOWARP.">
+  <meta name="twitter:image" content="https://fowarp.vercel.app/og-image.png">
+  <link rel="preload" href="/fonts/KarlsbaderGrotesk-400.otf" as="font" type="font/otf" crossorigin>
+  <link rel="preload" href="/fonts/KarlsbaderGrotesk-600Italic.otf" as="font" type="font/otf" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
+  <script src="/js/lenis.min.js"></script>
+  <style>
+    @font-face {
+      font-family: 'Karlsbader Grotesk';
+      src: url('/fonts/KarlsbaderGrotesk-400.otf') format('opentype');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Karlsbader Grotesk';
+      src: url('/fonts/KarlsbaderGrotesk-500.otf') format('opentype');
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Karlsbader Grotesk';
+      src: url('/fonts/KarlsbaderGrotesk-600Italic.otf') format('opentype');
+      font-weight: 600;
+      font-style: italic;
+      font-display: swap;
+    }
+
+    :root { --vw: 19.2px; --vwFont: 19.2px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #fff;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      max-width: 2560px;
+      margin: 0 auto;
+    }
+
+    /* ─── HEADER ─────────────────────────────── */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(calc(var(--vwFont) * 0.52));
+      -webkit-backdrop-filter: blur(calc(var(--vwFont) * 0.52));
+    }
+
+    .marquee-section {
+      width: 100%;
+      padding: 0;
+      background: transparent;
+    }
+
+    .marquee-bar { width: 100%; overflow-x: hidden; }
+
+    .marquee-bar-inner {
+      /* 배경을 두면 헤더 세로 그리드를 가린다. 헤더가 이미 검정이라 불필요.
+         ::after 가로선의 기준점이 되도록 relative. */
+      position: relative;
+      width: 100%;
+      height: calc(var(--vwFont) * 2.083);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    /* 헤더 가로선 2개(마키바 아래·헤더 아래).
+       border 는 애니메이션이 안 되고 레이아웃 높이도 먹으므로 pseudo-element 로 그린다.
+       컨택트는 항상 검정이라 상세페이지의 다크 색(#686868)을 바로 쓴다. */
+    .header::after,
+    .marquee-bar-inner::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 1px;
+      background: #D9D9D9;
+    }
+
+    .marquee-track {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      will-change: transform;
+    }
+
+    .marquee-set {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--vwFont) * 5.208);
+      padding-right: calc(var(--vwFont) * 5.208);
+      flex-shrink: 0;
+    }
+
+    .marquee-text {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      color: #000;
+      white-space: nowrap;
+    }
+
+    /* 한글/영문 마퀴 텍스트 크기 개별 조정용 훅 (현재는 동일 크기) */
+    .marquee-text-ko { font-size: calc(var(--vwFont) * 0.729); }
+
+    .marquee-logo {
+      height: calc(var(--vwFont) * 0.852);
+      width: auto;
+      display: block;
+      filter: invert(1);
+    }
+
+    .header-main {
+      width: 100%;
+      max-width: 2560px;
+      margin: 0 auto;
+      height: calc(var(--vwFont) * 3.125); /* 1920px 기준 60px, 그 이하는 비례 축소 */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      position: relative;
+    }
+
+    .header-logo-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: block;
+      line-height: 0;
+    }
+
+    .header-logo-center img {
+      height: calc(var(--vwFont) * 1.4);
+      width: auto;
+      display: block;
+    }
+
+    .header-nav {
+      display: flex;
+      gap: calc(var(--vwFont) * 4.167);
+      align-items: center;
+    }
+
+    .header-nav a,
+    .header-nav > span {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      text-decoration: none;
+      color: #B7B7B7;   /* 비활성 카테고리 — 메인 페이지와 동일 */
+      text-transform: capitalize;
+    }
+
+    .header-nav a.active,
+    .header-nav > span.active { color: #000; }
+
+    .header-cta {
+      display: inline-block;
+      position: relative;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      padding: calc(var(--vwFont) * 0.625) calc(var(--vwFont) * 0.729);
+      border-radius: calc(var(--vwFont) * 0.417);
+      text-decoration: none;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    @keyframes ctaSheen {
+      0%, 100% { transform: translateX(-130%) skewX(-18deg); }
+      50% { transform: translateX(360%) skewX(-18deg); }
+    }
+    .header-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.45), transparent);
+      animation: ctaSheen 3s ease-in-out infinite;
+    }
+
+    /* ─── MOBILE MENU (텍스트 버튼) ──────────────────── */
+    .menu-toggle {
+      display: none;
+      align-items: center;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      z-index: 101;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-weight: 400;
+      font-size: 14px;
+      color: #000;
+      text-transform: capitalize;
+      /* 글자를 줄인 대신 터치 영역은 유지 (헤더 바 52px 안에서 세로 중앙) */
+      min-height: 44px;
+    }
+
+    /* 언폴드 모션 — max-height 대신 clip-path 로 여닫는다.
+       max-height 방식이 부드럽지 않았던 이유 3가지를 모두 해결:
+       (1) max-height 는 레이아웃 프로퍼티라 매 프레임 리플로우가 발생한다.
+           clip-path: inset() 은 GPU 합성 단계에서 처리돼 리플로우가 없다.
+       (2) 목표값 280px 이 실제 콘텐츠 높이(216px)보다 커서 이징의 마지막 23%
+           구간이 화면 밖에서 진행됐다 → 끝이 뭉툭하게 잘리는 느낌.
+           clip-path 는 콘텐츠 높이와 정확히 일치하는 지점에서 끝난다.
+       (3) cubic-bezier(0.7,0,0.2,1) 은 갤러리 선 긋기용 강한 ease-in 커브라
+           열림 모션엔 부적합했다 → 빠르게 시작해 부드럽게 멈추는 ease-out 으로 교체.
+       visibility 는 애니메이션 종료 후 꺼서 닫힌 메뉴가 키보드 포커스를 먹지 않게 함. */
+    .mobile-menu {
+      display: flex;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border-top: 1px solid #000;
+      flex-direction: column;
+      /* 시안 440:1394 — 항목(4×30) 아래 14px 여백 뒤 닫는 선 */
+      padding: 0 0 14px;
+      border-bottom: 1px solid #D9D9D9;
+      clip-path: inset(0 0 100% 0);
+      visibility: hidden;
+      pointer-events: none;
+      transition: clip-path 0.32s cubic-bezier(0.4, 0, 1, 1),
+                  visibility 0s linear 0.32s;
+    }
+    .mobile-menu.is-open {
+      clip-path: inset(0 0 0 0);
+      visibility: visible;
+      pointer-events: auto;
+      transition: clip-path 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+                  visibility 0s;
+    }
+    .mobile-menu a,
+    .mobile-menu span {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      height: 30px;
+      padding: 0 20px;   /* 메인 헤더 모바일 좌우 마진(20px)과 통일 */
+      font-size: 14px;
+      line-height: 1;
+      text-decoration: none;
+      color: #000;
+      text-transform: capitalize;
+      border-bottom: 1px solid #D9D9D9;
+      /* 언폴드하면서 항목이 순차로 살짝 떠오른다 — 갤러리 등장 모션(revContent)과 같은 결.
+         스태거 마지막 항목이 0.21+0.36=0.57s 에 끝나 패널(0.52s)과 거의 동시에 안착한다.
+         닫힐 때는 지연 없이 짧게 사라져야 잔상이 남지 않는다. */
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.16s ease, transform 0.16s ease;
+    }
+    /* a 만 잡으면 About(<span>)이 opacity:0 인 채로 남아 아예 안 보인다.
+       항목 태그가 바뀌어도 안 깨지도록 자식 전체를 잡는다. */
+    .mobile-menu.is-open > * {
+      opacity: 1;
+      transform: none;
+      transition: opacity 0.3s ease, transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .mobile-menu.is-open > *:nth-child(1) { transition-delay: 0.06s; }
+    .mobile-menu.is-open > *:nth-child(2) { transition-delay: 0.11s; }
+    .mobile-menu.is-open > *:nth-child(3) { transition-delay: 0.16s; }
+    .mobile-menu.is-open > *:nth-child(4) { transition-delay: 0.21s; }
+
+    /* 이 페이지는 항상 라이트 — 다크 토글(is-dark) 없이 기본 헤더 스타일을 그대로 쓴다. */
+
+
+    /* ─── 세로 그리드 (메인 페이지와 동일) ────────────────────────
+       1920 미만 3열(4줄) · 1920 이상 4열(5줄) · 767 이하 2열(3줄).
+       컨택트는 항상 검정이라 색은 다크값(#686868)을 바로 쓴다.
+       .header 는 fixed + z-index 로 자체 스택 컨텍스트라 바깥 그리드를
+       배경 위에 못 끼운다 → 헤더 안에 같은 선을 따로 그린다.
+       i 를 100vh 로 두고 컨테이너에서 잘라내 바깥 선과 그어지는 속도를 맞춘다. */
+    .grid-rules {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 20px;
+      width: calc(100% - 40px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .header-rules {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      max-width: calc(2560px - 40px);
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .grid-rules i {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: #D9D9D9;
+    }
+    .header-rules i {
+      position: absolute;
+      top: 0;
+      height: 100vh;
+      width: 1px;
+      background: #D9D9D9;
+    }
+    .grid-rules i:nth-child(1),
+    .header-rules i:nth-child(1) { left: 0; }
+    .grid-rules i:nth-child(2),
+    .header-rules i:nth-child(2) { left: 33.3333%; }
+    .grid-rules i:nth-child(3),
+    .header-rules i:nth-child(3) { left: 66.6667%; }
+    .grid-rules i:nth-child(4),
+    .header-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
+    .grid-rules i:nth-child(5),
+    .header-rules i:nth-child(5) { display: none; }   /* 4열에서만 사용 */
+
+    /* 그리드가 콘텐츠를 덮지 않도록 본문을 한 단 위로 올린다.
+       .contact 에 배경을 두면 그리드를 가리므로 배경은 body 가 낸다. */
+    .contact { position: relative; z-index: 1; }
+
+    /* 1920 이상은 메인과 같이 4열로 벌어진다 */
+    @media (min-width: 1920px) {
+      .grid-rules i:nth-child(2),
+      .header-rules i:nth-child(2) { left: 25%; }
+      .grid-rules i:nth-child(3),
+      .header-rules i:nth-child(3) { left: 50%; }
+      .grid-rules i:nth-child(4),
+      .header-rules i:nth-child(4) { left: 75%; margin-left: 0; }
+      .grid-rules i:nth-child(5),
+      .header-rules i:nth-child(5) { display: block; left: 100%; margin-left: -1px; }
+    }
+
+    /* ─── 진입 인트로 — 오브젝트가 순서대로 나타난다 ──────────────
+       Get in Touch 의 검정 베일이 덮은 직후 이어지는 연출.
+       fill-mode 를 backwards 로 둬서 끝나면 원래 스타일로 되돌아간다
+       (.step-q / .field 는 단계 전환용 transform 을 따로 쓰기 때문에
+        forwards 로 두면 그 transform 을 덮어버린다).
+       헤더는 translateX(-50%) 로 가운데 정렬돼 있어 키프레임에 같이 써야 한다. */
+    @keyframes introLine  { from { transform: scaleY(0); } }
+    @keyframes introLineX { from { transform: scaleX(0); } }
+    @keyframes introRise { from { opacity: 0; transform: translateY(18px); } }
+    @keyframes introDrop { from { opacity: 0; transform: translateX(-50%) translateY(-16px); } }
+
+    body.intro .grid-rules i,
+    body.intro .header-rules i {
+      transform-origin: top;
+      animation: introLine 0.62s cubic-bezier(0.85, 0, 0.15, 1) backwards;
+    }
+    body.intro .header::after,
+    body.intro .marquee-bar-inner::after {
+      transform-origin: left center;
+      animation: introLineX 0.62s cubic-bezier(0.7, 0, 0.84, 0) backwards;
+    }
+    body.intro .header { animation: introDrop 0.70s cubic-bezier(0.22, 1, 0.36, 1) 0.04s backwards; }
+    body.intro .step-q { animation: introRise 0.70s cubic-bezier(0.22, 1, 0.36, 1) 0.20s backwards; }
+    body.intro .field  { animation: introRise 0.70s cubic-bezier(0.22, 1, 0.36, 1) 0.32s backwards; }
+    body.intro .strip  { animation: introRise 0.80s cubic-bezier(0.22, 1, 0.36, 1) 0.44s backwards; }
+    @media (prefers-reduced-motion: reduce) {
+      body.intro .header, body.intro .step-q,
+      body.intro .field,  body.intro .strip,
+      body.intro .grid-rules i, body.intro .header-rules i,
+      body.intro .header::after, body.intro .marquee-bar-inner::after { animation: none; }
+    }
+
+    /* ─── CONTACT (레퍼런스 mux3.mp4 구성 기준) ──────────────────
+       검정 배경 + 중앙 대형 입력 한 줄. 한 번에 한 질문만 묻고,
+       값이 채워지면 질문이 뒤로 물러나며 버튼이 떠오른다.
+       레퍼런스 실측 색 — 배경 #000 / 플레이스홀더 #343434 /
+       아이콘 원 #323232 / 버튼 #252525 + 글자 #ECECEC. */
+
+    .contact {
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;           /* 스크롤 없이 한 화면에 */
+      display: flex;
+      flex-direction: column;
+      padding-top: calc(var(--vwFont) * 5.208); /* 헤더(마키 40 + 바 60) */
+    }
+
+    .contact-stage {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: calc(var(--vwFont) * 4) 40px 0;
+      text-align: center;
+    }
+
+    .form-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    /* 질문 — 레퍼런스의 고정 헤드라인 자리 */
+    .step-q {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 1.354); /* 26px */
+      font-weight: 400;
+      line-height: 1.3;
+      color: #000;
+    }
+
+    .field {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: calc(var(--vwFont) * 2.2);
+      max-width: 100%;
+      font-size: calc(var(--vwFont) * 2.5); /* 48px — 글자 수 브레이크포인트는 JS(sizeRatio)가 여기서부터 줄인다 */
+    }
+
+    .field input,
+    .field textarea {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: 1em;
+      font-weight: 400;
+      line-height: 1.22;
+      color: #000;
+      background: none;
+      border: none;
+      outline: none;
+      padding: 0;
+      text-align: center;
+      caret-color: #000;
+      /* 폭은 JS 가 내용(또는 플레이스홀더) 길이에 맞춰 지정해 항상 중앙에 둔다 */
+      width: 40px;
+    }
+    .field textarea { resize: none; overflow: hidden; text-align: left; }
+    /* 레퍼런스는 플레이스홀더와 입력값이 같은 크기다 (색만 다르다) */
+    .field input::placeholder,
+    .field textarea::placeholder { color: #dcdcdc; }
+
+    /* 단계 전환 — 나갈 때 위로 밀리며 사라지고, 들어올 때 아래에서 떠오른다.
+       레퍼런스 실측: 페이드아웃 0.18s, 빈 화면 0.06s, 페이드인 0.26s. */
+    .step-q, .field {
+      transition: opacity 0.26s ease,
+                  transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .contact.is-out .step-q,
+    .contact.is-out .field {
+      opacity: 0;
+      transform: translateY(-10px);
+      transition-duration: 0.18s;
+    }
+    /* 새 내용을 시작 자세로 '점프'시키는 한 프레임 — 전환 없이 바로 적용 */
+    .contact.is-in .step-q,
+    .contact.is-in .field {
+      opacity: 0;
+      transform: translateY(12px);
+      transition-duration: 0s;
+    }
+
+    /* 값이 채워지면 질문이 뒤로 물러난다 — 레퍼런스에서 흰 글자가 #353535 까지 죽는다 */
+    .step-q {
+      filter: blur(0);
+      transition: opacity 0.3s ease,
+                  transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                  filter 0.45s ease;
+    }
+    .contact.is-typing .step-q { opacity: 0.21; filter: blur(3px); transform: translateY(-6px); }
+
+    /* Back 도 Next 처럼 값이 들어와야 떠오른다 (레퍼런스: 빈 칸에는 버튼이 없다). */
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: calc(var(--vwFont) * 0.9);
+      margin-top: calc(var(--vwFont) * 2.6);
+    }
+
+    .back {
+      background: none;
+      color: #6a6a6a;
+      border: none;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.833);
+      padding: calc(var(--vwFont) * 0.5) 0;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
+    }
+    .contact.is-typing .back { opacity: 1; transform: none; pointer-events: auto; }
+    .back:hover { color: #000; }
+    .contact.is-first .back { display: none; }
+
+    /* Get in Touch(.header-cta, 라이트 상태)와 동일한 디자인 */
+    .next {
+      position: relative;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: calc(var(--vwFont) * 0.417);
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      padding: calc(var(--vwFont) * 0.625) calc(var(--vwFont) * 0.729);
+      text-transform: capitalize;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                  background 0.2s ease, color 0.2s ease;
+    }
+    .contact.is-typing .next { opacity: 1; transform: none; pointer-events: auto; }
+    .next:disabled { opacity: 0.45; cursor: default; }
+
+    .err {
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.677);
+      color: #d64545;
+      margin-top: calc(var(--vwFont) * 0.7);
+      min-height: calc(var(--vwFont) * 1);
+    }
+
+    /* ─── 완료 화면 ─── */
+    .done { display: none; flex-direction: column; align-items: center; }
+    .contact.is-done .form-wrap { display: none; }
+    .contact.is-done .done { display: flex; }
+
+    .check {
+      width: calc(var(--vwFont) * 2.6);
+      height: calc(var(--vwFont) * 2.6);
+      border-radius: 50%;
+      background: #000;
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .check svg { width: 52%; height: 52%; }
+
+    .done-t {
+      font-family: 'Pretendard Variable', sans-serif;
+      font-size: calc(var(--vwFont) * 1.354); /* 26px */
+      line-height: 1.4;
+      color: #000;
+      margin-top: calc(var(--vwFont) * 1);
+    }
+    /* 하단의 입력내용을 확인하는 텍스트(요약 표) */
+    .summary {
+      margin-top: calc(var(--vwFont) * 1.8);
+      display: grid;
+      grid-template-columns: auto auto;
+      gap: calc(var(--vwFont) * 0.34) calc(var(--vwFont) * 0.7);
+      font-family: 'Pretendard Variable', sans-serif;
+      font-size: calc(var(--vwFont) * 0.833); /* 16px */
+      text-align: left;
+    }
+    .summary dt { color: #6a6a6a; }
+    .summary dd { color: #000; max-width: calc(var(--vw) * 22); }
+
+    /* ─── 하단 포트폴리오 — 원기둥 원근 스트립 ────────────────────
+       레퍼런스와 같이 카드가 좌 → 우로 흐르고, 화면 중앙에서 벗어날수록
+       Y축으로 돌아 바깥쪽 모서리가 뒤로 물러난다.
+       좌우 끝은 마스크로 검정에 녹여 시작·끝을 감춘다.
+       회전각과 재생 여부는 JS 가 카드 중심 좌표에서 계산한다. */
+    .strip {
+      /* JS 가 읽어 쓰는 값. 커스텀 속성의 calc() 는 getComputedStyle 이 px 로
+         계산해 주지 않으므로(파싱하면 NaN) 전부 단위 없는 '비율·각도'로 둔다. */
+      --strip-gap: 0.20;    /* 카드 사이 여백 = 카드폭 × 이 값. 화면 어디서나 이 값으로 고정된다 */
+      --strip-skew: 0.09;   /* 기울어진 카드의 외접폭 증가분(실측). 여백 계산에 반영한다 */
+      --strip-depth: 0.47;  /* 가운데가 뒤로 물러난 깊이(원근거리 대비). 그대로 크기 차이가 된다 */
+      --strip-turn: 28;     /* 화면 좌우 끝에서의 Y축 회전각(도) */
+      /* 크기가 최대에 도달하는 지점(화면 반폭 대비). 1.0 = 화면 좌우 끝.
+         이보다 작게 두면 그 안쪽에서 이미 최대가 돼 바깥 카드들이 다 같아 보인다. */
+      --strip-vis: 1.0;
+
+      position: relative;
+      flex: none;
+      cursor: grab;
+      touch-action: pan-y;        /* 세로 스와이프는 페이지에 넘긴다 */
+      /* 가장자리 카드가 가장 크게 투영되므로 그 높이까지 담아야 잘리지 않는다 */
+      height: min(calc(var(--vw) * 19.5), 38vh);
+      /* 레퍼런스는 스트립 아래에 검은 여백이 남는다 (화면 바닥에 붙지 않는다) */
+      margin-bottom: calc(var(--vw) * 6);
+      overflow: hidden;
+      /* 원근은 .strip-track 에 건다 — 여기 걸고 트랙에 preserve-3d 를 주면
+         크로미움에서 3D 변환된 카드가 히트테스트를 못 받아 링크가 안 눌린다.
+         트랙에 직접 걸면 카드가 '직계 자식'이라 preserve-3d 자체가 필요 없다. */
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+              mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%);
+    }
+    /* 카드를 flex 로 늘어놓으면 원근이 '위치'까지 중앙으로 끌어당겨
+       가운데 간격만 좁아지고 속도도 달라진다 (레퍼런스는 간격이 일정하다).
+       그래서 전부 절대배치하고 화면상의 목표 위치를 JS 가 직접 지정한다. */
+    .strip.is-drag { cursor: grabbing; }
+    .strip-track {
+      position: absolute;
+      inset: 0;
+      /* 원근 거리가 짧으면 바깥 카드가 과하게 일그러진다 — 레퍼런스는 훨씬 완만하다 */
+      perspective: calc(var(--vw) * 90);
+    }
+    .strip-item {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      /* 좌우 끝(가장 큰) 기준 크기. 가운데에서는 1/(1+depth) 배로 줄어든다 */
+      width: calc(var(--vw) * 14.6);
+      margin-left: calc(var(--vw) * -7.3);      /* 카드 중심을 원근 원점에 맞춘다 */
+      aspect-ratio: 606.667 / 758;              /* 메인 갤러리 썸네일과 동일한 4:5 */
+      overflow: hidden;
+      border-radius: calc(var(--vw) * 0.42);
+      line-height: 0;
+      backface-visibility: hidden;
+      will-change: transform;
+      transition: opacity 0.3s ease;
+    }
+    .strip-item > img,
+    .strip-item > video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      pointer-events: none;
+    }
+
+    /* ─── MOBILE ──────────────────────────────── */
+    @media (max-width: 767px) {
+      .marquee-section { padding: 0; }
+      .marquee-bar-inner { height: 28px; border-radius: 0; }
+      .marquee-text { font-size: 11px; }
+      .marquee-text-ko { font-size: 12px; }
+      .marquee-logo { height: 13px; }
+      .marquee-set { gap: calc(var(--vwFont) * 10.416); padding-right: calc(var(--vwFont) * 10.416); } /* 데스크탑 대비 2배 */
+
+      .header-main { height: 52px; padding: 0 20px; }
+      .header-logo-center img { height: 16px; }
+      .header-nav { display: none; }
+      .menu-toggle { display: flex; }
+      .header-nav { gap: 10px; }
+      .header-nav a,
+      .header-nav > span { font-size: 11px; }
+      .header-cta { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; }
+
+      .header-rules { width: calc(100% - 20px); }
+      .grid-rules { left: 10px; right: 10px; }
+      .grid-rules i:nth-child(2),
+      .header-rules i:nth-child(2) { left: 50%; }
+      .grid-rules i:nth-child(3),
+      .header-rules i:nth-child(3) { display: none; }
+      .grid-rules i:nth-child(4),
+      .header-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
+      .grid-rules i:nth-child(5),
+      .header-rules i:nth-child(5) { display: none; }
+
+      .contact { padding-top: 80px; }
+      .contact-stage { padding: 0 16px 24px; }
+      .step-q { font-size: 17px; }
+      .field { margin-top: 18px; max-width: none; font-size: 34px; }
+      .actions { gap: 14px; margin-top: 24px; }
+      .back { font-size: 12px; }
+      .next { font-size: 9.6px; padding: 6.4px 9.6px; border-radius: 4.8px; } /* header-cta 모바일과 동일 */
+      .err { font-size: 11px; margin-top: 10px; min-height: 16px; }
+      .done-t { font-size: 19px; }
+      .summary { font-size: 14px; margin-top: 22px; }
+      .summary dd { max-width: 46vw; }
+      /* --vw 비례로 두면 모바일에서 카드가 찌그러진다 → 고정값.
+         화면이 좁아 깊이를 그대로 쓰면 가운데 카드가 너무 작아진다 → 약하게 */
+      /* 화면이 좁아 카드가 크면 두세 장밖에 안 들어와 호로 안 읽힌다.
+         카드를 줄여 네 장 이상 보이게 하고 깊이도 약하게 간다. */
+      .strip {
+        /* 모바일은 카드가 커서 잘림이 화면 21% 에서 끝난다 → 리빌 지점도 그만큼 안쪽 */
+        -webkit-mask-image: linear-gradient(90deg,
+          transparent 0, transparent 16%, #000 21%, #000 79%, transparent 84%, transparent 100%);
+                mask-image: linear-gradient(90deg,
+          transparent 0, transparent 16%, #000 21%, #000 79%, transparent 84%, transparent 100%);
+        height: min(200px, 28vh);
+        /* 원근은 트랙에 (위 주석 참고) */
+        --strip-gap: 0.16;
+        --strip-skew: 0.06;
+        --strip-depth: 0.30;
+        --strip-turn: 20;
+        --strip-vis: 1.0;
+      }
+      .strip-track { perspective: 560px; }
+      .strip-item { width: 150px; margin-left: -75px; border-radius: 6px; }
+
+    }
+  
+    /* ─── 링크 hover 플립 (rayraylab.com 헤더 CONTACT 규칙 그대로) ───
+       .menu_text2 { position:absolute; top:10px;
+                     transform: translateZ(20px) rotateX(90deg);
+                     transform-origin: center center; transition-duration:.3s }
+       li:hover .menu_text  { transform: translateY(-10px) rotateX(90deg) }
+       li:hover .menu_text2 { top:0; transform: translateZ(0) rotateX(0deg) }
+       top 값도 함께 전환되기 때문에 두 글자가 위로 이동하면서 눌린다.
+       오프셋 10px 은 원본 글자 15px 기준 → 0.667em 으로 환산해 크기에 따라간다. */
+    .flip-a { position: relative; display: inline-block; }
+    /* 터치 영역만 확장 — 글자 위치·크기는 그대로 */
+    .header-nav > *::before {
+      content: '';
+      position: absolute;
+      inset: -14px -16px;
+      z-index: 1;
+    }
+    .flip-a .fa,
+    .flip-a .fb { display: inline-block; white-space: nowrap; }
+    .flip-a .fb {
+      position: absolute;
+      left: 0;
+      top: 0.667em;
+      pointer-events: none;
+      transform: translateZ(20px) rotateX(90deg);
+      transform-origin: center center;
+    }
+    @media (hover: hover) {
+      .flip-a .fa,
+      .flip-a .fb { transition-duration: 0.3s; }
+      .flip-a:hover .fa { transform: translateY(-0.667em) rotateX(90deg); }
+      .flip-a:hover .fb { top: 0; transform: translateZ(0) rotateX(0deg); }
+    }
+
+    /* ─── 비활성 링크 (About) ────────────────────────────────────
+       링크는 막되 버튼 형태와 플립은 유지하고, hover 시 넘어온 글자
+       가운데에 취소선이 좌→우로 그어져 '지금은 못 들어감'을 알린다. */
+    .flip-a.is-off { cursor: default; }
+    .flip-a.is-off .fb::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      height: 1px;
+      background: currentColor;
+      transform: scaleX(0);
+      transform-origin: left center;
+    }
+    @media (hover: hover) {
+      .flip-a.is-off .fb::after { transition: transform 0.3s ease 0.08s; }
+      .flip-a.is-off:hover .fb::after { transform: scaleX(1); }
+    }
+
+    /* ─── About 사이드 패널 (Figma 485:4493) ─────────────────────
+       헤더 About 을 누르면 왼쪽에서 밀려 나온다 (레퍼런스 iroje.com 은 오른쪽).
+       열려 있는 동안 나머지 화면은 모바일 드롭다운과 같은 방식으로 흐려진다.
+       패널은 검정 배경 / 흰 글자, 그리드는 다크 전환과 같은 #686868. */
+    .about-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(255,255,255,0);
+      backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+      pointer-events: none;
+      transition: background-color .42s cubic-bezier(.85,0,.15,1),
+                  backdrop-filter .42s cubic-bezier(.85,0,.15,1);
+    }
+    body.about-open .about-overlay {
+      background: rgba(255,255,255,.8);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      pointer-events: auto;
+    }
+    .about-panel {
+      position: fixed; top: 0; left: 0; z-index: 301;
+      width: calc(var(--vw) * 33.177);   /* Figma 637 */
+      max-width: 92vw;
+      height: 100vh;
+      height: 100dvh;      /* 모바일 주소창을 뺀 실제 높이 */
+      background: #000; color: #fff;
+      transform: translateX(-100%);
+      transition: transform .42s cubic-bezier(.85,0,.15,1);
+      overflow-y: auto; overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+    }
+    body.about-open .about-panel { transform: translateX(0); }
+    .about-panel::-webkit-scrollbar { width: 0; height: 0; }
+    /* 세로 그리드 — 스크롤 콘텐츠 전체 높이. 패널(스크롤 컨테이너)에 걸면
+       보이는 높이까지만 그려져 아래로 내리면 끊긴다 → inner 에 건다 */
+    .about-panel-inner { position: relative; }
+    .about-panel-inner::before,
+    .about-panel-inner::after {
+      content: ''; position: absolute; top: 0; bottom: 0;
+      width: 1px; background: #686868; pointer-events: none;
+    }
+    .about-panel-inner::before { left: 20px; }
+    .about-panel-inner::after  { right: 20px; }
+
+    .about-panel-inner { padding: calc(var(--vwFont) * 2.083) 0 40px; }
+    /* 블록: 번호(74) + 본문(523), 가로 그리드는 패널 폭 전체 */
+    .ab-block {
+      display: grid;
+      grid-template-columns: calc(var(--vw) * 4.896) 1fr;   /* 1920 기준 94 = 그리드20 + 번호74 */
+      align-items: start;
+      padding: 0;                      /* 가로 그리드는 마진 없이 폭 전체 */
+      border-top: 1px solid #686868;
+      border-bottom: 1px solid #686868;
+    }
+    .ab-block + .ab-block { margin-top: 20px; }
+    .ab-no {
+      /* 글자 크기가 16 vs 18 이라 같은 패딩이면 번호가 살짝 위로 뜬다.
+         차이만큼(0.075em) 내려 영문 첫 줄과 윗선을 맞춘다 */
+      padding: calc(10px + 0.075em) 0 10px 30px;   /* 좌 30 = 그리드 20 + 10 */
+      font-size: calc(var(--vwFont) * .833);   /* 16 */
+      line-height: 1.5;
+      color: #fff;
+    }
+    .ab-body { padding: 10px 30px 10px 10px; }   /* 우 30 = 그리드 20 + 10 */
+    .ab-body p { margin: 0; line-height: 1.5; color: #fff; }
+    .ab-body .ab-en { font-size: calc(var(--vwFont) * .938); }   /* 18 */
+    .ab-body .ab-ko { font-size: calc(var(--vwFont) * .990); margin-top: 0.75em; }  /* 19 */
+    /* 2x2 영상 */
+    .ab-media {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .ab-media video {
+      display: block; width: 100%; aspect-ratio: 16 / 9;
+      object-fit: cover; background: #000;
+    }
+    .ab-copy {
+      padding: 10px 30px 10px calc(var(--vw) * 4.896 + 10px);   /* 본문 시작점과 동일 */
+      font-size: calc(var(--vwFont) * .938);   /* 18 — 본문 영문과 동일 */
+      line-height: 1.5;
+      color: #fff;
+    }
+    .ab-copy-ko { font-family: 'Pretendard Variable', sans-serif; }
+    .about-close {
+      position: fixed; z-index: 302;
+      top: calc(var(--vwFont) * 1.042);
+      left: calc(var(--vw) * 33.177);
+      width: 43px; height: 43px; margin-left: 10px;
+      border: 0; background: transparent; cursor: pointer;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s ease .12s;
+    }
+    body.about-open .about-close { opacity: 1; pointer-events: auto; }
+    .about-close span {
+      position: absolute; left: 7px; top: 21px;
+      width: 29px; height: 1.8px; background: #000;
+    }
+    .about-close span:first-child { transform: rotate(45deg); }
+    .about-close span:last-child { transform: rotate(-45deg); }
+    @media (max-width: 767px) {
+      .about-panel { width: 88vw; max-width: none; }
+      /* 패널(88vw) 오른쪽 남는 공간(12vw)의 한가운데 */
+      .about-close {
+        left: calc(88vw + (12vw - 43px) / 2);
+        margin-left: 0;
+        top: 12px; width: 43px; height: 43px;
+      }
+      /* 상단은 헤더 마키가 끝나는 지점(28px)에 맞추고,
+         하단은 마지막 줄이 가려지지 않게 넉넉히 */
+      .about-panel-inner { padding: 28px 0 calc(20px + env(safe-area-inset-bottom)); }
+      .ab-block { grid-template-columns: 46px 1fr; padding: 0; }
+      .ab-no { padding: calc(10px + 0.075em) 0 10px 20px; }
+      .ab-body { padding: 10px 20px 10px 10px; }
+      .about-panel-inner::before { left: 10px; }
+      .about-panel-inner::after { right: 10px; }
+      .ab-no { font-size: 12px; }
+      .ab-body .ab-en { font-size: 13px; }
+      .ab-body .ab-ko { font-size: 14px; }
+      .ab-copy { padding: 10px 20px 10px 56px; font-size: 13px; }
+    }
+</style>
+</head>
+<body class="intro">
+
+  <div class="grid-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+
+  <header class="header">
+    <div class="header-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="marquee-section">
+      <div class="marquee-bar">
+        <div class="marquee-bar-inner">
+          <div class="marquee-track" id="marqueeTrack">
+            <div class="marquee-set">
+              <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text">Brand Strategy &amp; Design Agency</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+              <span class="marquee-text marquee-text-ko">브랜드 전략 &amp; 디자인 에이전시</span>
+              <img class="marquee-logo" src="/media/fowarp-logo-marquee.svg" alt="FOWARP">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="header-main">
+      <nav class="header-nav">
+        <a href="/" class="active flip-a"><span class="fa">Project</span><span class="fb" aria-hidden="true">Project</span></a>
+        <span class="flip-a" data-about tabindex="0"><span class="fa">About</span><span class="fb" aria-hidden="true">About</span></span>
+        <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener" class="flip-a"><span class="fa">Behance</span><span class="fb" aria-hidden="true">Behance</span></a>
+        <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener" class="flip-a"><span class="fa">Instagram</span><span class="fb" aria-hidden="true">Instagram</span></a>
+      </nav>
+      <button class="menu-toggle" aria-label="Menu" aria-expanded="false">Menu</button>
+      <a href="/" class="header-logo-center"><img src="/media/fowarp-logo-center.svg" alt="FOWARP"></a>
+      <span class="header-cta">Get in Touch</span>
+    </div>
+    <nav class="mobile-menu">
+        <a href="/" class="active">Project</a>
+        <span class="menu-off" data-about tabindex="0">About</span>
+        <a href="https://www.behance.net/gallery/208776293/DESIGN-PORTFOLIO-" target="_blank" rel="noopener">Behance</a>
+        <a href="https://www.instagram.com/fowarp" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+  </header>
+
+  <div class="contact" id="contact">
+
+    <div class="contact-stage">
+
+      <div class="form-wrap">
+        <div class="step-q" id="stepQ">브랜드명을 입력해 주세요.</div>
+
+        <div class="field">
+          <input id="stepInput" type="text" placeholder="your brand"
+                 autocomplete="off" spellcheck="false" aria-labelledby="stepQ">
+        </div>
+
+        <div class="err" id="err" role="alert" aria-live="polite"></div>
+        <div class="actions">
+          <button class="back" id="back" type="button">Back</button>
+          <button class="next" id="next" type="button">Next</button>
+        </div>
+
+        <!-- 스팸 봇용 함정 필드 (사람에게는 보이지 않음) -->
+        <input id="hp" type="text" tabindex="-1" aria-hidden="true"
+               style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+      </div>
+
+      <div class="done">
+        <span class="check" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"
+               stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>
+        </span>
+        <div class="done-t">문의해 주셔서 감사합니다.<br>검토 후 기재해 주신 연락처로 답변 드리겠습니다.</div>
+        <dl class="summary" id="summary"></dl>
+      </div>
+
+    </div>
+
+    <!-- 하단 포트폴리오 — 원기둥 원근 스트립 (레퍼런스 mux3.mp4) -->
+    <div class="strip" id="strip">
+      <div class="strip-track" id="stripTrack">
+      <span class="strip-item"><video src="/media/contact-marquee/goventure.mp4" muted loop playsinline preload="auto" aria-label="GoVenture Forum"></video></span>
+      <span class="strip-item"><video src="/media/contact-marquee/starbucks.mp4" muted loop playsinline preload="auto" aria-label="Starbucks®"></video></span>
+      <span class="strip-item"><img src="/media/contact-marquee/returnity.jpg" alt="RETURNITY" loading="lazy"></span>
+      <span class="strip-item"><video src="/media/contact-marquee/nosugar.mp4" muted loop playsinline preload="auto" aria-label="NO SUGAR ADDED"></video></span>
+      <span class="strip-item"><video src="/media/contact-marquee/kohonjin.mp4" muted loop playsinline preload="auto" aria-label="KOHONJIN"></video></span>
+      <span class="strip-item"><video src="/media/contact-marquee/calmlab.mp4" muted loop playsinline preload="auto" aria-label="CALMLAB+"></video></span>
+      <span class="strip-item"><video src="/media/contact-marquee/hwanghugung.mp4" muted loop playsinline preload="auto" aria-label="황후궁 삼계탕"></video></span>
+      <span class="strip-item"><img src="/media/contact-marquee/antursolais.jpg" alt="An Túr Solais" loading="lazy"></span>
+      <span class="strip-item"><img src="/media/contact-marquee/gonyakjelly.jpg" alt="단백질 곤약젤리" loading="lazy"></span>
+      <span class="strip-item"><video src="/media/contact-marquee/souptoppokki.mp4" muted loop playsinline preload="auto" aria-label="SOUP TOPPOKKI"></video></span>
+      <span class="strip-item"><img src="/media/contact-marquee/gooumcookit.jpg" alt="구움쿠킷" loading="lazy"></span>
+      <span class="strip-item"><video src="/media/contact-marquee/unknot.mp4" muted loop playsinline preload="auto" aria-label="Unknot"></video></span>
+      <span class="strip-item"><img src="/media/contact-marquee/jjonjingeo.jpg" alt="쫀징어" loading="lazy"></span>
+      <span class="strip-item"><img src="/media/contact-marquee/danbaekking.jpg" alt="단백킹" loading="lazy"></span>
+      <span class="strip-item"><img src="/media/contact-marquee/kkokkochip.jpg" alt="꼭꼬칩" loading="lazy"></span>
+      </div>
+    </div>
+
+  </div>
+
+  
+  <!-- About 사이드 패널 -->
+  <div class="about-overlay" id="aboutOverlay"></div>
+  <aside class="about-panel" id="aboutPanel" data-lenis-prevent role="dialog" aria-modal="true" aria-label="About FOWARP" aria-hidden="true">
+    <div class="about-panel-inner">
+
+      <div class="ab-block">
+        <div class="ab-no">1</div>
+        <div class="ab-body">
+          <p class="ab-en">FOWARP is a brand agency born from the fusion of Forward and Warp. We contemplate the growth of our client’s brands and lead better user experiences through the best brand building.</p>
+          <p class="ab-ko">FOWARP는 Forward와 Warp의 단어가 만나 탄생한 브랜드 에이전시입니다. 클라이언트의 브랜드 성장을 위해 고찰하며, 최상의 브랜드 구축을 통해 더 나은 사용자 경험을 이끌어 냅니다.</p>
+        </div>
+      </div>
+
+      <div class="ab-block">
+        <div class="ab-no">2</div>
+        <div class="ab-body">
+          <div class="ab-media">
+            <video autoplay muted loop playsinline><source src="/media/about/a1.mp4" type="video/mp4"></video>
+            <video autoplay muted loop playsinline><source src="/media/about/a2.mp4" type="video/mp4"></video>
+            <video autoplay muted loop playsinline><source src="/media/about/a3.mp4" type="video/mp4"></video>
+            <video autoplay muted loop playsinline><source src="/media/about/a4.mp4" type="video/mp4"></video>
+          </div>
+          <p class="ab-en">FOWARP’s brand symbol shifts freely across materials and forms. It stands for the way FOWARP approaches each client’s circumstances with flexibility and invention, arriving at the solution that fits.</p>
+          <p class="ab-ko">FOWARP의 브랜드 심볼은 다양한 재질 및 형태로 유연하게 변화합니다. 이는 클라이언트의 다양한 상황에 항상 유연하고 창의적으로 접근하여 최적의 솔루션을 제공하는 FOWARP의 크리에이티브를 상징합니다.</p>
+        </div>
+      </div>
+
+      <div class="ab-block">
+        <div class="ab-no">3</div>
+        <div class="ab-body">
+          <p class="ab-en">Countless brands are born and disappear every day in the market. In this landscape, FOWARP proposes innovative solutions through design for brands to grow. A brand can grow through design. FOWARP is waiting for brands to grow with us even now.</p>
+          <p class="ab-ko">하루에도 수 없이 많은 브랜드들이 탄생하고 또한 사라집니다. 이러한 시장 속에서 FOWARP는 디자인을 통해 브랜드가 성장할 수 있는 독창적인 솔루션을 제안합니다. 브랜드는 디자인을 통해 성장할 수 있습니다. FOWARP는 지금도 우리와 함께 성장할 브랜드를 기다리고 있습니다.</p>
+        </div>
+      </div>
+
+      <div class="ab-copy">Copyright © FOWARP. <span class="ab-copy-ko">모든 권리 보유.</span></div>
+    </div>
+  </aside>
+  <button class="about-close" id="aboutClose" type="button" aria-label="닫기"><span></span><span></span></button>
+
+<script>
+    // 인트로가 끝나면 클래스를 뗀다 — 안 그러면 .step-q 의 단계 전환
+    // transform 이 인트로 애니메이션에 계속 눌린다
+    setTimeout(function () { document.body.classList.remove('intro'); }, 1400);
+
+    function updateVW() {
+      var w = window.innerWidth;
+      document.documentElement.style.setProperty('--vw', (Math.min(w, 2560) / 100) + 'px');
+      document.documentElement.style.setProperty('--vwFont', (Math.min(w, 1920) / 100) + 'px');
+    }
+    // 그리드는 fixed 라 뷰포트 기준이 된다. body(max-width 2560, 중앙정렬) 와
+    // 어긋나지 않도록 실제 body 박스를 재서 맞춘다. (메인 페이지와 동일)
+    function syncRules() {
+      var el = document.querySelector('.grid-rules');
+      if (!el) return;
+      var r = document.body.getBoundingClientRect();
+      var inset = window.innerWidth <= 767 ? 10 : 20;   // 모바일은 10px
+      el.style.left  = (r.left + inset) + 'px';
+      el.style.width = (r.width - inset * 2) + 'px';
+    }
+    updateVW();
+    syncRules();
+    window.addEventListener('resize', function () { updateVW(); syncRules(); });
+
+        var lenis = new Lenis({ duration: 0.9, easing: function(t) { return 1 - Math.pow(1 - t, 4); }, smoothWheel: true });
+    (function lenisLoop(t) { lenis.raf(t); requestAnimationFrame(lenisLoop); })(0);
+
+    // ─── 대화형 폼 (한 번에 한 질문) ──────────────────────────
+    (function() {
+      var STEPS = [
+        { key:'brand',   ko:'브랜드명을 입력해 주세요.',      ph:'your brand', area:false,
+          check:function(v){ return v ? '' : '브랜드명을 입력해 주세요.'; } },
+        { key:'email',   ko:'이메일 주소를 입력해 주세요.',    ph:'your email',  area:false, inputType:'email',
+          check:function(v){ if(!v) return '이메일 주소를 입력해 주세요.';
+                             return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? '' : '이메일 형식을 확인해 주세요.'; } },
+        { key:'budget',  ko:'프로젝트 예산을 입력해 주세요.',  ph:'your budget',   area:false, money:true,
+          check:function(v){ return /\d/.test(v) ? '' : '예산을 입력해 주세요.'; } },
+        { key:'message', ko:'문의 내용을 입력해 주세요.',      ph:'your message',  area:true,
+          check:function(v){ return v ? '' : '문의 내용을 입력해 주세요.'; } }
+      ];
+
+      var wrap   = document.getElementById('contact');
+      var qEl    = document.getElementById('stepQ');
+      var errEl  = document.getElementById('err');
+      var btn    = document.getElementById('next');
+      var backBtn = document.getElementById('back');
+      var hp     = document.getElementById('hp');
+      var input  = document.getElementById('stepInput');
+
+      var i = 0, data = {}, sending = false;
+
+      // 4단계 중 마지막만 textarea 라서 스텝마다 입력 요소를 교체한다
+      function mountInput(step) {
+        var el = document.createElement(step.area ? 'textarea' : 'input');
+        el.id = 'stepInput';
+        el.placeholder = step.ph;
+        el.setAttribute('autocomplete', 'off');
+        el.setAttribute('spellcheck', 'false');
+        el.setAttribute('aria-labelledby', 'stepQ');
+        if (step.area) { el.rows = 1; } else { el.type = step.inputType || 'text'; }
+        if (data[step.key]) el.value = data[step.key];
+        input.replaceWith(el);
+        input = el;
+        bind();
+        autoGrow();
+      }
+
+      // 입력 폭을 내용(또는 플레이스홀더) 길이에 맞춰 조절해서 항상 화면 중앙에 유지되게 한다
+      var sizer = document.createElement('span');
+      sizer.setAttribute('aria-hidden', 'true');
+      sizer.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre';
+      document.body.appendChild(sizer);
+
+      var field = document.querySelector('.field');
+
+      // 글자 수 구간마다 계단식으로 줄어드는 배율. 절대 px 이 아니라 CSS 기준 크기(48px
+      // 데스크탑 / 34px 모바일 등, .field 의 폰트 크기)에 곱하는 비율이라 어느 화면에서도
+      // 같은 규칙이 적용된다. 문의 내용처럼 긴 텍스트는 이걸로 충분히 줄어들어
+      // 더 이상 단계별로 별도 크기를 하드코딩할 필요가 없다.
+      var SIZE_STEPS = [
+        { len: 8,  ratio: 1.00 },
+        { len: 16, ratio: 0.90 },
+        { len: 24, ratio: 0.78 },
+        { len: 36, ratio: 0.66 },
+        { len: 50, ratio: 0.56 },
+        { len: 70, ratio: 0.46 },
+        { len: Infinity, ratio: 0.38 }
+      ];
+      function sizeRatio(len) {
+        for (var k = 0; k < SIZE_STEPS.length; k++) {
+          if (len <= SIZE_STEPS[k].len) return SIZE_STEPS[k].ratio;
+        }
+      }
+
+      function availWidth() {
+        var stage = document.querySelector('.contact-stage');
+        var cs = getComputedStyle(stage);
+        return stage.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 20;
+      }
+
+      function fitWidth() {
+        field.style.fontSize = '';   // CSS 기준 크기로 되돌린 뒤 다시 잰다
+        var fcs  = getComputedStyle(field);
+        var base = parseFloat(fcs.fontSize);
+        var text = input.value || input.placeholder;
+
+        var size = base * sizeRatio(text.length);
+        field.style.fontSize = size + 'px';
+
+        var cs = getComputedStyle(input);
+        sizer.style.fontFamily    = cs.fontFamily;
+        sizer.style.fontWeight    = cs.fontWeight;
+        sizer.style.fontStyle     = cs.fontStyle;
+        sizer.style.letterSpacing = cs.letterSpacing;
+        // 레퍼런스는 플레이스홀더와 입력값이 같은 크기라 따로 잴 필요가 없다
+        sizer.style.fontSize = size + 'px';
+        sizer.textContent = text;
+
+        var avail = availWidth();
+        var w = sizer.offsetWidth + 8; // 캐럿 여유
+
+        // textarea 는 알아서 줄바꿈하므로 폭만 제한한다 (글자 수 배율은 이미 적용됨)
+        if (input.tagName === 'TEXTAREA') {
+          input.style.width = Math.min(Math.max(w, 40), Math.max(avail, 40)) + 'px';
+          return;
+        }
+        // 배율을 적용하고도 한 줄이 가용 폭을 넘으면 추가로 줄인다
+        // (아주 좁은 화면에서의 안전장치 — 브레이크포인트만으로는 못 잡는 극단값 대비)
+        if (w > avail && avail > 0) {
+          var k = Math.max(avail / w, 0.34);
+          field.style.fontSize = (size * k) + 'px';
+          w = w * k;
+        }
+        input.style.width = Math.min(Math.max(w, 40), Math.max(avail, 40)) + 'px';
+      }
+
+      function autoGrow() {
+        fitWidth();
+        if (input.tagName !== 'TEXTAREA') return;
+        input.style.height = 'auto';
+        input.style.height = input.scrollHeight + 'px';
+      }
+
+      window.addEventListener('resize', autoGrow);
+
+      // 웹폰트(Karlsbader Grotesk)가 늦게 오면 첫 렌더 때 대체 폰트 기준으로
+      // 폭이 계산돼 플레이스홀더가 잘린다 → 폰트 로드 후 한 번 더 맞춘다
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function() { autoGrow(); });
+      }
+      window.addEventListener('load', autoGrow);
+
+      // 예산 필드는 숫자만 남겨 천 단위 콤마를 찍고 ' KRW' 를 붙인다.
+      // 캐럿은 항상 ' KRW' 앞에 두어 백스페이스가 단위가 아닌 숫자를 지우게 한다.
+      var UNIT = ' KRW';
+      function formatMoney() {
+        var digits = input.value.replace(/[^0-9]/g, '').replace(/^0+(?=\d)/, '');
+        input.value = digits ? Number(digits).toLocaleString('en-US') + UNIT : '';
+        var caret = Math.max(0, input.value.length - UNIT.length);
+        if (input.value) input.setSelectionRange(caret, caret);
+      }
+
+      function bind() {
+        input.addEventListener('input', function(e) {
+          // inputType 이 삽입인지 삭제인지 정확히 알려준다 (포맷 때문에 길이 비교는 못 쓴다)
+          var back = !!(e.inputType && e.inputType.indexOf('delete') === 0);
+          document.dispatchEvent(new CustomEvent('strip-nudge', { detail: { dir: back ? -1 : 1 } }));
+          if (STEPS[i].money) formatMoney();
+          wrap.classList.toggle('is-typing', input.value.length > 0);
+          if (errEl.textContent) errEl.textContent = '';
+          autoGrow();
+        });
+        // 클릭으로 캐럿이 단위 안쪽에 들어가면 입력이 어긋나므로 되돌린다
+        input.addEventListener('click', function() {
+          if (!STEPS[i].money || !input.value) return;
+          var limit = input.value.length - UNIT.length;
+          if (input.selectionStart > limit) input.setSelectionRange(limit, limit);
+        });
+        input.addEventListener('keydown', function(e) {
+          // textarea 는 Enter 로 줄바꿈, Cmd/Ctrl+Enter 로 제출
+          if (e.key !== 'Enter') return;
+          if (input.tagName === 'TEXTAREA' && !(e.metaKey || e.ctrlKey)) return;
+          e.preventDefault();
+          go();
+        });
+      }
+
+      function render() {
+        var s = STEPS[i];
+        qEl.textContent = s.ko;
+        wrap.classList.toggle('is-first', i === 0);
+        wrap.classList.toggle('is-area', !!s.area);
+        btn.textContent = (i === STEPS.length - 1) ? 'Send' : 'Next';
+        errEl.textContent = '';
+        mountInput(s);
+        wrap.classList.toggle('is-typing', input.value.length > 0);
+        input.focus();
+      }
+
+      // 레퍼런스의 단계 전환: 현재 텍스트가 위로 빠진 뒤 새 텍스트가 아래에서 떠오른다.
+      // is-in 은 새 내용을 '시작 자세'로 한 프레임 고정하는 용도라 곧바로 벗긴다.
+      var switching = false;
+      function transitionTo(next) {
+        switching = true;
+        wrap.classList.remove('is-typing');
+        wrap.classList.add('is-out');
+        setTimeout(function() {
+          i = next;
+          wrap.classList.remove('is-out');
+          wrap.classList.add('is-in');
+          render();
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+              wrap.classList.remove('is-in');
+              switching = false;
+            });
+          });
+        }, 240); // 페이드아웃 180ms + 빈 화면 60ms
+      }
+
+      function go() {
+        if (sending || switching) return;
+        var s = STEPS[i];
+        var v = input.value.trim();
+        var msg = s.check(v);
+        if (msg) { errEl.textContent = msg; input.focus(); return; }
+        data[s.key] = v;
+        if (i < STEPS.length - 1) { transitionTo(i + 1); return; }
+        submit();
+      }
+
+      function submit() {
+        sending = true;
+        btn.disabled = true;
+        btn.textContent = 'Sending…';
+        errEl.textContent = '';
+        var payload = { brand:data.brand, email:data.email, budget:data.budget, message:data.message, _hp:hp.value };
+
+        fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(function(r) {
+          return r.json().catch(function(){ return {}; }).then(function(j) {
+            if (!r.ok) throw new Error(j.error || ('전송 실패 (' + r.status + ')'));
+            return j;
+          });
+        }).then(function() {
+          document.getElementById('summary').innerHTML =
+            '<dt>브랜드</dt><dd>' + esc(data.brand) + '</dd>' +
+            '<dt>이메일</dt><dd>' + esc(data.email) + '</dd>' +
+            '<dt>예산</dt><dd>' + esc(data.budget) + '</dd>' +
+            '<dt>문의</dt><dd>' + esc(data.message) + '</dd>';
+          wrap.classList.remove('is-typing');
+          wrap.classList.add('is-done');
+        }).catch(function(e) {
+          sending = false;
+          btn.disabled = false;
+          btn.textContent = 'Try again';
+          errEl.textContent = e.message + ' — hi@fowarp.com 으로 직접 보내주셔도 됩니다.';
+        });
+      }
+
+      function esc(s) {
+        return String(s).replace(/[&<>"]/g, function(c) {
+          return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c];
+        });
+      }
+
+      function back() {
+        if (sending || switching || i === 0) return;
+        delete data[STEPS[i - 1].key]; // 돌아가는 단계는 입력이 비어 있는 채로 나온다
+        transitionTo(i - 1);
+      }
+
+      btn.addEventListener('click', go);
+      backBtn.addEventListener('click', back);
+      render();
+    })();
+
+    // ─── 하단 포트폴리오 — 원호 캐러셀 ──────────────────────────
+    // 하단 스트립 — 레퍼런스(mux3.mp4) 실측 구조.
+    //  · 카드 사이 여백은 화면 어디서나 똑같다 (붙었다 벌어지지 않는다)
+    //  · 크기는 가운데가 가장 작고 좌우 끝으로 갈수록 커진다 — 시청자를 감싸는 오목한 호
+    //  · 각 카드의 바깥쪽 모서리가 안쪽보다 앞으로 나온다 (실측: 좌/우 모서리비 1.12 → 0.80)
+    //
+    // 여백을 고정하면 '중심 간격'은 그 자리 카드 크기를 따라 달라져야 한다.
+    // 그래서 위치를 x 로 직접 잡지 않고 흐름 좌표 u 로 잡는다 —
+    //   du = dx / (그 자리 카드폭 + 고정여백)
+    // u 를 1 늘리면 화면상으로 딱 '카드 한 장 + 여백'만큼 이동한다.
+    // u 를 등간격·등속으로 돌리면 여백이 항상 일정하게 유지된다.
+    (function () {
+      var stage = document.getElementById('strip');
+      var track = document.getElementById('stripTrack');
+      if (!stage || !track) return;
+
+      var items = [].slice.call(track.children);
+      var N = items.length;
+      var EDGE_PXPS = 120;              // 가장 큰(좌우 끝) 카드 기준 속도(px/s)
+      var NUDGE     = 4.0;              // 글자 한 자당 찍는 최고 속도(u/s)
+      var NUDGE_MAX = 7;                // 드래그 관성까지 포함한 상한
+      var DECAY     = 0.01;             // 얹은 속도가 1초에 이만큼으로 준다
+      var P, half, reach, DEPTH, TURN, SKEW, W0, GAP, flow;
+      var tblU = [], tblX = [];
+      var base = 0, last = null, frame = 0, raf;
+      var boost = 0;                    // 타이핑·드래그가 얹는 추가 속도
+      var dragging = false, pending = false, startX = 0, lastX = 0, vel = 0, pid = null;
+
+      function norm(v) { v %= N; return v < 0 ? v + N : v; }
+
+      // 가운데가 1, 화면 끝에서 0 이 되는 프로파일 (raised cosine).
+      //  · 지수함수(exp)를 쓰면 화면 끝보다 한참 앞에서 이미 0 에 수렴해 버려
+      //    바깥쪽 카드 서너 장이 전부 최대 크기로 똑같아진다(실측 560↔881 차이 2%).
+      //    코사인은 R 까지 계속 변해서 첫 카드가 둘째보다 확실히 크다(23%).
+      //  · u=0 과 u=1 양쪽에서 기울기가 0 이라 어디서도 꺾이지 않는다
+      //    (±1 에서 자르면 그 지점에서 여백이 튄다 — 실측 60→80px).
+      function fAt(x) {
+        var u = Math.min(1, Math.abs(x) / reach);
+        return 0.5 * (1 + Math.cos(Math.PI * u));
+      }
+      function kAt(x) { return 1 + DEPTH * fAt(x); }   // 깊이 계수 — 클수록 뒤로 밀려 작아진다
+      // rotateY 로 기울면 카드의 외접 사각형이 조금 넓어진다(실측 +9%).
+      // 눈에 보이는 여백을 맞추려면 그 몫까지 폭으로 쳐야 한다.
+      function wAt(x) {
+        var f = fAt(x);
+        return W0 / (1 + DEPTH * f) * (1 + SKEW * (1 - f));
+      }
+
+      function measure() {
+        var cs = getComputedStyle(stage);
+        P     = parseFloat(getComputedStyle(track).perspective) || 1728;
+        DEPTH = parseFloat(cs.getPropertyValue('--strip-depth')) || 0.6;
+        TURN  = parseFloat(cs.getPropertyValue('--strip-turn'))  || 28;
+        SKEW  = parseFloat(cs.getPropertyValue('--strip-skew'))  || 0.09;
+        W0    = items[0].offsetWidth;
+        GAP   = W0 * (parseFloat(cs.getPropertyValue('--strip-gap')) || 0.2);
+        half  = stage.clientWidth / 2;
+        flow  = EDGE_PXPS / (W0 + GAP);   // 평상시 흐름 속도(u/s)
+        reach = half * (parseFloat(cs.getPropertyValue('--strip-vis')) || 0.68);
+        buildTable();
+      }
+
+      // u ↔ x 대응표. 양쪽으로 N/2 만큼 쌓으면 카드 N 장이 한 바퀴를 정확히 채운다.
+      //
+      // 우리가 원하는 조건은 '이웃한 두 카드의 여백이 항상 GAP' —
+      //   x(u+1) - x(u) = (폭(u) + 폭(u+1)) / 2 + GAP
+      // 이건 미분방정식이 아니라 한 칸 건너뛰는 관계식이라 한 번에 못 푼다.
+      // 그래서 먼저 제자리 폭만으로 거칠게 풀고(1차), 그 결과로 이웃 폭을 알아내
+      // 다시 푸는 과정을 몇 번 돌린다. 실측 여백 편차 21% → 2% 로 떨어진다.
+      function integrate(rate) {
+        var STEP = 2, lim = N / 2;
+        var uR = [0], xR = [0], u = 0, x = 0;
+        while (u < lim && x < 40000) { u += STEP / rate(x, u); x += STEP; uR.push(u); xR.push(x); }
+        var uL = [], xL = [];
+        u = 0; x = 0;
+        while (u > -lim && x > -40000) { u -= STEP / rate(x, u); x -= STEP; uL.push(u); xL.push(x); }
+        uL.reverse(); xL.reverse();
+        return { U: uL.concat(uR), X: xL.concat(xR) };
+      }
+
+      function buildTable() {
+        var t = integrate(function (x) { return wAt(x) + GAP; });
+        for (var pass = 0; pass < 3; pass++) {
+          tblU = t.U; tblX = t.X;                     // xAt 이 직전 결과를 보게 한다
+          // 한쪽 이웃만 보면(전진차분) 좌우가 서로 반대로 틀어진다 — 양옆 반 칸씩 본다
+          t = integrate(function (x, u) {
+            return (wAt(xAt(u - 0.5)) + wAt(xAt(u + 0.5))) / 2 + GAP;
+          });
+        }
+        tblU = t.U; tblX = t.X;
+      }
+
+      function xAt(u) {
+        var lo = 0, hi = tblU.length - 1;
+        if (u <= tblU[0])  return tblX[0];
+        if (u >= tblU[hi]) return tblX[hi];
+        while (hi - lo > 1) { var m = (lo + hi) >> 1; if (tblU[m] <= u) lo = m; else hi = m; }
+        var t = (u - tblU[lo]) / (tblU[hi] - tblU[lo]);
+        return tblX[lo] + t * (tblX[hi] - tblX[lo]);
+      }
+
+      function draw(t) {
+        if (last === null) last = t;
+        // 가장 큰 카드 자리에서 EDGE_PXPS 가 되도록 흐름 속도를 잡는다
+        var dt = Math.min((t - last) / 1000, 0.05);
+        last = t;
+        if (!dragging) {
+          base = norm(base + (flow + boost) * dt);
+          boost *= Math.pow(DECAY, dt);   // 얹은 속도는 지수적으로 사그라든다
+          if (Math.abs(boost) < 0.001) boost = 0;
+        }
+        var check = (frame++ % 12) === 0;
+
+        for (var i = 0; i < N; i++) {
+          var el = items[i];
+          var d  = xAt(((base + i) % N) - N / 2);   // 화면 중앙 기준 목표 위치
+          var on = Math.abs(d) < half + W0;
+
+          if (!on) {
+            if (el.style.visibility !== 'hidden') el.style.visibility = 'hidden';
+          } else {
+            if (el.style.visibility) el.style.visibility = '';
+            var f   = fAt(d);
+            var k   = 1 + DEPTH * f;
+            // 회전도 같은 프로파일을 쓴다 — 가운데 0°, 바깥으로 갈수록 TURN 에 수렴
+            var a   = (d < 0 ? -1 : 1) * TURN * Math.sqrt(1 - f);
+            // translateZ 로 뒤로 밀면 화면상 위치도 중앙으로 딸려 들어가므로
+            // translateX 를 k 배로 미리 부풀려 목표 위치에 정확히 앉힌다
+            el.style.transform =
+              'translate3d(' + (d * k).toFixed(1) + 'px,-50%,0)' +
+              ' translateZ(' + (-(k - 1) * P).toFixed(1) + 'px)' +
+              ' rotateY(' + (-a).toFixed(2) + 'deg)';
+          }
+
+          if (check) {
+            var v = el.firstElementChild;
+            if (v && v.tagName === 'VIDEO') {
+              // 브라우저 동시 디코딩 한도가 있어 화면 밖 영상은 반드시 멈춘다
+              if (on) {
+                if (v.paused) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); }
+              } else if (!v.paused) {
+                v.pause();
+              }
+            }
+          }
+        }
+        raf = requestAnimationFrame(draw);
+      }
+
+      // 글자를 칠 때마다 좌→우로, 지울 때마다 우→좌로 한 번씩 튕긴다.
+      // 더하지 않고 '최고 속도를 다시 찍는' 방식 — 더하면 연타할수록 속도가 쌓여
+      // 느리다가 빨라지는(ease-in) 느낌이 된다. 여기서는 매번 즉시 최고속을 찍고
+      // 지수적으로 감쇠하므로 한 자마다 빠르게 튀었다가 점점 느려진다(ease-out).
+      document.addEventListener('strip-nudge', function (e) {
+        // 최종 속도가 정확히 ±NUDGE 가 되도록 평상시 흐름만큼 빼고 얹는다.
+        // 그냥 더하면 좌→우 흐름이 이미 깔려 있어 입력은 flow+NUDGE,
+        // 백스페이스는 flow-NUDGE 가 돼서 뒤로 갈 때만 약해진다.
+        var dir = (e.detail && e.detail.dir < 0) ? -1 : 1;
+        var want = dir * NUDGE - flow;
+        boost = dir > 0 ? Math.max(boost, want) : Math.min(boost, want);
+      });
+
+      // 드래그 — 화면 이동량을 그 자리 피치로 나눠 흐름 좌표로 환산한다
+      function localPitch(clientX) {
+        return wAt(clientX - stage.getBoundingClientRect().left - half) + GAP;
+      }
+      stage.addEventListener('pointerdown', function (e) {
+        pending = true; dragging = false;
+        startX = lastX = e.clientX; vel = 0; pid = e.pointerId;
+      });
+      stage.addEventListener('pointermove', function (e) {
+        if (!pending && !dragging) return;
+        var dx = e.clientX - lastX; lastX = e.clientX;
+        if (!dragging) {
+          // 문턱을 넘기 전에는 포인터를 잡지 않는다 —
+          // pointerdown 에서 바로 setPointerCapture 하면 클릭 대상이 .strip 으로
+          // 바뀌어 카드 링크가 안 눌린다.
+          if (Math.abs(e.clientX - startX) < 5) return;
+          dragging = true; boost = 0;
+          stage.classList.add('is-drag');
+          if (stage.setPointerCapture) stage.setPointerCapture(pid);
+        }
+        var du = dx / localPitch(e.clientX);
+        base = norm(base + du);
+        vel = du * 60;                    // 놓았을 때 이어질 관성
+      });
+      function endDrag() {
+        pending = false;
+        if (!dragging) return;
+        dragging = false;
+        stage.classList.remove('is-drag');
+        boost = Math.max(-NUDGE_MAX, Math.min(NUDGE_MAX, vel));
+        vel = 0;
+      }
+      stage.addEventListener('pointerup', endDrag);
+      stage.addEventListener('pointercancel', endDrag);
+      stage.addEventListener('pointerleave', endDrag);
+      measure();
+      raf = requestAnimationFrame(draw);
+
+      var rt;
+      window.addEventListener('resize', function () {
+        clearTimeout(rt);
+        rt = setTimeout(function () {
+          cancelAnimationFrame(raf);
+          updateVW();
+          last = null; measure();
+          raf = requestAnimationFrame(draw);
+        }, 120);
+      });
+    })();
+
+    (function() {
+      var track = document.getElementById('marqueeTrack');
+      var set   = track.querySelector('.marquee-set');
+      var pos = 0, PX_PER_SEC = 30, setWidth = 0, lastTime = null, raf;
+
+      function fillClones() {
+        while (track.children.length > 1) track.removeChild(track.lastChild);
+        setWidth = set.offsetWidth;
+        for (var i = 0, n = Math.ceil(window.innerWidth / setWidth) + 1; i < n; i++)
+          track.appendChild(set.cloneNode(true));
+      }
+
+      function tick(now) {
+        var delta = lastTime !== null ? now - lastTime : 0;
+        lastTime = now;
+        pos -= PX_PER_SEC * (delta / 1000);
+        if (pos <= -setWidth) pos += setWidth;
+        track.style.transform = 'translateX(' + pos + 'px)';
+        raf = requestAnimationFrame(tick);
+      }
+
+      fillClones();
+      raf = requestAnimationFrame(tick);
+
+      window.addEventListener('load', function() {
+        cancelAnimationFrame(raf); lastTime = null; fillClones(); raf = requestAnimationFrame(tick);
+      });
+      window.addEventListener('resize', function() {
+        cancelAnimationFrame(raf); updateVW();
+        setTimeout(function() { lastTime = null; fillClones(); raf = requestAnimationFrame(tick); }, 50);
+      });
+    })();
+
+    // 모바일 햄버거 메뉴
+    (function() {
+      var toggle = document.querySelector('.menu-toggle');
+      var menu = document.querySelector('.mobile-menu');
+      if (!toggle || !menu) return;
+      function setOpen(open) {
+        menu.classList.toggle('is-open', open);
+        toggle.classList.toggle('is-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        document.body.style.overflow = open ? 'hidden' : '';
+        if (typeof lenis !== 'undefined') { open ? lenis.stop() : lenis.start(); }
+      }
+      toggle.addEventListener('click', function() {
+        setOpen(!menu.classList.contains('is-open'));
+      });
+      menu.querySelectorAll('a, span').forEach(function(el) {
+        el.addEventListener('click', function() { setOpen(false); });
+      });
+      // 드롭다운 아래 빈 화면(오버레이)을 누르면 닫힌다
+      var mo = document.querySelector('.menu-overlay');
+      if (mo) mo.addEventListener('click', function() { setOpen(false); });
+    })();
+
+
+  /* 보이는 영상만 재생 — 한 페이지에서 다수를 동시 재생하면 브라우저 동시 디코더
+     상한에 걸려 재생이 시작됐다가 강제로 멈춘다(특히 Safari). 화면 밖은 정지시켜
+     동시 재생 수를 줄이고, 브라우저가 임의로 멈춘 경우엔 다시 살린다. */
+  (function () {
+    var vids = document.querySelectorAll('video[autoplay]');
+    if (!vids.length || !window.IntersectionObserver) return;
+
+    var visible = new WeakSet();
+    function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) { visible.add(v); play(v); }
+        else { visible.delete(v); v.pause(); }
+      });
+    }, { rootMargin: '200px 0px' });
+
+    Array.prototype.forEach.call(vids, function (v) {
+      v.addEventListener('pause', function () {
+        if (visible.has(v) && !document.hidden) setTimeout(function () { if (visible.has(v)) play(v); }, 60);
+      });
+      io.observe(v);
+    });
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) return;
+      Array.prototype.forEach.call(vids, function (v) { if (visible.has(v)) play(v); });
+    });
+  })();
+
+
+    // ─── About 사이드 패널 ─────────────────────────────────────
+    (function () {
+      var panel = document.getElementById('aboutPanel');
+      if (!panel) return;
+      var overlay = document.getElementById('aboutOverlay');
+      var closeBtn = document.getElementById('aboutClose');
+      // 영상 4개를 같은 시점에 맞춰 동시에 재생 (길이 2.4초로 동일)
+      var vids = [].slice.call(panel.querySelectorAll('video'));
+      function syncPlay() {
+        vids.forEach(function (v) { try { v.pause(); v.currentTime = 0; } catch (e) {} });
+        vids.forEach(function (v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); });
+      }
+      if (vids.length) {
+        var ready = 0;
+        vids.forEach(function (v) {
+          if (v.readyState >= 3) { ready++; }
+          else v.addEventListener('canplay', function once() {
+            v.removeEventListener('canplay', once); ready++;
+            if (ready === vids.length) syncPlay();
+          });
+        });
+        if (ready === vids.length) syncPlay();
+        // 루프 시점이 어긋나면 다시 맞춘다
+        vids[0].addEventListener('seeked', function () {});
+        setInterval(function () {
+          if (!document.body.classList.contains('about-open')) return;
+          var t0 = vids[0].currentTime;
+          for (var i = 1; i < vids.length; i++) {
+            if (Math.abs(vids[i].currentTime - t0) > 0.12) { syncPlay(); break; }
+          }
+        }, 2000);
+      }
+
+      function open() {
+        document.body.classList.add('about-open');
+        panel.setAttribute('aria-hidden', 'false');
+        if (typeof syncPlay === 'function') syncPlay();
+        if (typeof lenis !== 'undefined') lenis.stop();
+      }
+      function close() {
+        document.body.classList.remove('about-open');
+        panel.setAttribute('aria-hidden', 'true');
+        if (typeof lenis !== 'undefined') lenis.start();
+      }
+      [].forEach.call(document.querySelectorAll('[data-about]'), function (el) {
+        el.addEventListener('click', function (e) { e.preventDefault(); open(); });
+      });
+      closeBtn.addEventListener('click', close);
+      overlay.addEventListener('click', close);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && document.body.classList.contains('about-open')) close();
+      });
+    })();
+</script>
+</body>
+</html>
