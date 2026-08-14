@@ -123,7 +123,10 @@ async function send(data, ttl = 3600) {
       'Content-Encoding': 'aes128gcm',
       'Content-Type': 'application/octet-stream',
       TTL: String(ttl),
-      Urgency: 'normal',
+      // normal 로 두면 APNs 가 배터리를 아끼려고 알림을 모아뒀다가 폰이
+      // 깨어날 때 몰아서 준다 — 실제로 수십 초씩 늦었다. 방문 알림은
+      // 즉시성이 핵심이라 high 로 올려 바로 깨우게 한다.
+      Urgency: 'high',
     },
     body,
   });
