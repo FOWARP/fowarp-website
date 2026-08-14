@@ -464,20 +464,20 @@
       font-size: 1em;
       font-weight: 400;
       line-height: 1.22;
-      color: #000;
+      color: #B7B7B7;
       background: none;
       border: none;
       outline: none;
       padding: 0;
       text-align: center;
-      caret-color: #000;
+      caret-color: #B7B7B7;
       /* 폭은 JS 가 내용(또는 플레이스홀더) 길이에 맞춰 지정해 항상 중앙에 둔다 */
       width: 40px;
     }
     .field textarea { resize: none; overflow: hidden; text-align: left; }
     /* 레퍼런스는 플레이스홀더와 입력값이 같은 크기다 (색만 다르다) */
     .field input::placeholder,
-    .field textarea::placeholder { color: #dcdcdc; }
+    .field textarea::placeholder { color: #D9D9D9; }
 
     /* 단계 전환 — 나갈 때 위로 밀리며 사라지고, 들어올 때 아래에서 떠오른다.
        레퍼런스 실측: 페이드아웃 0.18s, 빈 화면 0.06s, 페이드인 0.26s. */
@@ -585,6 +585,21 @@
       color: #000;
       margin-top: calc(var(--vwFont) * 1);
     }
+    /* Get in Touch(.header-cta)와 같은 토큰(반경·폰트·패딩)을 쓰는 홈 버튼 */
+    .home-btn {
+      display: inline-block;
+      margin-top: calc(var(--vwFont) * 1.6);
+      background: #000;
+      color: #fff;
+      text-decoration: none;
+      border-radius: calc(var(--vwFont) * 0.417);
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      padding: calc(var(--vwFont) * 0.625) calc(var(--vwFont) * 0.729);
+      text-transform: capitalize;
+      transition: opacity 0.2s ease;
+    }
+    .home-btn:hover { opacity: 0.75; }
     /* 하단의 입력내용을 확인하는 텍스트(요약 표) */
     .summary {
       margin-top: calc(var(--vwFont) * 1.8);
@@ -976,6 +991,7 @@
                stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>
         </span>
         <div class="done-t">문의해 주셔서 감사합니다.<br>검토 후 기재해 주신 연락처로 답변 드리겠습니다.</div>
+        <a href="/" class="home-btn">Home</a>
         <dl class="summary" id="summary"></dl>
       </div>
 

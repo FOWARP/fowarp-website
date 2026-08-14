@@ -597,6 +597,21 @@
       color: #fff;
       margin-top: calc(var(--vwFont) * 1);
     }
+    /* Get in Touch(.header-cta)와 같은 토큰(반경·폰트·패딩)을 쓰는 홈 버튼 */
+    .home-btn {
+      display: inline-block;
+      margin-top: calc(var(--vwFont) * 1.6);
+      background: #fff;
+      color: #000;
+      text-decoration: none;
+      border-radius: calc(var(--vwFont) * 0.417);
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729);
+      padding: calc(var(--vwFont) * 0.625) calc(var(--vwFont) * 0.729);
+      text-transform: capitalize;
+      transition: opacity 0.2s ease;
+    }
+    .home-btn:hover { opacity: 0.75; }
     /* 하단의 입력내용을 확인하는 텍스트(요약 표) */
     .summary {
       margin-top: calc(var(--vwFont) * 1.8);
@@ -988,6 +1003,7 @@
                stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 L9.5 18 L20 6"/></svg>
         </span>
         <div class="done-t">문의해 주셔서 감사합니다.<br>검토 후 기재해 주신 연락처로 답변 드리겠습니다.</div>
+        <a href="/" class="home-btn">Home</a>
         <dl class="summary" id="summary"></dl>
       </div>
 
