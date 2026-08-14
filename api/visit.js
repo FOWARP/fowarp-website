@@ -56,7 +56,9 @@ function referrerLabel(ref) {
 async function lookupOrg(ip) {
   if (!ip) return null;
   try {
-    const ctl = AbortSignal.timeout(2500);
+    // 이제 이 조회가 끝나야 응답이 나가므로 넉넉히 잡지 않는다.
+    // 실패해도 지역 정보는 Vercel 헤더로 이미 있으니 알림 자체는 나간다.
+    const ctl = AbortSignal.timeout(1500);
     const r = await fetch(`http://ip-api.com/json/${ip}?fields=status,isp,org,mobile,hosting`, { signal: ctl });
     if (!r.ok) return null;
     const j = await r.json();
@@ -95,10 +97,12 @@ module.exports = async (req, res) => {
     return res.end('Method Not Allowed');
   }
 
-  // 응답은 즉시 준다 — 방문자 브라우저를 푸시 발송 때문에 붙들 이유가 없다
-  res.statusCode = 204;
-  res.end();
-
+  // 발송을 모두 끝낸 뒤에 응답한다.
+  // 응답을 먼저 주고 뒤에서 보내는 편이 방문자에겐 빠르지만, Vercel 함수는
+  // Lambda 기반이라 응답이 끝나면 실행이 그 자리에서 얼어붙는다 — 뒤에 남은
+  // await send() 가 통째로 죽어서 알림이 한 건도 안 나갔다.
+  // 방문자 쪽은 sendBeacon / fetch(keepalive) 라 응답을 기다리지 않으므로
+  // 여기서 몇 초 더 걸려도 체감 지연은 없다.
   try {
     const b = await readBody(req);
     const ua = req.headers['user-agent'] || '';
@@ -166,5 +170,9 @@ module.exports = async (req, res) => {
     }
   } catch {
     // 알림은 부가 기능이다. 어떤 이유로 실패하든 사이트에 영향을 주지 않는다.
+  } finally {
+    // 봇 차단·짧은 체류 등 중간 return 경로가 여러 개라 finally 로 모아 응답한다
+    res.statusCode = 204;
+    res.end();
   }
 };
