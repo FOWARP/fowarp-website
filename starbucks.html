@@ -495,6 +495,20 @@
     .media-block.ar-4-5 { aspect-ratio: 4 / 5; }
     .media-block.ar-9-16 { aspect-ratio: 9 / 16; }
 
+    /* 2열 사진 행 (다른 상세페이지와 동일 규칙).
+       .project-media 가 gap 을 고정 px 로 쓰므로 여기도 같은 단위로 맞춘다 */
+    .media-row-2col {
+      display: flex;
+      gap: 10px;
+    }
+    .media-row-2col .media-block {
+      flex: 1;
+      width: auto;
+    }
+    /* CRM 배너 2:1, 온드미디어 KV 3:4 (Figma 940x470 / 940x1253.33) */
+    .media-block.ar-2-1 { aspect-ratio: 2 / 1; }
+    .media-block.ar-3-4 { aspect-ratio: 3 / 4; }
+
     
     /* ─── FOOTER (Figma 446:1533) ─────────────────
        높이 80, 상단 #D9D9D9 헤어라인, 좌우 콘텐츠 30px(괘선 20 + 10).
@@ -913,8 +927,8 @@
         <span class="info-name">Starbucks®</span>
         <span class="info-desc">스타벅스 베로나 · 스프링 드립백 프로모션</span>
       </div>
-      <p class="info-en reveal">We designed motion content for the launch of Starbucks® drip bag Caffè Verona and Spring Blend. Caffè Verona's dark roast comes through in deep green tones and red florals, while Spring Blend's milk chocolate and orange notes appear in vibrant pink and cherry blossoms. To visualize each blend's aroma, we worked from storyboard to motion design with generative AI.</p>
-      <p class="info-ko reveal">스타벅스® 드립백 카페 베로나와 스프링 블렌드의 출시를 기념하여 제품 모션을 디자인하였습니다. 카페 베로나는 짙은 그린 톤과 레드 플로럴로 다크 로스트의 깊은 향을, 스프링 블렌드는 화사한 핑크 톤과 체리블라썸으로 달콤한 밀크초콜릿과 오렌지 향을 표현하였습니다. 각 원두가 지닌 향을 시각적으로 구현하기 위해 스토리보드 기획부터 생성형 AI를 활용한 모션 디자인까지 전 과정을 진행하였습니다.</p>
+      <p class="info-en reveal">We designed product motion for the launch of Starbucks® drip bag Caffè Verona and Spring Blend. To give each blend's aroma a visual form, we handled the full process from storyboard planning to motion design with generative AI, and designed the promotional CRM and owned media content.</p>
+      <p class="info-ko reveal">스타벅스® 드립백 카페 베로나와 스프링 블렌드의 출시를 기념하여 제품 모션을 디자인하였습니다. 각 원두가 지닌 향을 시각적으로 구현하기 위해 스토리보드 기획부터 생성형 AI를 활용한 모션 디자인까지 전 과정을 진행하였으며, 프로모션 CRM 및 온드미디어 컨텐츠를 디자인하였습니다.</p>
     </div>
 
     <div class="hline"></div>
@@ -934,6 +948,41 @@
         <video autoplay muted loop playsinline>
           <source src="/media/starbucks/spring-blend.mp4" type="video/mp4">
         </video>
+      </div>
+
+    </div>
+
+    <!-- 프로모션 CRM / 온드미디어 -->
+    <div class="project-media">
+
+      <!-- 3: 카페모먼트 미니컵 CRM 2열 -->
+      <div class="media-row-2col reveal">
+        <div class="media-block ar-2-1">
+          <img src="/media/starbucks/crm-01.jpg" alt="스타벅스 카페모먼트 미니컵 신상EAT쇼 CRM 배너">
+        </div>
+        <div class="media-block ar-2-1">
+          <img src="/media/starbucks/crm-02.jpg" alt="스타벅스 카페모먼트 미니컵 홈카페 CRM 배너">
+        </div>
+      </div>
+
+      <!-- 4: 가정의 달 선물대첩 · 커피 크래프트 2열 -->
+      <div class="media-row-2col reveal">
+        <div class="media-block ar-2-1">
+          <img src="/media/starbucks/crm-03.jpg" alt="스타벅스앳홈 가정의 달 선물대첩 CRM 배너">
+        </div>
+        <div class="media-block ar-2-1">
+          <img src="/media/starbucks/crm-04.jpg" alt="스타벅스 커피 크래프트 신상EAT쇼 CRM 배너">
+        </div>
+      </div>
+
+      <!-- 5: 로미오와 줄리엣 뮤지컬 초대 이벤트 온드미디어 2열 -->
+      <div class="media-row-2col reveal">
+        <div class="media-block ar-3-4">
+          <img src="/media/starbucks/crm-05.jpg" alt="스타벅스앳홈 로미오와 줄리엣 뮤지컬 초대 이벤트 키비주얼">
+        </div>
+        <div class="media-block ar-3-4">
+          <img src="/media/starbucks/crm-06.jpg" alt="뮤지컬 로미오와 줄리엣 공연 포스터 안내">
+        </div>
       </div>
 
     </div>
