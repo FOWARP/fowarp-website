@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FOWARP 방문 알림</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="FOWARP">
+<meta name="theme-color" content="#000000">
+<meta name="robots" content="noindex, nofollow">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 20px calc(32px + env(safe-area-inset-bottom));
+    font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fff;
+    color: #000;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: -0.02em; }
+  .sub { font-size: 13px; color: #888; margin: 0 0 28px; }
+
+  .card {
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .state { font-size: 15px; font-weight: 600; margin: 0 0 6px; }
+  .desc { font-size: 13px; line-height: 1.6; color: #666; margin: 0; }
+
+  button {
+    width: 100%;
+    padding: 15px;
+    border: 0;
+    border-radius: 10px;
+    background: #000;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 14px;
+  }
+  button:disabled { background: #ccc; cursor: default; }
+  button.ghost { background: #f2f2f2; color: #000; }
+
+  .steps { font-size: 13px; line-height: 1.8; color: #444; padding-left: 20px; margin: 10px 0 0; }
+  .steps code {
+    background: #f2f2f2; padding: 1px 5px; border-radius: 4px;
+    font-size: 12px; font-family: ui-monospace, monospace;
+  }
+
+  textarea {
+    width: 100%;
+    height: 150px;
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    font-family: ui-monospace, SFMono-Regular, monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    resize: vertical;
+    background: #fafafa;
+  }
+  .hidden { display: none; }
+  .ok { color: #0a7d32; }
+  .err { color: #c00; }
+</style>
+</head>
+<body>
+
+<h1>FOWARP 방문 알림</h1>
+<p class="sub">fowarp.com 에 사람이 들어오면 이 폰으로 알림이 온다.</p>
+
+<div class="card">
+  <p class="state" id="state">확인 중…</p>
+  <p class="desc" id="desc"></p>
+  <button id="enable" class="hidden">알림 켜기</button>
+  <button id="test" class="ghost hidden">테스트 알림 보내기</button>
+</div>
+
+<div class="card hidden" id="installCard">
+  <p class="state">먼저 홈 화면에 추가해야 한다</p>
+  <p class="desc">아이폰은 홈 화면에 추가한 뒤에만 알림을 받을 수 있다.</p>
+  <ol class="steps">
+    <li>사파리 하단 <strong>공유</strong> 버튼 탭</li>
+    <li><strong>홈 화면에 추가</strong> 선택</li>
+    <li>홈 화면의 <strong>FOWARP</strong> 아이콘으로 다시 열기</li>
+  </ol>
+</div>
+
+<div class="card hidden" id="keyCard">
+  <p class="state">마지막 한 단계</p>
+  <p class="desc">
+    아래 값을 Vercel → Settings → Environment Variables 에
+    <code>PUSH_SUBSCRIPTION</code> 이름으로 저장하고 재배포하면 끝난다.
+  </p>
+  <textarea id="sub" readonly></textarea>
+  <button id="copy" class="ghost">복사하기</button>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var VAPID = 'BD7m5U4ImBMtj3Wu3Rg08hHVk36G-w68rdzbpNU0tnXl6E-Qkm6sbLlRfF8bEkQIQ4gWC9K8WvMSb1unq8rBP7I';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var state = $('state'), desc = $('desc');
+
+  function show(el) { el.classList.remove('hidden'); }
+  function hide(el) { el.classList.add('hidden'); }
+
+  function b64ToU8(s) {
+    var pad = '='.repeat((4 - s.length % 4) % 4);
+    var raw = atob((s + pad).replace(/-/g, '+').replace(/_/g, '/'));
+    return Uint8Array.from(raw, function (c) { return c.charCodeAt(0); });
+  }
+
+  var isStandalone = navigator.standalone === true ||
+                     matchMedia('(display-mode: standalone)').matches;
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    if (isIOS && !isStandalone) {
+      state.textContent = '홈 화면에 추가가 필요하다';
+      desc.textContent = '아이폰 사파리에서는 홈 화면 앱으로 열어야 알림을 켤 수 있다.';
+      show($('installCard'));
+    } else {
+      state.textContent = '이 브라우저는 웹 푸시를 지원하지 않는다';
+      state.className = 'state err';
+      desc.textContent = 'iOS 16.4 이상 사파리, 또는 크롬·엣지에서 열어라.';
+    }
+    return;
+  }
+
+  navigator.serviceWorker.register('/sw.js').then(function (reg) {
+    return reg.pushManager.getSubscription().then(function (sub) {
+      if (sub) return ready(sub);
+
+      state.textContent = '알림이 꺼져 있다';
+      desc.textContent = '아래 버튼을 누르면 이 기기로 방문 알림이 온다.';
+      show($('enable'));
+
+      $('enable').onclick = function () {
+        $('enable').disabled = true;
+        Notification.requestPermission().then(function (p) {
+          if (p !== 'granted') {
+            $('enable').disabled = false;
+            state.textContent = '알림 권한이 거부됐다';
+            state.className = 'state err';
+            desc.textContent = '설정 → 알림에서 FOWARP 를 허용한 뒤 다시 시도해라.';
+            return;
+          }
+          return reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: b64ToU8(VAPID),
+          }).then(ready);
+        }).catch(function (e) {
+          $('enable').disabled = false;
+          state.textContent = '등록 실패';
+          state.className = 'state err';
+          desc.textContent = String(e && e.message || e);
+        });
+      };
+    });
+  }).catch(function (e) {
+    state.textContent = '서비스워커 등록 실패';
+    state.className = 'state err';
+    desc.textContent = String(e && e.message || e);
+  });
+
+  function ready(sub) {
+    hide($('enable'));
+    hide($('installCard'));
+    state.textContent = '알림이 켜져 있다';
+    state.className = 'state ok';
+    desc.textContent = '방문자가 들어오면 잠금화면에 알림이 뜬다.';
+
+    $('sub').value = JSON.stringify(sub);
+    show($('keyCard'));
+    show($('test'));
+
+    $('copy').onclick = function () {
+      var t = $('sub');
+      t.select();
+      navigator.clipboard ? navigator.clipboard.writeText(t.value) : document.execCommand('copy');
+      $('copy').textContent = '복사됨';
+      setTimeout(function () { $('copy').textContent = '복사하기'; }, 1500);
+    };
+
+    $('test').onclick = function () {
+      $('test').disabled = true;
+      $('test').textContent = '보내는 중…';
+      fetch('/api/visit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phase: 'enter', path: '/', visits: 1, test: true }),
+      }).then(function () {
+        $('test').textContent = '보냈다 — 잠시 후 알림 확인';
+      }).catch(function () {
+        $('test').textContent = '실패';
+      }).then(function () {
+        setTimeout(function () {
+          $('test').disabled = false;
+          $('test').textContent = '테스트 알림 보내기';
+        }, 3000);
+      });
+    };
+  }
+})();
+</script>
+
+</body>
+</html>

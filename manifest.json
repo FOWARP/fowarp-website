@@ -1,0 +1,18 @@
+{
+  "name": "FOWARP 방문 알림",
+  "short_name": "FOWARP",
+  "description": "fowarp.com 방문자 실시간 알림",
+  "start_url": "/notify",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
