@@ -624,12 +624,15 @@
          이보다 작게 두면 그 안쪽에서 이미 최대가 돼 바깥 카드들이 다 같아 보인다. */
       --strip-vis: 1.0;
       /* 좌우 가장자리 카드에 거는 실제 블러(px). 0 이면 끄기.
-         모바일(카드 150px)의 12px 와 같은 카드폭 대비 8% 를 데스크탑
-         카드폭(280px)에 적용해 22px */
-      --strip-blur: 22;
-      /* 마스크 페이드가 차지하는 폭(화면 폭 대비). 블러도 같은 구간에서
-         0 → 최대로 올라가야 해서 JS 가 이 값을 읽어 쓴다 */
+         PC·모바일 공통 최대 6px */
+      --strip-blur: 6;
+      /* 마스크 페이드가 차지하는 폭(화면 폭 대비) */
       --strip-fade: 0.14;
+      /* 블러가 0 → 최대로 올라가는 구간(화면 '반폭' 대비 비율).
+         페이드 폭과 별개로 둔다 — 판정이 카드 중심 좌표라 카드 반폭만큼
+         여유가 필요한데, 그 보정을 fade 에 섞으면 화면이 좁을수록 구간이
+         과하게 넓어진다(모바일 0.53 vs 데스크탑 0.29 였다) */
+      --strip-blur-span: 0.286;
       /* 스트립이 화면 밖으로 넓혀진 한쪽 폭(px). 모바일에서만 200 */
       --strip-bleed: 0;
 
@@ -760,8 +763,12 @@
         --strip-depth: 0.30;
         --strip-turn: 20;
         --strip-vis: 1.0;
-        --strip-blur: 12;
+        --strip-blur: 6;
         --strip-bleed: 200;
+        /* 데스크탑과 같은 계산이면 0.525 로 두 배 가까이 넓어진다 → 절반으로 */
+        --strip-blur-span: 0.262;
+        /* 썸네일을 살짝 위로 */
+        margin-bottom: 44px;
       }
       .strip-track { perspective: 560px; }
       .strip-item { width: 150px; margin-left: -75px; border-radius: 6px; }
@@ -1424,12 +1431,9 @@
         // 화면 밖으로 넓힌 몫을 뺀 '실제로 보이는' 반폭. 블러는 이 안에서만 걸린다
         BLUR  = parseFloat(cs.getPropertyValue('--strip-blur')) || 0;
         var bleed = parseFloat(cs.getPropertyValue('--strip-bleed')) || 0;
-        var fade  = parseFloat(cs.getPropertyValue('--strip-fade')) || 0.14;
+        var span  = parseFloat(cs.getPropertyValue('--strip-blur-span')) || 0.286;
         viewHalf  = half - bleed;
-        // 페이드 시작 지점을 카드 반폭만큼 안쪽으로 당긴다 — 판정이 카드 '중심'
-        // 좌표라, 그냥 페이드 시작점을 쓰면 카드 대부분이 이미 화면 밖으로
-        // 나간 뒤에야 blur 가 걸려서 사실상 안 보인다
-        blurFrom  = Math.max(0, viewHalf * (1 - fade) - W0 / 2);
+        blurFrom  = Math.max(0, viewHalf * (1 - span));
         flow  = EDGE_PXPS / (W0 + GAP);   // 평상시 흐름 속도(u/s)
         reach = half * (parseFloat(cs.getPropertyValue('--strip-vis')) || 0.68);
         buildTable();
