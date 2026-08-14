@@ -1354,7 +1354,7 @@
 
       function back() {
         if (sending || switching || i === 0) return;
-        data[STEPS[i].key] = input.value.trim(); // 쓰다 만 값도 보존
+        delete data[STEPS[i - 1].key]; // 돌아가는 단계는 입력이 비어 있는 채로 나온다
         transitionTo(i - 1);
       }
 
