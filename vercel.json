@@ -8,6 +8,21 @@
       "source": "/returnity",
       "destination": "/returnity-skinhealer",
       "permanent": true
+    },
+    {
+      "source": "/project",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/project2",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/about",
+      "destination": "/",
+      "permanent": true
     }
   ],
   "headers": [
