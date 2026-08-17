@@ -58,7 +58,6 @@
     :root { --vw: 19.2px; --vwFont: 19.2px; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
-    html { background: #000; }   /* 베일에서 넘어올 때 흰 프레임이 스치지 않게 */
     body {
       background: #fff;
       overflow-x: hidden;
@@ -110,7 +109,7 @@
       right: 0;
       bottom: 0;
       height: 1px;
-      background: #686868;
+      background: #D9D9D9;
     }
 
     .marquee-track {
@@ -131,7 +130,7 @@
     .marquee-text {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.729);
-      color: #fff;
+      color: #000;
       white-space: nowrap;
     }
 
@@ -183,7 +182,7 @@
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.729);
       text-decoration: none;
-      color: #000;
+      color: #B7B7B7;   /* 비활성 카테고리 — 메인 페이지와 동일 */
       text-transform: capitalize;
     }
 
@@ -305,18 +304,7 @@
     .mobile-menu.is-open > *:nth-child(3) { transition-delay: 0.16s; }
     .mobile-menu.is-open > *:nth-child(4) { transition-delay: 0.21s; }
 
-    /* ─── DARK (상세페이지의 is-dark 규칙 그대로) ────────────────
-       컨택트는 항상 검정이라 토글 없이 body 에 고정으로 걸어 둔다. */
-    body.is-dark { background: #000; }
-    body.is-dark .header { background: #000; }
-    body.is-dark .marquee-text { color: #fff; }
-    body.is-dark .header-nav a, body.is-dark .header-nav > span { color: #B7B7B7; }
-    body.is-dark .header-nav a.active, body.is-dark .header-nav > span.active { color: #fff; }
-    body.is-dark .menu-toggle { color: #fff; }
-    body.is-dark .header-logo-center img { filter: invert(1); }
-    body.is-dark .header-cta { background: #fff; color: #000; }
-    body.is-dark .mobile-menu { background: #000; border-top-color: #fff; border-bottom-color: #fff; }
-    body.is-dark .mobile-menu a, body.is-dark .mobile-menu span { color: #fff; border-bottom-color: #fff; }
+    /* 이 페이지는 항상 라이트 — 다크 토글(is-dark) 없이 기본 헤더 스타일을 그대로 쓴다. */
 
 
     /* ─── 세로 그리드 (프로젝트 페이지와 동일) ──────────────────────
@@ -350,14 +338,14 @@
       top: 0;
       bottom: 0;
       width: 1px;
-      background: #686868;
+      background: #D9D9D9;
     }
     .header-rules i {
       position: absolute;
       top: 0;
       height: 100vh;
       width: 1px;
-      background: #686868;
+      background: #D9D9D9;
     }
     .grid-rules i:nth-child(1),
     .header-rules i:nth-child(1) { left: 0; }
@@ -378,36 +366,48 @@
        .contact 에 배경을 두면 그리드를 가리므로 배경은 body 가 낸다. */
     .contact { position: relative; z-index: 1; }
 
-    /* ─── 진입 인트로 — 오브젝트가 순서대로 나타난다 ──────────────
-       Get in Touch 의 검정 베일이 덮은 직후 이어지는 연출.
-       fill-mode 를 backwards 로 둬서 끝나면 원래 스타일로 되돌아간다
-       (.step-q / .field 는 단계 전환용 transform 을 따로 쓰기 때문에
-        forwards 로 두면 그 transform 을 덮어버린다).
-       헤더는 translateX(-50%) 로 가운데 정렬돼 있어 키프레임에 같이 써야 한다. */
-    @keyframes introLine  { from { transform: scaleY(0); } }
-    @keyframes introLineX { from { transform: scaleX(0); } }
-    @keyframes introRise { from { opacity: 0; transform: translateY(18px); } }
-    @keyframes introDrop { from { opacity: 0; transform: translateX(-50%) translateY(-16px); } }
-
-    body.intro .grid-rules i,
-    body.intro .header-rules i {
-      transform-origin: top;
-      animation: introLine 0.62s cubic-bezier(0.85, 0, 0.15, 1) backwards;
+    /* ─── 진입 모션 (프로젝트 페이지와 동일) ──────────────────────
+       Get in Touch 클릭 시 검정 베일 없이 바로 넘어오므로, 도착한 뒤
+       상세페이지와 똑같은 모션으로 스스로 그려진다 — body 클래스 토글 없이
+       로드되는 즉시 재생되고 forwards 로 끝난 상태에 고정된다.
+       세로선 위→아래(0.3s 지연) → 가로선 좌→우(지연 없음) →
+       헤더 오브젝트 0.9s 뒤 페이드인(갤러리 라벨과 같은 시점) →
+       하단 스트립은 갤러리 미디어처럼 0.2s 더 늦게. */
+    .grid-rules i,
+    .header-rules i {
+      transform: scaleY(0);
+      transform-origin: top center;
+      animation: revLineY 0.6s cubic-bezier(0.85, 0, 0.15, 1) 0.3s forwards;
     }
-    body.intro .header::after,
-    body.intro .marquee-bar-inner::after {
+    .header::after,
+    .marquee-bar-inner::after {
+      transform: scaleX(0);
       transform-origin: left center;
-      animation: introLineX 0.62s cubic-bezier(0.7, 0, 0.84, 0) backwards;
+      animation: revLineX 0.75s cubic-bezier(0.7, 0, 0.84, 0) forwards;
     }
-    body.intro .header { animation: introDrop 0.70s cubic-bezier(0.22, 1, 0.36, 1) 0.04s backwards; }
-    body.intro .step-q { animation: introRise 0.70s cubic-bezier(0.22, 1, 0.36, 1) 0.20s backwards; }
-    body.intro .field  { animation: introRise 0.70s cubic-bezier(0.22, 1, 0.36, 1) 0.32s backwards; }
-    body.intro .strip  { animation: introRise 0.80s cubic-bezier(0.22, 1, 0.36, 1) 0.44s backwards; }
+    .marquee-track,
+    .header-logo-center,
+    .header-nav,
+    .header-cta,
+    .menu-toggle {
+      opacity: 0;
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+    }
+    .step-q, .field {
+      opacity: 0;
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards;
+    }
+    .strip {
+      opacity: 0;
+      animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
+    }
+    @keyframes revLineY   { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    @keyframes revLineX   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @keyframes revContent { from { opacity: 0; } to { opacity: 1; } }
     @media (prefers-reduced-motion: reduce) {
-      body.intro .header, body.intro .step-q,
-      body.intro .field,  body.intro .strip,
-      body.intro .grid-rules i, body.intro .header-rules i,
-      body.intro .header::after, body.intro .marquee-bar-inner::after { animation: none; }
+      .grid-rules i, .header-rules i, .header::after, .marquee-bar-inner::after,
+      .marquee-track, .header-logo-center, .header-nav, .header-cta, .menu-toggle,
+      .step-q, .field, .strip { animation: none; opacity: 1; transform: none; }
     }
 
     /* ─── CONTACT (레퍼런스 mux3.mp4 구성 기준) ──────────────────
@@ -449,7 +449,7 @@
       font-size: calc(var(--vwFont) * 1.354); /* 26px */
       font-weight: 400;
       line-height: 1.3;
-      color: #fff;
+      color: #000;
     }
 
     .field {
@@ -468,20 +468,20 @@
       font-size: 1em;
       font-weight: 400;
       line-height: 1.22;
-      color: #fff;
+      color: #B7B7B7;
       background: none;
       border: none;
       outline: none;
       padding: 0;
       text-align: center;
-      caret-color: #fff;
+      caret-color: #B7B7B7;
       /* 폭은 JS 가 내용(또는 플레이스홀더) 길이에 맞춰 지정해 항상 중앙에 둔다 */
       width: 40px;
     }
     .field textarea { resize: none; overflow: hidden; text-align: left; }
     /* 레퍼런스는 플레이스홀더와 입력값이 같은 크기다 (색만 다르다) */
     .field input::placeholder,
-    .field textarea::placeholder { color: #343434; }
+    .field textarea::placeholder { color: #D9D9D9; }
 
     /* 단계 전환 — 나갈 때 위로 밀리며 사라지고, 들어올 때 아래에서 떠오른다.
        레퍼런스 실측: 페이드아웃 0.18s, 빈 화면 0.06s, 페이드인 0.26s. */
@@ -534,15 +534,15 @@
       transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), color 0.2s ease;
     }
     .contact.is-typing .back { opacity: 1; transform: none; pointer-events: auto; }
-    .back:hover { color: #fff; }
+    .back:hover { color: #000; }
     .contact.is-first .back { display: none; }
 
-    /* Get in Touch(.header-cta, 다크 상태)와 동일한 디자인 */
+    /* Get in Touch(.header-cta, 라이트 상태)와 동일한 디자인 */
     .next {
       position: relative;
       overflow: hidden;
-      background: #fff;
-      color: #000;
+      background: #000;
+      color: #fff;
       border: none;
       border-radius: calc(var(--vwFont) * 0.417);
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
@@ -562,7 +562,7 @@
     .err {
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
       font-size: calc(var(--vwFont) * 0.677);
-      color: #ff6b6b;
+      color: #d64545;
       margin-top: calc(var(--vwFont) * 0.7);
       min-height: calc(var(--vwFont) * 1);
     }
@@ -576,7 +576,7 @@
       font-family: 'Pretendard Variable', sans-serif;
       font-size: calc(var(--vwFont) * 1.354); /* 26px */
       line-height: 1.4;
-      color: #fff;
+      color: #000;
     }
     /* 모바일에서만 "연락처로" 뒤에 한 줄 더 띈다 */
     .done-t .mobile-br { display: none; }
@@ -584,8 +584,8 @@
     .home-btn {
       display: inline-block;
       margin-top: calc(var(--vwFont) * 1.6);
-      background: #fff;
-      color: #000;
+      background: #000;
+      color: #fff;
       text-decoration: none;
       border-radius: calc(var(--vwFont) * 0.417);
       font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
@@ -606,7 +606,7 @@
       text-align: left;
     }
     .summary dt { color: #6a6a6a; }
-    .summary dd { color: #fff; max-width: calc(var(--vw) * 22); }
+    .summary dd { color: #000; max-width: calc(var(--vw) * 22); }
 
     /* ─── 하단 포트폴리오 — 원기둥 원근 스트립 ────────────────────
        레퍼런스와 같이 카드가 좌 → 우로 흐르고, 화면 중앙에서 벗어날수록
@@ -775,7 +775,7 @@
 
 
     }
-  
+
     /* ─── 링크 hover 플립 (rayraylab.com 헤더 CONTACT 규칙 그대로) ───
        .menu_text2 { position:absolute; top:10px;
                      transform: translateZ(20px) rotateX(90deg);
@@ -843,7 +843,7 @@
     }
     body.about-open .about-overlay {
       background: rgba(255,255,255,.8);
-      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
       pointer-events: auto;
     }
     .about-panel {
@@ -953,7 +953,7 @@
     }
 </style>
 </head>
-<body class="is-dark intro">
+<body>
 
   <div class="grid-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
@@ -1092,10 +1092,6 @@
   <button class="about-close" id="aboutClose" type="button" aria-label="닫기"><span></span><span></span></button>
 
 <script>
-    // 인트로가 끝나면 클래스를 뗀다 — 안 그러면 .step-q 의 단계 전환
-    // transform 이 인트로 애니메이션에 계속 눌린다
-    setTimeout(function () { document.body.classList.remove('intro'); }, 1400);
-
     function updateVW() {
       var w = window.innerWidth;
       document.documentElement.style.setProperty('--vw', (Math.min(w, 2560) / 100) + 'px');

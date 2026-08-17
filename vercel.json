@@ -23,6 +23,11 @@
       "source": "/about",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/contact-light",
+      "destination": "/contact",
+      "permanent": true
     }
   ],
   "headers": [

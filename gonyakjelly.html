@@ -31,7 +31,7 @@
   <link rel="preload" href="/fonts/KarlsbaderGrotesk-400.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="/fonts/KarlsbaderGrotesk-600.otf" as="font" type="font/otf" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css">
-  <link rel="prefetch" href="/contact-light">
+  <link rel="prefetch" href="/contact">
   <script src="/js/lenis.min.js"></script>
   <style>
     /*
@@ -1335,7 +1335,7 @@
       el.style.cursor = 'pointer';
       el.setAttribute('role', 'link');
       el.setAttribute('tabindex', '0');
-      function go() { location.href = '/contact-light'; }
+      function go() { location.href = '/contact'; }
       el.addEventListener('click', go);
       el.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }

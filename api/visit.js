@@ -18,7 +18,7 @@ const BOT_RE = /bot|crawl|spider|slurp|bing|yandex|baidu|duckduck|facebookextern
 // Returnity 는 두 페이지가 같은 이름이라 무엇에 관한 건지만 덧붙였다.
 const PAGE_NAMES = {
   '/': '메인', '/index': '메인',
-  '/contact': '컨택트', '/contact-light': '컨택트',
+  '/contact': '컨택트',
   '/starbucks': 'Starbucks®', '/calmlab': 'Calmlab+', '/kohonjin': 'Kohonjin',
   '/unknot': 'Unknot', '/goventure': 'Goventure Forum', '/jjonjingeo': '쫀징어',
   '/gonyakjelly': '단백질 곤약젤리', '/gooumcookit': '구움쿠킷',
