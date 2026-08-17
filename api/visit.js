@@ -7,12 +7,12 @@
 //
 // 서버가 하는 일은 세 가지뿐이다.
 //   1) 봇 걸러내기
-//   2) IP 로 지역·회사(ISP) 알아내기 (클라이언트는 자기 IP 를 모른다)
+//   2) IP 로 지역 알아내기 + 데이터센터 IP 인지 판별 (클라이언트는 자기 IP 를 모른다)
 //   3) 푸시 발송
 
 const { send } = require('./_push.js');
 
-const BOT_RE = /bot|crawl|spider|slurp|bing|yandex|baidu|duckduck|facebookexternal|embedly|preview|monitor|uptime|pingdom|lighthouse|headless|curl|wget|python-requests|axios|postman|vercel-screenshot|whatsapp|telegram|slackbot|discord/i;
+const BOT_RE = /bot|crawl|spider|slurp|bing|yandex|baidu|duckduck|facebookexternal|embedly|preview|monitor|uptime|pingdom|lighthouse|headless|curl|wget|python-requests|axios|postman|vercel-screenshot|whatsapp|telegram|slackbot|discord|kakaotalk-scrap|daumoa/i;
 
 const PAGE_NAMES = {
   '/': '메인', '/index': '메인', '/about': 'About', '/project': '프로젝트 목록',
@@ -35,8 +35,28 @@ function human(sec) {
 }
 
 /** 유입 경로를 사람 말로. 검색어가 붙어 오면 그것까지. */
-function referrerLabel(ref) {
-  if (!ref) return '직접 입력·북마크';
+/**
+ * 앱 안에서 링크를 열면(인스타·카톡 등) referrer 가 대부분 비어서 '직접 입력'
+ * 으로 잡힌다. 인앱 브라우저는 User-Agent 에 자기 이름을 박아두므로 그걸로
+ * 되살린다. 한국 유입은 카톡·인스타 공유가 큰 비중이라 이게 없으면 통계가
+ * 통째로 왜곡된다.
+ */
+function inAppSource(ua) {
+  if (!ua) return null;
+  if (/Instagram/i.test(ua)) return '인스타그램 앱';
+  if (/Threads|Barcelona/i.test(ua)) return '스레드 앱';
+  if (/KAKAOTALK/i.test(ua)) return '카카오톡';
+  if (/FBAN|FBAV|FB_IAB/i.test(ua)) return '페이스북 앱';
+  if (/NAVER\(inapp/i.test(ua)) return '네이버 앱';
+  if (/DaumApps/i.test(ua)) return '다음 앱';
+  if (/Line\//i.test(ua)) return '라인';
+  if (/TwitterAndroid|Twitter for/i.test(ua)) return '트위터 앱';
+  if (/everytimeApp/i.test(ua)) return '에브리타임';
+  return null;
+}
+
+function referrerLabel(ref, ua) {
+  if (!ref) return inAppSource(ua) || '직접 입력·북마크';
   let host;
   try { host = new URL(ref).hostname.replace(/^www\./, ''); } catch { return '알 수 없음'; }
   if (/fowarp/.test(host)) return null; // 사이트 내부 이동
@@ -52,7 +72,12 @@ function referrerLabel(ref) {
   return known[host] || host;
 }
 
-/** ISP·회사명. 실패해도 알림 자체는 나가야 하므로 조용히 포기한다. */
+/**
+ * 데이터센터(hosting) IP 인지 판별한다. 통신사·회사명은 알림에 더 이상 쓰지
+ * 않지만(매번 같은 통신사가 찍혀 정보량이 없었다), 스캐너·프리뷰 봇을 걸러내는
+ * hosting 플래그는 필요해서 조회 자체는 유지한다.
+ * 실패해도 알림은 나가야 하므로 조용히 포기한다.
+ */
 async function lookupOrg(ip) {
   if (!ip) return null;
   try {
@@ -119,7 +144,6 @@ module.exports = async (req, res) => {
     if (org && org.hosting) return;
 
     const device = b.mobile ? '모바일' : 'PC';
-    const orgText = org && org.org ? ` · ${org.org}` : '';
 
     if (b.phase === 'enter') {
       const visits = Number(b.visits) || 1;
@@ -131,9 +155,9 @@ module.exports = async (req, res) => {
         ? `재방문 ${visits}번째${days !== null ? ` (마지막 ${days === 0 ? '오늘' : days + '일 전'})` : ''}`
         : '첫 방문';
 
-      const ref = referrerLabel(b.referrer);
+      const ref = referrerLabel(b.referrer, ua);
       const lines = [
-        `${place}${orgText} · ${device}`,
+        `${place} | ${device}`,
         `${pageName(b.path)} 페이지로 진입`,
         ref ? `유입: ${ref}` : null,
         who,
@@ -160,7 +184,7 @@ module.exports = async (req, res) => {
       await send({
         title: `📄 방문 종료 · ${human(dwell)} 체류`,
         body: [
-          `${place}${orgText}`,
+          place,
           `본 페이지: ${trail}`,
           seen.length > 1 ? `${seen.length}개 페이지 열람` : null,
         ].filter(Boolean).join('\n'),
