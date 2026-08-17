@@ -14,14 +14,17 @@ const { send } = require('./_push.js');
 
 const BOT_RE = /bot|crawl|spider|slurp|bing|yandex|baidu|duckduck|facebookexternal|embedly|preview|monitor|uptime|pingdom|lighthouse|headless|curl|wget|python-requests|axios|postman|vercel-screenshot|whatsapp|telegram|slackbot|discord|kakaotalk-scrap|daumoa/i;
 
+// 각 페이지가 화면에 띄우는 실제 제목(.info-name)과 맞춘다.
+// Returnity 는 두 페이지가 같은 이름이라 무엇에 관한 건지만 덧붙였다.
 const PAGE_NAMES = {
   '/': '메인', '/index': '메인', '/about': 'About', '/project': '프로젝트 목록',
   '/project2': '프로젝트 목록', '/contact': '컨택트', '/contact-light': '컨택트',
-  '/starbucks': '스타벅스', '/calmlab': '캄랩', '/kohonjin': '고혼진',
-  '/unknot': '언노트', '/goventure': '고벤처', '/jjonjingeo': '쫀진거',
-  '/gonyakjelly': '곤약젤리', '/gooumcookit': '고움쿡잇', '/hwanghugung': '황후궁',
-  '/nosugaradded': '노슈가', '/returnity-skinhealer': '리터니티 스킨힐러',
-  '/returnity-scalp': '리터니티 스캘프',
+  '/starbucks': 'Starbucks®', '/calmlab': 'Calmlab+', '/kohonjin': 'Kohonjin',
+  '/unknot': 'Unknot', '/goventure': 'Goventure Forum', '/jjonjingeo': '쫀징어',
+  '/gonyakjelly': '단백질 곤약젤리', '/gooumcookit': '구움쿠킷',
+  '/hwanghugung': '황후궁 삼계탕', '/nosugaradded': 'No Sugar Added',
+  '/returnity-skinhealer': 'Returnity 스킨힐러',
+  '/returnity-scalp': 'Returnity 두피 스왑',
 };
 
 const pageName = (p) => PAGE_NAMES[(p || '').replace(/\/$/, '') || '/'] || p || '?';
@@ -156,9 +159,12 @@ module.exports = async (req, res) => {
         : '첫 방문';
 
       const ref = referrerLabel(b.referrer, ua);
+      // 메인으로 들어오는 게 기본값이라 매번 찍으면 노이즈다.
+      // 프로젝트 상세로 바로 들어온 경우만 알린다(그때는 정보가 된다).
+      const entry = pageName(b.path);
       const lines = [
         `${place} | ${device}`,
-        `${pageName(b.path)} 페이지로 진입`,
+        entry === '메인' ? null : `${entry} 페이지로 진입`,
         ref ? `유입: ${ref}` : null,
         who,
       ].filter(Boolean);
