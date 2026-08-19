@@ -68,6 +68,29 @@
     background: #fafafa;
   }
   .hidden { display: none; }
+
+  /* ── 통계 ── */
+  .stat-day { border-top: 1px solid #eee; padding: 16px 0; }
+  .stat-day:first-of-type { border-top: 0; }
+  .stat-date { font-size: 12px; color: #888; margin: 0 0 8px; }
+  .stat-date.today { color: #000; font-weight: 600; }
+  .stat-big { display: flex; gap: 18px; margin-bottom: 10px; }
+  .stat-big div { font-size: 13px; color: #666; }
+  .stat-big b { display: block; font-size: 22px; color: #000; letter-spacing: -0.02em; }
+  .stat-row { font-size: 13px; line-height: 1.7; color: #444; }
+  .stat-row .k { color: #999; display: inline-block; min-width: 52px; }
+  .stat-contact {
+    margin-top: 10px; padding: 10px 12px;
+    background: #f7f7f7; border-radius: 8px;
+    font-size: 13px; line-height: 1.6;
+  }
+  .stat-contact b { color: #000; }
+  .stat-empty { font-size: 13px; color: #bbb; }
+  #reload {
+    width: 100%; padding: 12px; margin-top: 4px;
+    border: 1px solid #e5e5e5; border-radius: 10px;
+    background: #fff; font-size: 13px; font-family: inherit; cursor: pointer;
+  }
   .ok { color: #0a7d32; }
   .err { color: #c00; }
 </style>
@@ -92,6 +115,12 @@
     <li><strong>홈 화면에 추가</strong> 선택</li>
     <li>홈 화면의 <strong>FOWARP</strong> 아이콘으로 다시 열기</li>
   </ol>
+</div>
+
+<div class="card" id="statCard">
+  <p class="state">방문 통계</p>
+  <div id="statBody"><p class="desc">불러오는 중…</p></div>
+  <button id="reload">새로고침</button>
 </div>
 
 <div class="card hidden" id="keyCard">
@@ -121,6 +150,99 @@
     var raw = atob((s + pad).replace(/-/g, '+').replace(/_/g, '/'));
     return Uint8Array.from(raw, function (c) { return c.charCodeAt(0); });
   }
+
+  // ── 방문 통계 ─────────────────────────────────────
+  // 알림 본문은 두 줄뿐이라, 자세한 내용은 여기서 본다.
+  var PAGE_NAMES = {
+    '/': '메인', '/index': '메인', '/contact': '컨택트',
+    '/starbucks': 'Starbucks\u00ae', '/calmlab': 'Calmlab+', '/kohonjin': 'Kohonjin',
+    '/unknot': 'Unknot', '/goventure': 'Goventure Forum', '/jjonjingeo': '쫀징어',
+    '/gonyakjelly': '단백질 곤약젤리', '/gooumcookit': '구움쿠킷',
+    '/hwanghugung': '황후궁 삼계탕', '/nosugaradded': 'No Sugar Added',
+    '/returnity-skinhealer': 'Returnity 스킨힐러',
+    '/returnity-scalp': 'Returnity 두피 스왑'
+  };
+  function pname(p) { return PAGE_NAMES[(p || '').replace(/\/$/, '') || '/'] || p; }
+  function esc(t) { return String(t).replace(/[&<>]/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
+  function dur(sec) {
+    if (!sec) return '-';
+    if (sec < 60) return sec + '초';
+    var m = Math.floor(sec / 60);
+    return m >= 60 ? Math.floor(m / 60) + '시간 ' + (m % 60) + '분' : m + '분 ' + (sec % 60) + '초';
+  }
+  function topN(obj, n) {
+    return Object.keys(obj || {})
+      .map(function (k) { return [k, obj[k]]; })
+      .sort(function (a, b) { return b[1] - a[1]; })
+      .slice(0, n);
+  }
+
+  function renderStats(data) {
+    var box = $('statBody');
+    if (!data || data.error || !data.days) {
+      box.innerHTML = '<p class="desc">' + esc((data && data.error) || '불러오지 못했다') + '</p>';
+      return;
+    }
+    var today = data.days[0] && data.days[0].date;
+    var html = data.days.map(function (d) {
+      var c = d.count || {};
+      var visits = +c.visits || 0, submits = +c.submits || 0;
+      if (!visits && !submits) return '';
+
+      var sessions = +c.sessions || 0, dwell = +c.dwellSum || 0;
+      var avg = sessions ? Math.round(dwell / sessions) : 0;
+
+      var pages = {};
+      Object.keys(d.pages || {}).forEach(function (k) {
+        if (k !== '/' && k !== '/contact') pages[k] = d.pages[k];
+      });
+
+      var out = '<div class="stat-day">';
+      out += '<p class="stat-date' + (d.date === today ? ' today' : '') + '">'
+           + esc(d.date) + (d.date === today ? ' (오늘)' : '') + '</p>';
+      out += '<div class="stat-big">'
+           + '<div>방문<b>' + visits + '</b></div>'
+           + '<div>방문자<b>' + (d.uniques || 0) + '</b></div>'
+           + '<div>평균 체류<b>' + dur(avg) + '</b></div></div>';
+
+      out += '<div class="stat-row">';
+      out += '<span class="k">첫·재방문</span>' + (+c.first || 0) + ' · ' + (+c.returning || 0) + '<br>';
+      var tp = topN(pages, 4);
+      if (tp.length) out += '<span class="k">인기</span>'
+        + tp.map(function (x) { return esc(pname(x[0])) + ' ' + x[1]; }).join(' · ') + '<br>';
+      var tr = topN(d.refs, 4);
+      if (tr.length) out += '<span class="k">유입</span>'
+        + tr.map(function (x) { return esc(x[0]) + ' ' + x[1]; }).join(' · ');
+      out += '</div>';
+
+      out += '<div class="stat-contact">📮 컨택트 방문 <b>' + (+c.contactViews || 0)
+           + '</b> · 쓰다 이탈 <b>' + (+c.formAbandon || 0)
+           + '</b> · 제출 <b>' + submits + '</b>';
+      var cf = topN(d.contactFrom, 2);
+      if (cf.length) out += '<br>직전에 본 페이지: '
+        + cf.map(function (x) { return esc(pname(x[0])) + ' ' + x[1]; }).join(' · ');
+      out += '</div></div>';
+      return out;
+    }).join('');
+    box.innerHTML = html || '<p class="stat-empty">최근 7일간 방문 기록이 없다.</p>';
+  }
+
+  function loadStats() {
+    $('statBody').innerHTML = '<p class="desc">불러오는 중…</p>';
+    fetch('/api/stats' + location.search, { cache: 'no-store' })
+      .then(function (r) { return r.json(); })
+      .then(renderStats)
+      .catch(function (e) {
+        $('statBody').innerHTML = '<p class="desc">불러오지 못했다: ' + esc(e.message) + '</p>';
+      });
+  }
+  $('reload').onclick = loadStats;
+  loadStats();
+  // 알림을 탭해 앱이 다시 떠오를 때 최신값으로
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible') loadStats();
+  });
 
   var isStandalone = navigator.standalone === true ||
                      matchMedia('(display-mode: standalone)').matches;

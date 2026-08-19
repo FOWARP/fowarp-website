@@ -70,26 +70,18 @@ module.exports = async (req, res) => {
       return res.end(JSON.stringify({ skipped: 'no-visits', day }));
     }
 
-    const pages = { ...(d.pages || {}) };
-    delete pages['/'];                 // 메인은 거의 항상 1위라 정보량이 없다
-    delete pages['/contact'];          // 컨택트는 아래 전용 줄에서 다룬다
-
-    const lines = [
-      `방문 ${visits} · 방문자 ${d.uniques || 0}명 (첫 ${first} / 재 ${returning})`,
-      avg ? `평균 체류 ${human(avg)}` : null,
-      Object.keys(pages).length ? `인기: ${top(pages, 3, pageName)}` : null,
-      Object.keys(d.refs || {}).length ? `유입: ${top(d.refs, 3)}` : null,
-      '',
-      `📮 컨택트 ${contactViews}명 방문 · 쓰다 이탈 ${formAbandon} · 제출 ${submits}`,
-      Object.keys(d.contactFrom || {}).length
-        ? `   직전에 본 페이지: ${top(d.contactFrom, 2, pageName)}` : null,
-    ].filter((x) => x !== null);
+    // 알림은 두 줄만. iOS 잠금화면에서 잘리지 않는 분량이고,
+    // 나머지는 탭해서 /notify 앱의 상세 화면에서 본다.
+    const body = [
+      `방문 ${visits} · 방문자 ${d.uniques || 0}명` + (avg ? ` · 평균 ${human(avg)}` : ''),
+      `📮 컨택트 ${contactViews} · 이탈 ${formAbandon} · 제출 ${submits}`,
+    ].join('\n');
 
     await send({
       title: submits ? `🎉 오늘 문의 ${submits}건 · 하루 요약` : '📊 하루 요약',
-      body: lines.join('\n'),
+      body,
       tag: 'summary-' + day,
-      url: '/',
+      url: '/notify',   // 탭하면 상세 화면으로
     }, 86400);
 
     res.statusCode = 200;
