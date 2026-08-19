@@ -82,9 +82,22 @@
     }
 
     /* ─── 다크 테마 ─────────────────────────────────
-       이 페이지는 두 프로모션(어워즈·블랙프라이데이) 모두 어두운 키비주얼이라
-       스크롤에 따라 전환하지 않고 처음부터 검정으로 고정한다.
-       body 에 is-dark 를 직접 걸어 두었다. */
+       스킨힐러 페이지와 같은 방식·같은 시점에 흰색→검정으로 전환한다.
+       인트로(.info-row)가 화면 위로 완전히 빠진 뒤, 첫 미디어(.dark-start)가
+       뷰포트 32.77% 지점에 닿으면 body 에 is-dark 가 붙는다.
+       되돌아 올라오면 흰색으로 복귀한다. */
+    /* 배경이 바뀔 때 헤더·괘선·푸터가 같이 부드럽게 반전되도록 */
+    .header, .marquee-text, .header-nav a, .header-cta,
+    .menu-toggle, .header-logo-center img, .mobile-menu, .mobile-menu a,
+    .grid-rules i, .header-rules i, .header::after, .marquee-bar-inner::after,
+    .site-footer, .footer-info a, .hline,
+    .info-name, .info-desc, .info-en, .info-ko {
+      transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  color 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  filter 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    body.bg-anim { transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
     body.is-dark .header { background: #000; }
     body.is-dark .marquee-text { color: #fff; }
     body.is-dark .header-nav a, body.is-dark .header-nav > span { color: #B7B7B7; }
@@ -919,7 +932,7 @@
        갉아먹으므로 요소를 화면보다 위·좌우로 넉넉히 키워 둔다. */
 </style>
 </head>
-<body class="is-dark">
+<body>
 
   <div class="grid-rules" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 
@@ -980,7 +993,7 @@
 
     <!-- 2025 연말 베스트 어워즈 — 랜딩 페이지 -->
     <div class="detail-strip reveal">
-      <img src="/media/returnity-promo/a01.jpg" alt="2025 리터니티 베스트 어워즈 랜딩 페이지" loading="lazy">
+      <img class="dark-start" src="/media/returnity-promo/a01.jpg" alt="2025 리터니티 베스트 어워즈 랜딩 페이지" loading="lazy">
       <img src="/media/returnity-promo/a02.jpg" alt="어워즈 아이템 · 구매금액별 사은품" loading="lazy">
       <img src="/media/returnity-promo/a03.jpg" alt="선착순 사은품 · 멤버십 혜택" loading="lazy">
       <img src="/media/returnity-promo/a04.jpg" alt="수상 아이템 초특가" loading="lazy">
@@ -1131,6 +1144,25 @@
       });
       window.addEventListener('load', resync);
       setTimeout(resync, 1500); setTimeout(resync, 4000);
+    })();
+
+    // 배경 전환 — 마커가 올라오면 흰색→검정 (되돌리면 복귀).
+    // 스킨힐러 페이지와 동일한 기준: 인트로(.info-row)가 화면 위로 완전히
+    // 빠진 뒤에만 전환해 소개 텍스트가 검정 배경에 묻히지 않게 한다.
+    (function() {
+      var marker = document.querySelector('.dark-start');
+      var intro = document.querySelector('.info-row');
+      if (!marker || !intro) return;
+      function checkBg() {
+        var introGone = intro.getBoundingClientRect().bottom < -24;
+        document.body.classList.toggle('is-dark',
+          introGone && marker.getBoundingClientRect().top < window.innerHeight * 0.3277);
+      }
+      checkBg();
+      requestAnimationFrame(function() { document.body.classList.add('bg-anim'); });
+      window.addEventListener('scroll', checkBg, { passive: true });
+      window.addEventListener('resize', checkBg);
+      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkBg);
     })();
 
     // Scroll reveal — getBoundingClientRect 기반 (body가 스크롤 컨테이너라 IO 대신 사용)
