@@ -11,6 +11,7 @@
 //   3) 푸시 발송
 
 const { send } = require('./_push.js');
+const stat = require('./_stat.js');
 
 const BOT_RE = /bot|crawl|spider|slurp|bing|yandex|baidu|duckduck|facebookexternal|embedly|preview|monitor|uptime|pingdom|lighthouse|headless|curl|wget|python-requests|axios|postman|vercel-screenshot|whatsapp|telegram|slackbot|discord|kakaotalk-scrap|daumoa/i;
 
@@ -169,6 +170,9 @@ module.exports = async (req, res) => {
         who,
       ].filter(Boolean);
 
+      // 집계는 알림과 독립적으로 남긴다(하루 요약용)
+      await stat.recordEnter({ sid: b.sid, page: b.path, ref, returning });
+
       await send({
         title: returning ? '🔁 재방문자 접속' : '👤 새 방문자 접속',
         body: lines.join('\n'),
@@ -180,6 +184,11 @@ module.exports = async (req, res) => {
 
     if (b.phase === 'leave') {
       const dwell = Math.round(Number(b.dwell) || 0);
+
+      // 집계는 짧은 방문도 포함해야 하루 통계가 맞다.
+      // 알림만 30초 기준으로 거른다.
+      await stat.recordLeave({ dwell, pages: b.pages, formAbandon: !!b.formAbandon });
+
       if (dwell < 30) return; // 스쳐 지나간 방문은 2차 알림을 보내지 않는다
 
       const seen = Array.isArray(b.pages) ? b.pages : [];

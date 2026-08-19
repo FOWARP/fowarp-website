@@ -84,6 +84,18 @@
     });
   }
 
+  // ── 컨택트 폼 이탈 감지 ────────────────────────────
+  // 문의를 쓰다 만 사람은 '놓친 리드'라 따로 센다. 입력을 한 글자라도 했는데
+  // 완료 화면(.contact.is-done)에 도달하지 못한 채 떠나면 이탈로 본다.
+  // 단계마다 input 요소가 교체되므로 개별 바인딩 대신 위임으로 듣는다.
+  var formTouched = false;
+  document.addEventListener('input', function (e) {
+    if (e.target && e.target.id === 'stepInput' && e.target.value) formTouched = true;
+  }, true);
+  function formAbandoned() {
+    return formTouched && !document.querySelector('.contact.is-done');
+  }
+
   // ── 사이트 안에서의 이동은 '이탈'이 아니다 ──────────
   // 페이지를 옮길 때도 pagehide 가 뜨기 때문에, 그대로 두면 컨택트 페이지로
   // 넘어가는 순간 "방문 종료" 알림이 나간다. 이동을 유발하는 클릭을 미리
@@ -116,9 +128,11 @@
     if (sent || navigating) return;
     var cur = read(sessionStorage, SS) || s;
     var dwell = Math.round((Date.now() - cur.start) / 1000);
-    if (dwell < 30) return;   // 서버에서도 한 번 더 거르지만 트래픽을 아낀다
+    // 예전에는 여기서 30초 미만을 잘라 트래픽을 아꼈지만, 그러면 하루 요약의
+    // 방문 수·컨택트 지표에서 짧은 방문이 통째로 빠진다. 서버가 알림만 거른다.
     sent = true;
-    post({ phase: 'leave', path: path, dwell: dwell, pages: cur.pages }, true);
+    post({ phase: 'leave', path: path, dwell: dwell, pages: cur.pages,
+           formAbandon: formAbandoned() }, true);
   }
 
   // pagehide 가 iOS 사파리에서 가장 확실하다(unload 는 안 불릴 때가 있다)

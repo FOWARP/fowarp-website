@@ -11,6 +11,7 @@
 // 로컬 MCP(hiworks-mcp)가 쓰는 것과 동일한 계정·서버다.
 
 const tls = require('tls');
+const stat = require('./_stat.js');
 
 const SMTP_HOST = 'smtps.hiworks.com';
 const SMTP_PORT = 465; // implicit TLS
@@ -190,6 +191,8 @@ module.exports = async (req, res) => {
       body,
       replyTo: email.trim(),
     });
+    // 하루 요약용 제출 카운트. 실패해도 메일은 이미 갔으니 응답에 영향 주지 않는다.
+    try { await stat.recordSubmit(); } catch {}
     return res.status(200).json({ ok: true });
   } catch (e) {
     console.error('메일 발송 실패:', e && e.message);
