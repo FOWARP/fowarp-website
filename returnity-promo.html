@@ -70,6 +70,34 @@
     body { position: relative; background: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; position: relative; max-width: 2560px; margin: 0 auto; }
 
 
+    /* 3열 사진 행 — Figma 1860 안에 613 세 장(gap 10) */
+    .media-row-3col {
+      display: flex;
+      gap: 10px;
+    }
+    .media-row-3col .media-block {
+      flex: 1;
+      width: auto;
+    }
+
+    /* 랜딩 상세는 Figma 에서 760/1920 폭으로 중앙 배치된다 */
+    .narrow-760 {
+      width: calc(var(--vw) * 39.583);
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .narrow-760 img { width: 100%; display: block; }
+
+    /* 피드 영상은 1080/1920 폭 */
+    .narrow-1080 {
+      width: calc(var(--vw) * 56.25);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .narrow-1080 video { width: 100%; display: block; }
+
     /* 2열 사진 행 (다른 상세페이지와 동일 규칙).
        .project-media 가 gap 을 고정 px 로 쓰므로 여기도 같은 단위로 맞춘다 */
     .media-row-2col {
@@ -690,6 +718,8 @@
       /* 세로로 쌓되 PC 비율은 그대로 유지 (16:9 강제하던 규칙 제거) */
       /* flex 로 정의된 페이지(kohonjin 등)도 있어 두 축 모두 세로로 */
       .media-row-2col { grid-template-columns: 1fr; flex-direction: column; gap: 6px; }
+      .media-row-3col { flex-direction: column; gap: 6px; }
+      .narrow-760, .narrow-1080 { width: 100%; margin-left: 0; margin-right: 0; }
       /* 세로 스택에서 inline flex-basis 가 높이를 0 으로 만들던 문제 */
       .media-row > .media-block { flex: none !important; width: 100% !important; }
       /* 2열 포스터·PC 전용 중앙정렬 폭 → 좌우 마진까지 꽉 채움 */
@@ -991,59 +1021,97 @@
 
     <div class="hline"></div>
 
-    <!-- 2025 연말 베스트 어워즈 — 랜딩 페이지 -->
-    <div class="detail-strip reveal">
-      <img class="dark-start" src="/media/returnity-promo/a01.jpg" alt="2025 리터니티 베스트 어워즈 랜딩 페이지" loading="lazy">
-      <img src="/media/returnity-promo/a02.jpg" alt="어워즈 아이템 · 구매금액별 사은품" loading="lazy">
-      <img src="/media/returnity-promo/a03.jpg" alt="선착순 사은품 · 멤버십 혜택" loading="lazy">
-      <img src="/media/returnity-promo/a04.jpg" alt="수상 아이템 초특가" loading="lazy">
+    <!-- 1. 프로모션 피드 영상 (1080x1350) -->
+    <div class="project-media">
+      <div class="narrow-1080 reveal">
+        <video class="dark-start" autoplay muted loop playsinline>
+          <source src="/media/gallery/returnity-promo.mp4" type="video/mp4">
+        </video>
+      </div>
     </div>
 
-    <div class="hline"></div>
+    <!-- 2. 어워즈 CRM 3종 -->
+    <div class="project-media">
+      <div class="media-row-3col reveal">
+        <div class="media-block"><img src="/media/returnity-promo/c01.jpg" alt="리터니티 베스트 어워즈 CRM" loading="lazy"></div>
+        <div class="media-block"><img src="/media/returnity-promo/c02.jpg" alt="리터니티 베스트 어워즈 CRM" loading="lazy"></div>
+        <div class="media-block"><img src="/media/returnity-promo/c03.jpg" alt="리터니티 베스트 어워즈 CRM" loading="lazy"></div>
+      </div>
+    </div>
 
-    <!-- 어워즈 CRM -->
+    <!-- 3. 서브 배너 3종 -->
+    <div class="project-media">
+      <div class="media-row-3col reveal">
+        <div class="media-block"><img src="/media/returnity-promo/s1.jpg" alt="리터니티 어워즈 서브 배너" loading="lazy"></div>
+        <div class="media-block"><img src="/media/returnity-promo/s2.jpg" alt="리터니티 어워즈 서브 배너" loading="lazy"></div>
+        <div class="media-block"><img src="/media/returnity-promo/s3.jpg" alt="리터니티 어워즈 서브 배너" loading="lazy"></div>
+      </div>
+    </div>
+
+    <!-- 4. 2025 베스트 어워즈 랜딩 페이지 (760 폭) -->
+    <div class="project-media">
+      <div class="narrow-760 reveal">
+        <img src="/media/returnity-promo/a01.jpg" alt="2025 리터니티 베스트 어워즈 랜딩" loading="lazy">
+        <img src="/media/returnity-promo/a02.jpg" alt="어워즈 아이템 · 구매금액별 사은품" loading="lazy">
+        <img src="/media/returnity-promo/a03.jpg" alt="선착순 사은품 · 멤버십 혜택" loading="lazy">
+        <img src="/media/returnity-promo/a04.jpg" alt="수상 아이템 초특가" loading="lazy">
+      </div>
+    </div>
+
+    <!-- 5. 블랙 프라이데이 메인 배너 -->
     <div class="project-media">
       <div class="media-row-2col reveal">
-        <div class="media-block">
-          <img src="/media/returnity-promo/c01.jpg" alt="리터니티 베스트 어워즈 CRM" loading="lazy">
-        </div>
-        <div class="media-block">
-          <img src="/media/returnity-promo/c02.jpg" alt="리터니티 베스트 어워즈 CRM" loading="lazy">
-        </div>
+        <div class="media-block"><img src="/media/returnity-promo/w1.jpg" alt="블랙 프라이데이 메인 배너" loading="lazy"></div>
+        <div class="media-block"><img src="/media/returnity-promo/w2.jpg" alt="블랙 프라이데이 서브 배너" loading="lazy"></div>
       </div>
     </div>
 
-    <div class="hline"></div>
-
-    <!-- 2025 블랙 프라이데이 — 랜딩 페이지 -->
-    <div class="detail-strip reveal">
-      <img src="/media/returnity-promo/b01.jpg" alt="2025 리터니티 블랙 프라이데이 랜딩 페이지" loading="lazy">
-    </div>
-
-    <div class="hline"></div>
-
-    <!-- 블랙 프라이데이 썸네일 · 구성 배너 -->
+    <!-- 6. 럭키박스 썸네일 -->
     <div class="project-media">
       <div class="media-row-2col reveal">
-        <div class="media-block">
-          <img src="/media/returnity-promo/t01.jpg" alt="율무 럭키박스 썸네일" loading="lazy">
-        </div>
-        <div class="media-block">
-          <img src="/media/returnity-promo/t02.jpg" alt="순환 럭키박스 썸네일" loading="lazy">
-        </div>
+        <div class="media-block"><img src="/media/returnity-promo/t01.jpg" alt="율무 럭키박스 썸네일" loading="lazy"></div>
+        <div class="media-block"><img src="/media/returnity-promo/t02.jpg" alt="순환 럭키박스 썸네일" loading="lazy"></div>
       </div>
+    </div>
+
+    <!-- 7. 럭키박스 CRM -->
+    <div class="project-media">
       <div class="media-row-2col reveal">
-        <div class="media-block">
-          <img src="/media/returnity-promo/t03.jpg" alt="율무 럭키박스 구성 배너" loading="lazy">
-        </div>
-        <div class="media-block">
-          <img src="/media/returnity-promo/t04.jpg" alt="순환 럭키박스 구성 배너" loading="lazy">
-        </div>
+        <div class="media-block"><img src="/media/returnity-promo/c01b.jpg" alt="율무 럭키박스 CRM" loading="lazy"></div>
+        <div class="media-block"><img src="/media/returnity-promo/c02b.jpg" alt="순환 럭키박스 CRM" loading="lazy"></div>
       </div>
+    </div>
+
+    <!-- 8. 블랙 프라이데이 피드 1 -->
+    <div class="project-media">
+      <div class="media-row-3col reveal">
+        <div class="media-block"><img src="/media/returnity-promo/f1.jpg" alt="블랙 프라이데이 피드" loading="lazy"></div>
+        <div class="media-block"><img src="/media/returnity-promo/f2.jpg" alt="블랙 프라이데이 피드" loading="lazy"></div>
+        <div class="media-block"><img src="/media/returnity-promo/f3.jpg" alt="블랙 프라이데이 피드" loading="lazy"></div>
+      </div>
+    </div>
+
+    <!-- 9. 블랙 프라이데이 피드 2 -->
+    <div class="project-media">
+      <div class="media-row-3col reveal">
+        <div class="media-block"><img src="/media/returnity-promo/f4.jpg" alt="블랙 프라이데이 피드" loading="lazy"></div>
+        <div class="media-block"><img src="/media/returnity-promo/f5.jpg" alt="블랙 프라이데이 피드" loading="lazy"></div>
+        <div class="media-block"><img src="/media/returnity-promo/f6.jpg" alt="블랙 프라이데이 피드" loading="lazy"></div>
+      </div>
+    </div>
+
+    <!-- 10. 럭키박스 구성 배너 -->
+    <div class="project-media">
       <div class="media-row-2col reveal">
-        <div class="media-block">
-          <img src="/media/returnity-promo/c03.jpg" alt="리터니티 블랙 프라이데이 CRM" loading="lazy">
-        </div>
+        <div class="media-block"><img src="/media/returnity-promo/t03.jpg" alt="율무 럭키박스 구성" loading="lazy"></div>
+        <div class="media-block"><img src="/media/returnity-promo/t04.jpg" alt="순환 럭키박스 구성" loading="lazy"></div>
+      </div>
+    </div>
+
+    <!-- 11. 블랙 프라이데이 랜딩 페이지 (760 폭) -->
+    <div class="project-media">
+      <div class="narrow-760 reveal">
+        <img src="/media/returnity-promo/b01.jpg" alt="2025 리터니티 블랙 프라이데이 랜딩" loading="lazy">
       </div>
     </div>
   </div>
