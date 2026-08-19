@@ -26,6 +26,7 @@ const PAGE_NAMES = {
   '/hwanghugung': '황후궁 삼계탕', '/nosugaradded': 'No Sugar Added',
   '/returnity-skinhealer': 'Returnity 스킨힐러',
   '/returnity-scalp': 'Returnity 두피 스왑',
+  '/returnity-promo': 'Returnity 시즈널 프로모션',
 };
 
 const pageName = (p) => PAGE_NAMES[(p || '').replace(/\/$/, '') || '/'] || p || '?';
