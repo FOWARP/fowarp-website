@@ -724,8 +724,11 @@
       .detail-strip { width: auto; margin-left: 20px; margin-right: 20px; }
       /* 세로로 쌓되 PC 비율은 그대로 유지 (16:9 강제하던 규칙 제거) */
       /* flex 로 정의된 페이지(kohonjin 등)도 있어 두 축 모두 세로로 */
-      .media-row-2col { grid-template-columns: 1fr; flex-direction: column; gap: 6px; }
-      .media-row-3col { flex-direction: column; gap: 6px; }
+      /* 모바일에서도 PC 와 같은 열 수를 유지한다.
+         세로로 쪼개면 CRM·배너 한 장이 화면을 가득 채워 너무 크게 보인다.
+         영상과 세로로 긴 랜딩만 100% 폭으로 둔다. */
+      .media-row-2col { grid-template-columns: 1fr 1fr; flex-direction: row; gap: 6px; }
+      .media-row-3col { flex-direction: row; gap: 6px; }
       .narrow-760, .narrow-1080, .narrow-1280 { width: 100%; margin-left: 0; margin-right: 0; }
       /* 세로 스택에서 inline flex-basis 가 높이를 0 으로 만들던 문제 */
       .media-row > .media-block { flex: none !important; width: 100% !important; }
