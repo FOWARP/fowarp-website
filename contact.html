@@ -381,6 +381,14 @@
       animation: revLineX 0.75s cubic-bezier(0.7, 0, 0.84, 0) forwards;
       pointer-events: none;
     }
+    /* 하단도 같은 간격으로 대칭. 위쪽 선이 다 그어진 뒤 따라오게 살짝 늦춘다 */
+    .hline.is-bottom {
+      top: auto;
+      /* 헤더가 위쪽을 덮고 있어 컨테이너 기준으로 맞추면 눈에는 비대칭이다.
+         실제로 보이는 간격(헤더 끝 → 선 = 76px)과 같게 아래에서 띄운다. */
+      bottom: calc(var(--vwFont) * 3.958);
+      animation-delay: 0.15s;
+    }
 
     .contact { position: relative; z-index: 1; }
 
@@ -726,6 +734,7 @@
       .grid-rules { left: 10px; right: 10px; }
       /* 프로젝트 페이지와 동일한 자리 — 헤더(80) 아래 12px */
       .hline { top: 92px; }
+      .hline.is-bottom { top: auto; bottom: 12px; }
 
       /* 6열 → 2열: 가운데(4번)만 남기고 나머지 내부 괘선 숨김 (프로젝트 페이지와 동일) */
       .grid-rules i:nth-child(2), .grid-rules i:nth-child(3),
@@ -1020,6 +1029,7 @@
   <div class="contact" id="contact">
 
     <div class="hline"></div>
+    <div class="hline is-bottom"></div>
 
     <div class="contact-stage">
 
