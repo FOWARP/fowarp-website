@@ -503,18 +503,27 @@
     .narrow-760 img,
     .narrow-760 video { width: 100%; display: block; }
 
-    /* 상단 배너 — Figma 1860 안에 454 / 692 / 693 세 열(gap 10) */
+    /* 상단 배너 — Figma 1860 안에 454.26 / 692.11 / 693.21 세 열(가로 gap 10.21) */
     .banner-row {
       display: flex;
-      gap: calc(var(--vw) * 0.531);
+      gap: calc(var(--vw) * 0.5317);
       align-items: flex-start;
     }
-    .banner-col { display: flex; flex-direction: column; gap: calc(var(--vw) * 0.531); }
-    .banner-col.c1 { flex: 454.26; }
-    .banner-col.c2 { flex: 692.11; }
+    /* 세로 gap 은 열마다 다르다(Figma 원본이 그렇다). 통일하면 열 높이가
+       어긋나 짧은 열 아래로 페이지 배경(검정)이 그대로 드러난다.
+       c1 은 Figma 자체가 9px 짧아, 그 몫까지 gap 에 얹어 854.42 로 맞춘다. */
+    .banner-col { display: flex; flex-direction: column; }
+    .banner-col.c1 { flex: 454.26; gap: calc(var(--vw) * 1.0102); }
+    .banner-col.c2 { flex: 692.11; gap: calc(var(--vw) * 0.8059); }
     .banner-col.c3 { flex: 693.21; }
     .banner-col img,
-    .banner-col video { width: 100%; display: block; }
+    .banner-col video { width: 100%; display: block; object-fit: cover; }
+    /* 소스(GIF·PNG)의 원본 비율이 Figma 슬롯과 제각각이라 비율을 못 박는다 */
+    .banner-col.c1 > :nth-child(1) { aspect-ratio: 454.262 / 321.556; }
+    .banner-col.c1 > :nth-child(2) { aspect-ratio: 454.262 / 513.469; }
+    .banner-col.c2 > :nth-child(1) { aspect-ratio: 692.112 / 180.274; }
+    .banner-col.c2 > :nth-child(n+2) { aspect-ratio: 692.112 / 209.243; }
+    .banner-col.c3 > * { aspect-ratio: 693.210 / 854.421; }
 
     .media-block.ar-4-5 { aspect-ratio: 4 / 5; }
     .media-block.ar-9-16 { aspect-ratio: 9 / 16; }
@@ -654,12 +663,11 @@
       .info-desc { font-size: 12px; }
       .project-media { margin: 10px 20px 0; gap: 6px; }
       .narrow-760 { width: 100%; margin-left: 0; margin-right: 0; }
-      /* 상단 배너 — 모바일에서 3열을 그대로 두면 한 칸이 100px 대로 뭉개진다.
-         열 구조를 풀고 배너 7장을 화면 폭에 맞춰 2열 그리드로 다시 깐다.
-         세로로 한 장씩 쌓으면 배너 하나가 화면을 가득 채워 너무 커진다. */
-      .banner-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-      .banner-col { display: contents; }
-      .banner-col.c3 img, .banner-col.c3 video { grid-column: span 2; }
+      /* 상단 배너 — 모바일에서는 열 구조를 풀고 7장을 한 장씩 세로로 쌓는다.
+         display:contents 로 열을 걷어내면 배너가 직접 flex item 이 되어
+         PC 에서 박아둔 aspect-ratio 를 그대로 쓰면서 화면 폭을 꽉 채운다. */
+      .banner-row { display: flex; flex-direction: column; gap: 6px; }
+      .banner-col, .banner-col.c1, .banner-col.c2 { display: contents; }
       /* 세로로 쌓되 PC 비율은 그대로 유지 (16:9 강제하던 규칙 제거) */
       /* flex 로 정의된 페이지(kohonjin 등)도 있어 두 축 모두 세로로 */
       .media-row-2col { grid-template-columns: 1fr; flex-direction: column; gap: 6px; }
@@ -973,12 +981,12 @@
         </div>
         <div class="banner-col c2">
           <img src="/media/antursolais/b_free.jpg" alt="An Túr Solais 자유 배너" loading="lazy">
-          <img src="/media/antursolais/b_shop.jpg" alt="앙투어솔레 공식 판매처" loading="lazy">
+          <video preload="none" autoplay muted loop playsinline aria-label="앙투어솔레 공식 판매처"><source data-src="/media/antursolais/b_shop.mp4" type="video/mp4"></video>
           <img src="/media/antursolais/b_sub.jpg" alt="정기구독 배너" loading="lazy">
           <img src="/media/antursolais/b_vip.jpg" alt="VIP 배너" loading="lazy">
         </div>
         <div class="banner-col c3">
-          <img src="/media/antursolais/b_main.jpg" alt="An Túr Solais 메인 배너" loading="lazy">
+          <video preload="none" autoplay muted loop playsinline aria-label="An Túr Solais 메인 배너"><source data-src="/media/antursolais/b_main.mp4" type="video/mp4"></video>
         </div>
       </div>
     </div>
@@ -988,28 +996,28 @@
       <div class="narrow-760 reveal">
         <video preload="none" autoplay muted loop playsinline aria-label="An Túr Solais 시퀀스"><source data-src="/media/antursolais/d01.mp4" type="video/mp4"></video>
         <img src="/media/antursolais/d02.jpg" alt="" loading="lazy">
-        <img src="/media/antursolais/d03.jpg" alt="" loading="lazy">
+        <video preload="none" autoplay muted loop playsinline><source data-src="/media/antursolais/b_main.mp4" type="video/mp4"></video>
         <img src="/media/antursolais/d04.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d05.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d06.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d07.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d08.jpg" alt="" loading="lazy">
-        <img src="/media/antursolais/d09.jpg" alt="" loading="lazy">
+        <video preload="none" autoplay muted loop playsinline><source data-src="/media/antursolais/d09.mp4" type="video/mp4"></video>
         <img src="/media/antursolais/d10.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d11.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d12.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d13.jpg" alt="" loading="lazy">
-        <img src="/media/antursolais/d14.jpg" alt="" loading="lazy">
+        <video preload="none" autoplay muted loop playsinline><source data-src="/media/antursolais/d14.mp4" type="video/mp4"></video>
         <img src="/media/antursolais/d15.jpg" alt="" loading="lazy">
-        <img src="/media/antursolais/d16.jpg" alt="" loading="lazy">
+        <video preload="none" autoplay muted loop playsinline><source data-src="/media/antursolais/d16.mp4" type="video/mp4"></video>
         <img src="/media/antursolais/d17.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d18.jpg" alt="" loading="lazy">
-        <img src="/media/antursolais/d19.jpg" alt="" loading="lazy">
+        <video preload="none" autoplay muted loop playsinline><source data-src="/media/antursolais/d19.mp4" type="video/mp4"></video>
         <img src="/media/antursolais/d20.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d21.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d22.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d23.jpg" alt="" loading="lazy">
-        <img src="/media/antursolais/d24.jpg" alt="" loading="lazy">
+        <video preload="none" autoplay muted loop playsinline><source data-src="/media/antursolais/d24.mp4" type="video/mp4"></video>
         <img src="/media/antursolais/d25.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d26.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d27.jpg" alt="" loading="lazy">
