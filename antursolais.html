@@ -500,7 +500,8 @@
       display: flex;
       flex-direction: column;
     }
-    .narrow-760 img { width: 100%; display: block; }
+    .narrow-760 img,
+    .narrow-760 video { width: 100%; display: block; }
 
     /* 상단 배너 — Figma 1860 안에 454 / 692 / 693 세 열(gap 10) */
     .banner-row {
@@ -512,7 +513,8 @@
     .banner-col.c1 { flex: 454.26; }
     .banner-col.c2 { flex: 692.11; }
     .banner-col.c3 { flex: 693.21; }
-    .banner-col img { width: 100%; display: block; }
+    .banner-col img,
+    .banner-col video { width: 100%; display: block; }
 
     .media-block.ar-4-5 { aspect-ratio: 4 / 5; }
     .media-block.ar-9-16 { aspect-ratio: 9 / 16; }
@@ -652,9 +654,12 @@
       .info-desc { font-size: 12px; }
       .project-media { margin: 10px 20px 0; gap: 6px; }
       .narrow-760 { width: 100%; margin-left: 0; margin-right: 0; }
-      /* 상단 배너는 모바일에서도 열 구조 유지 — 한 장씩 보면 너무 크다 */
-      .banner-row { gap: 6px; }
-      .banner-col { gap: 6px; }
+      /* 상단 배너 — 모바일에서 3열을 그대로 두면 한 칸이 100px 대로 뭉개진다.
+         열 구조를 풀고 배너 7장을 화면 폭에 맞춰 2열 그리드로 다시 깐다.
+         세로로 한 장씩 쌓으면 배너 하나가 화면을 가득 채워 너무 커진다. */
+      .banner-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+      .banner-col { display: contents; }
+      .banner-col.c3 img, .banner-col.c3 video { grid-column: span 2; }
       /* 세로로 쌓되 PC 비율은 그대로 유지 (16:9 강제하던 규칙 제거) */
       /* flex 로 정의된 페이지(kohonjin 등)도 있어 두 축 모두 세로로 */
       .media-row-2col { grid-template-columns: 1fr; flex-direction: column; gap: 6px; }
@@ -963,8 +968,8 @@
     <div class="project-media">
       <div class="banner-row reveal">
         <div class="banner-col c1">
-          <img src="/media/antursolais/b_sales.jpg" alt="An Túr Solais 누적 판매량" loading="lazy">
-          <img src="/media/antursolais/b_kv.jpg" alt="An Túr Solais 키비주얼" loading="lazy">
+          <video preload="none" autoplay muted loop playsinline aria-label="An Túr Solais 누적 판매량"><source data-src="/media/antursolais/b_sales.mp4" type="video/mp4"></video>
+          <video preload="none" autoplay muted loop playsinline aria-label="An Túr Solais 키비주얼"><source data-src="/media/antursolais/b_kv.mp4" type="video/mp4"></video>
         </div>
         <div class="banner-col c2">
           <img src="/media/antursolais/b_free.jpg" alt="An Túr Solais 자유 배너" loading="lazy">
@@ -981,7 +986,7 @@
     <!-- 2. 상세페이지 본문 (760 폭) -->
     <div class="project-media">
       <div class="narrow-760 reveal">
-        <img src="/media/antursolais/d01.jpg" alt="" loading="lazy">
+        <video preload="none" autoplay muted loop playsinline aria-label="An Túr Solais 시퀀스"><source data-src="/media/antursolais/d01.mp4" type="video/mp4"></video>
         <img src="/media/antursolais/d02.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d03.jpg" alt="" loading="lazy">
         <img src="/media/antursolais/d04.jpg" alt="" loading="lazy">
@@ -1352,6 +1357,43 @@
     });
   })();
 </script>
+
+  <script>
+  /* 보이는 영상만 로드·재생 — 화면 근처에 올 때까지 파일을 받지 않는다.
+     src 를 박아두면 preload 와 무관하게 브라우저가 전부 내려받는다. */
+  (function () {
+    var vids = document.querySelectorAll('video[autoplay]');
+    if (!vids.length || !window.IntersectionObserver) return;
+    var visible = new WeakSet();
+    function play(v) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+    function load(v) {
+      if (v.dataset.loaded) return;
+      var src = v.querySelector('source[data-src]');
+      if (!src) { v.dataset.loaded = '1'; return; }
+      src.src = src.dataset.src;
+      src.removeAttribute('data-src');
+      v.dataset.loaded = '1';
+      v.load();
+    }
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) { visible.add(v); load(v); play(v); }
+        else { visible.delete(v); v.pause(); }
+      });
+    }, { rootMargin: '400px 0px' });
+    Array.prototype.forEach.call(vids, function (v) {
+      v.addEventListener('pause', function () {
+        if (visible.has(v) && !document.hidden) setTimeout(function () { if (visible.has(v)) play(v); }, 60);
+      });
+      io.observe(v);
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) return;
+      Array.prototype.forEach.call(vids, function (v) { if (visible.has(v)) play(v); });
+    });
+  })();
+  </script>
   <script src="/js/track.js" defer></script>
 </body>
 </html>
