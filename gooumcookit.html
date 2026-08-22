@@ -1097,16 +1097,32 @@
     // 괘선은 fixed 라 뷰포트 기준이 된다. body(max-width 2560, 중앙정렬) 와
     // 어긋나지 않도록 실제 body 박스를 재서 맞춘다.
     function syncRules() {
-      var el = document.querySelector('.grid-rules');
-      if (!el) return;
       var r = document.body.getBoundingClientRect();
       var inset = window.innerWidth <= 767 ? 10 : 20;   // 모바일은 10px
-      el.style.left  = (r.left + inset) + 'px';
-      el.style.width = (r.width - inset * 2) + 'px';
+      var el = document.querySelector('.grid-rules');
+      if (el) {
+        el.style.left  = (r.left + inset) + 'px';
+        el.style.width = (r.width - inset * 2) + 'px';
+      }
+      // 헤더 괘선은 CSS 로 .header(fixed, 뷰포트 폭) 기준이라 바깥 괘선과 기준이
+      // 다르다. 스크롤바가 폭을 차지하는 환경(맥 '항상 표시')이나 body 가
+      // max-width 에 걸리는 넓은 화면에서 body 폭 != 뷰포트 폭 이 되는 순간
+      // 왼쪽은 붙고 오른쪽으로 갈수록 벌어진다. 같은 body 기준으로 맞춘다.
+      var hr = document.querySelector('.header-rules');
+      var hd = document.querySelector('.header');
+      if (hr && hd) {
+        hr.style.left = (r.left + inset - hd.getBoundingClientRect().left) + 'px';
+        hr.style.transform = 'none';
+        hr.style.width = (r.width - inset * 2) + 'px';
+        hr.style.maxWidth = 'none';
+      }
     }
     updateVW();
     syncRules();
     window.addEventListener('resize', function() { updateVW(); syncRules(); });
+    // 스크롤바는 콘텐츠가 다 실린 뒤에 생기기도 한다. 그때 body 폭이 줄어도
+    // resize 는 안 오므로, body 크기 변화를 직접 지켜본다.
+    if (window.ResizeObserver) new ResizeObserver(syncRules).observe(document.body);
 
     // Smooth scroll (Lenis)
     var lenis = new Lenis({
