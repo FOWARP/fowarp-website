@@ -500,6 +500,38 @@
     .media-idcard { display: flex; align-items: center; justify-content: center; }
     .media-idcard > img { width: 77.8%; height: auto; }
 
+    /* ─── 배경이 검정으로 바뀌면 헤더도 함께 반전 ───
+       괘선은 #686868 로 낮추고, 헤더 구간 괘선(.header-rules)은 헤더 fill 위에
+       그대로 남겨 본문 괘선과 한 줄로 이어지게 한다. */
+    .header, .marquee-text, .header-nav a, .header-cta,
+    .menu-toggle, .header-logo-center img, .mobile-menu, .mobile-menu a,
+    .grid-rules i, .header-rules i, .header::after, .marquee-bar-inner::after,
+    .site-footer, .footer-info a {
+      transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  color 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  filter 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    body.is-dark .header { background: #000; }
+    body.is-dark .marquee-text { color: #fff; }
+    body.is-dark .header-nav a, body.is-dark .header-nav > span { color: #B7B7B7; }
+    body.is-dark .header-nav a.active, body.is-dark .header-nav > span.active { color: #fff; }
+    body.is-dark .menu-toggle { color: #fff; }
+    body.is-dark .header-logo-center img { filter: invert(1); }
+    body.is-dark .header-cta { background: #fff; color: #000; }
+    body.is-dark .mobile-menu { background: #000; border-top-color: #fff; border-bottom-color: #fff; }
+    body.is-dark .mobile-menu a, body.is-dark .mobile-menu span { color: #fff; border-bottom-color: #fff; }
+    body.is-dark .grid-rules i,
+    body.is-dark .header-rules i,
+    body.is-dark .header::after,
+    body.is-dark .marquee-bar-inner::after { background: #686868; }
+    /* 푸터는 배경이 없어 검정 위에서 글자가 묻힌다 → 헤더와 같이 반전 */
+    body.is-dark .site-footer { color: #fff; border-top-color: #686868; }
+    body.is-dark .footer-info a { color: #fff; }
+
+    body.bg-anim { transition: background-color 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+    body.is-dark { background: #000; }
+
     /* ─── FOOTER (Figma 446:1533) ─────────────────
        높이 80, 상단 #D9D9D9 헤어라인, 좌우 콘텐츠 30px(괘선 20 + 10).
        배경을 비워 페이지 세로 괘선이 그대로 관통하게 둔다. */
@@ -925,7 +957,7 @@
 
     <div class="project-media">
       <div class="media-block reveal">
-        <video autoplay muted loop playsinline>
+        <video class="dark-start" autoplay muted loop playsinline>
           <source src="/media/B01/goventure.mp4" type="video/mp4">
         </video>
       </div>
@@ -1075,6 +1107,24 @@
       });
       window.addEventListener('load', resync);
       setTimeout(resync, 1500); setTimeout(resync, 4000);
+    })();
+
+    // 배경 전환 — 마커가 올라오면 흰색→검정 (되돌리면 복귀).
+    // 인트로(.info-row)가 화면 위로 완전히 빠진 뒤에만 전환해 텍스트가 묻히지 않게 한다.
+    (function() {
+      var marker = document.querySelector('.dark-start');
+      var intro = document.querySelector('.info-row');
+      if (!marker || !intro) return;
+      function checkBg() {
+        var introGone = intro.getBoundingClientRect().bottom < -24;
+        document.body.classList.toggle('is-dark',
+          introGone && marker.getBoundingClientRect().top < window.innerHeight * 0.3277);
+      }
+      checkBg();
+      requestAnimationFrame(function() { document.body.classList.add('bg-anim'); });
+      window.addEventListener('scroll', checkBg, { passive: true });
+      window.addEventListener('resize', checkBg);
+      if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', checkBg);
     })();
 
     // Scroll reveal — getBoundingClientRect 기반 (body가 스크롤 컨테이너라 IO 대신 사용)
