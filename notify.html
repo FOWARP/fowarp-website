@@ -21,6 +21,18 @@
     -webkit-font-smoothing: antialiased;
   }
   h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: -0.02em; }
+  /* 통계 키 입력 — 글자 16px 미만이면 iOS 가 화면을 확대해 버린다 */
+  #keyInput {
+    width: 100%; padding: 12px; margin: 10px 0 8px; font-size: 16px;
+    border: 1px solid #ddd; border-radius: 10px; background: #fff; color: #000;
+    -webkit-appearance: none; appearance: none;
+  }
+  .key-btns { display: flex; gap: 8px; }
+  .key-btns button {
+    flex: 1; padding: 12px; font-size: 15px; border-radius: 10px;
+    border: 1px solid #ddd; background: #fff; color: #000;
+  }
+  .key-btns #keySave { background: #000; color: #fff; border-color: #000; }
   .sub { font-size: 13px; color: #888; margin: 0 0 28px; }
 
   .card {
@@ -107,6 +119,15 @@
 <div class="card" id="statCard">
   <p class="state">방문 통계</p>
   <div id="statBody"><p class="desc">불러오는 중…</p></div>
+  <div id="keyBox" hidden>
+    <p class="desc" id="keyMsg">통계를 보려면 키가 필요하다.</p>
+    <input id="keyInput" type="text" inputmode="text" placeholder="통계 키"
+           autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
+    <div class="key-btns">
+      <button id="keyPaste" type="button">붙여넣기</button>
+      <button id="keySave" type="button">저장</button>
+    </div>
+  </div>
   <button id="reload">새로고침</button>
 </div>
 
@@ -222,23 +243,35 @@
   function askKey() {
     var cur = '';
     try { cur = localStorage.getItem('fw_stats_key') || ''; } catch (e) {}
-    $('statBody').innerHTML =
-      '<p class="desc">통계를 보려면 키가 필요하다.' +
-      (cur ? ' 저장된 키가 서버와 맞지 않는다.' : '') + '</p>' +
-      '<input id="keyInput" type="text" placeholder="통계 키 붙여넣기" ' +
-      'autocomplete="off" autocapitalize="off" spellcheck="false" ' +
-      'style="width:100%;box-sizing:border-box;padding:10px;margin:8px 0;' +
-      'border:1px solid #444;border-radius:8px;background:#111;color:#fff;font-size:16px">' +
-      '<button id="keySave" style="width:100%;padding:10px;border:0;border-radius:8px;' +
-      'background:#fff;color:#000;font-size:15px">저장하고 불러오기</button>';
+    $('statBody').innerHTML = '';
+    $('keyMsg').textContent = cur
+      ? '저장된 키가 서버와 맞지 않는다. 다시 넣어라.'
+      : '통계를 보려면 키가 필요하다.';
     $('keyInput').value = cur;
-    $('keySave').onclick = function () {
-      var v = $('keyInput').value.trim();
-      if (!v) return;
-      try { localStorage.setItem('fw_stats_key', v); } catch (e) {}
-      loadStats();
-    };
+    $('keyBox').hidden = false;
   }
+  function saveKey(v) {
+    v = (v || '').trim();
+    if (!v) return;
+    try { localStorage.setItem('fw_stats_key', v); } catch (e) {}
+    $('keyBox').hidden = true;
+    loadStats();
+  }
+  $('keySave').onclick = function () { saveKey($('keyInput').value); };
+  // 홈 화면 앱에서 키보드가 안 올라오는 경우가 있어, 클립보드에서 바로 받는
+  // 길을 같이 둔다. 사용자 조작 안에서 호출해야 iOS 가 허용한다.
+  $('keyPaste').onclick = function () {
+    if (!navigator.clipboard || !navigator.clipboard.readText) {
+      $('keyMsg').textContent = '이 브라우저는 붙여넣기 버튼을 지원하지 않는다. 입력창에 직접 넣어라.';
+      return;
+    }
+    navigator.clipboard.readText().then(function (t) {
+      $('keyInput').value = (t || '').trim();
+      saveKey(t);
+    }).catch(function () {
+      $('keyMsg').textContent = '클립보드를 읽지 못했다. 입력창에 직접 넣어라.';
+    });
+  };
 
   function loadStats() {
     $('statBody').innerHTML = '<p class="desc">불러오는 중…</p>';
@@ -247,7 +280,7 @@
         if (r.status === 401) { askKey(); return null; }
         return r.json();
       })
-      .then(function (d) { if (d) renderStats(d); })
+      .then(function (d) { if (d) { $('keyBox').hidden = true; renderStats(d); } })
       .catch(function (e) {
         $('statBody').innerHTML = '<p class="desc">불러오지 못했다: ' + esc(e.message) + '</p>';
       });
