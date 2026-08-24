@@ -219,14 +219,35 @@
     return '/api/stats' + (k ? '?k=' + encodeURIComponent(k) : location.search);
   }
 
+  function askKey() {
+    var cur = '';
+    try { cur = localStorage.getItem('fw_stats_key') || ''; } catch (e) {}
+    $('statBody').innerHTML =
+      '<p class="desc">통계를 보려면 키가 필요하다.' +
+      (cur ? ' 저장된 키가 서버와 맞지 않는다.' : '') + '</p>' +
+      '<input id="keyInput" type="text" placeholder="통계 키 붙여넣기" ' +
+      'autocomplete="off" autocapitalize="off" spellcheck="false" ' +
+      'style="width:100%;box-sizing:border-box;padding:10px;margin:8px 0;' +
+      'border:1px solid #444;border-radius:8px;background:#111;color:#fff;font-size:16px">' +
+      '<button id="keySave" style="width:100%;padding:10px;border:0;border-radius:8px;' +
+      'background:#fff;color:#000;font-size:15px">저장하고 불러오기</button>';
+    $('keyInput').value = cur;
+    $('keySave').onclick = function () {
+      var v = $('keyInput').value.trim();
+      if (!v) return;
+      try { localStorage.setItem('fw_stats_key', v); } catch (e) {}
+      loadStats();
+    };
+  }
+
   function loadStats() {
     $('statBody').innerHTML = '<p class="desc">불러오는 중…</p>';
     fetch(statsUrl(), { cache: 'no-store' })
       .then(function (r) {
-        if (r.status === 401) throw new Error('통계 키가 없거나 틀렸다. fowarp.com/notify?k=키 로 한 번 열면 저장된다.');
+        if (r.status === 401) { askKey(); return null; }
         return r.json();
       })
-      .then(renderStats)
+      .then(function (d) { if (d) renderStats(d); })
       .catch(function (e) {
         $('statBody').innerHTML = '<p class="desc">불러오지 못했다: ' + esc(e.message) + '</p>';
       });
