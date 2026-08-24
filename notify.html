@@ -207,10 +207,25 @@
     box.innerHTML = html || '<p class="stat-empty">최근 7일간 방문 기록이 없다.</p>';
   }
 
+  // 통계 키는 한 번만 ?k=… 로 열어 주면 저장해 두고 이후 알아서 붙인다.
+  // 홈 화면에 추가한 앱은 주소가 고정이라 매번 쿼리를 달 수 없기 때문이다.
+  (function () {
+    var m = location.search.match(/[?&]k=([^&]*)/);
+    if (m) { try { localStorage.setItem('fw_stats_key', decodeURIComponent(m[1])); } catch (e) {} }
+  })();
+  function statsUrl() {
+    var k = '';
+    try { k = localStorage.getItem('fw_stats_key') || ''; } catch (e) {}
+    return '/api/stats' + (k ? '?k=' + encodeURIComponent(k) : location.search);
+  }
+
   function loadStats() {
     $('statBody').innerHTML = '<p class="desc">불러오는 중…</p>';
-    fetch('/api/stats' + location.search, { cache: 'no-store' })
-      .then(function (r) { return r.json(); })
+    fetch(statsUrl(), { cache: 'no-store' })
+      .then(function (r) {
+        if (r.status === 401) throw new Error('통계 키가 없거나 틀렸다. fowarp.com/notify?k=키 로 한 번 열면 저장된다.');
+        return r.json();
+      })
       .then(renderStats)
       .catch(function (e) {
         $('statBody').innerHTML = '<p class="desc">불러오지 못했다: ' + esc(e.message) + '</p>';
