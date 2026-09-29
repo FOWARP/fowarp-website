@@ -134,10 +134,15 @@ module.exports = async (req, res) => {
   // await send() 가 통째로 죽어서 알림이 한 건도 안 나갔다.
   // 방문자 쪽은 sendBeacon / fetch(keepalive) 라 응답을 기다리지 않으므로
   // 여기서 몇 초 더 걸려도 체감 지연은 없다.
+  // 알림이 안 올 때 어디서 끊겼는지 Vercel 로그에서 바로 보이도록
+  // 요청마다 결과를 한 줄 남긴다(IP 는 남기지 않는다).
+  // 테스트 버튼(/notify)에는 같은 결과를 응답으로 돌려준다.
+  let b = {};
+  let out = { outcome: 'none' };
   try {
-    const b = await readBody(req);
+    b = await readBody(req);
     const ua = req.headers['user-agent'] || '';
-    if (BOT_RE.test(ua) || !ua) return;
+    if (BOT_RE.test(ua) || !ua) { out = { outcome: 'bot' }; return; }
 
     const h = req.headers;
     const ip = (h['x-forwarded-for'] || '').split(',')[0].trim();
@@ -147,7 +152,7 @@ module.exports = async (req, res) => {
 
     const org = await lookupOrg(ip);
     // 데이터센터 IP 는 사람이 아니라 스캐너·프리뷰 봇일 가능성이 높다
-    if (org && org.hosting) return;
+    if (org && org.hosting) { out = { outcome: 'hosting-ip', org: org.org }; return; }
 
     const device = b.mobile ? '모바일' : 'PC';
 
@@ -175,7 +180,7 @@ module.exports = async (req, res) => {
       // 집계는 알림과 독립적으로 남긴다(하루 요약용)
       await stat.recordEnter({ sid: b.sid, page: b.path, ref, returning });
 
-      await send({
+      out = await send({
         title: returning ? '🔁 재방문자 접속' : '👤 새 방문자 접속',
         body: lines.join('\n'),
         tag: 'visit-' + (b.sid || Date.now()),
@@ -191,14 +196,14 @@ module.exports = async (req, res) => {
       // 알림만 30초 기준으로 거른다.
       await stat.recordLeave({ dwell, pages: b.pages, formAbandon: !!b.formAbandon });
 
-      if (dwell < 30) return; // 스쳐 지나간 방문은 2차 알림을 보내지 않는다
+      if (dwell < 30) { out = { outcome: 'short-stay', dwell }; return; } // 스쳐 지나간 방문은 2차 알림을 보내지 않는다
 
       const seen = Array.isArray(b.pages) ? b.pages : [];
       const trail = seen.length
         ? seen.map(pageName).join(' → ')
         : pageName(b.path);
 
-      await send({
+      out = await send({
         title: `📄 방문 종료 · ${human(dwell)} 체류`,
         body: [
           place,
@@ -209,10 +214,21 @@ module.exports = async (req, res) => {
         url: seen[seen.length - 1] || b.path || '/',
       });
     }
-  } catch {
+  } catch (e) {
     // 알림은 부가 기능이다. 어떤 이유로 실패하든 사이트에 영향을 주지 않는다.
+    out = { outcome: 'error', message: e && e.message };
   } finally {
+    const line = JSON.stringify({ phase: b.phase || null, test: !!b.test, ...out });
+    if (out.status && out.status >= 300 || out.skipped || out.outcome === 'error') console.error('[visit]', line);
+    else console.log('[visit]', line);
+
     // 봇 차단·짧은 체류 등 중간 return 경로가 여러 개라 finally 로 모아 응답한다
+    if (b.test) {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Cache-Control', 'no-store');
+      return res.end(line);
+    }
     res.statusCode = 204;
     res.end();
   }

@@ -104,6 +104,8 @@
   <p class="desc" id="desc"></p>
   <button id="enable" class="hidden">알림 켜기</button>
   <button id="test" class="ghost hidden">테스트 알림 보내기</button>
+  <p class="desc hidden" id="testMsg" style="margin-top:10px"></p>
+  <button id="copySub" class="ghost hidden">이 폰의 구독 값 복사</button>
 </div>
 
 <div class="card hidden" id="installCard">
@@ -361,15 +363,48 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phase: 'enter', path: '/', visits: 1, test: true }),
-      }).then(function () {
+      }).then(function (r) { return r.json(); }).then(function (d) {
         $('test').textContent = '보냈다 — 잠시 후 알림 확인';
-      }).catch(function () {
+        testResult(d);
+      }).catch(function (e) {
         $('test').textContent = '실패';
+        testResult({ outcome: 'error', message: String(e && e.message || e) });
       }).then(function () {
         setTimeout(function () {
           $('test').disabled = false;
           $('test').textContent = '테스트 알림 보내기';
         }, 3000);
+      });
+    };
+
+    // 서버가 실제로 보낸 결과를 보여준다. 서버에 등록된 구독(PUSH_SUBSCRIPTION)이
+    // 이 폰의 현재 구독과 다르면 알림은 엉뚱한 곳(또는 만료된 곳)으로 간다.
+    function testResult(d) {
+      var m = $('testMsg');
+      var mine = sub.endpoint.slice(-12);
+      var bad = true;
+      var msg;
+      if (d.skipped) msg = '서버에 알림 설정이 없다 (' + d.skipped + '). Vercel 환경변수를 확인해라.';
+      else if (d.outcome === 'hosting-ip') msg = '지금 접속 IP 가 데이터센터로 판정돼 걸러졌다 (' + (d.org || '?') + '). VPN·iCloud 비공개 릴레이를 끄고 다시 해봐라.';
+      else if (d.outcome === 'error') msg = '서버 오류: ' + (d.message || '?');
+      else if (d.expired) msg = '서버에 등록된 구독이 만료됐다 (' + d.status + ').';
+      else if (d.ep && d.ep !== mine) msg = '서버에 등록된 구독이 이 폰의 현재 구독과 다르다.';
+      else if (d.status && d.status >= 300) msg = '푸시 서비스가 거절했다 (' + d.status + ') ' + (d.reason || '');
+      else { msg = '서버 발송 성공 (' + d.status + '). 알림이 안 뜨면 폰 설정 → 알림 → FOWARP 를 확인해라.'; bad = false; }
+      m.textContent = msg;
+      m.className = 'desc ' + (bad ? 'err' : 'ok');
+      show(m);
+      if (bad && (d.expired || (d.ep && d.ep !== mine))) {
+        m.textContent += ' 아래 버튼으로 값을 복사해 Vercel 의 PUSH_SUBSCRIPTION 에 넣고 재배포해라.';
+        show($('copySub'));
+      }
+    }
+    $('copySub').onclick = function () {
+      var v = JSON.stringify(sub);
+      (navigator.clipboard ? navigator.clipboard.writeText(v) : Promise.reject()).then(function () {
+        $('copySub').textContent = '복사됨';
+      }).catch(function () {
+        prompt('이 값을 복사해라', v);
       });
     };
   }
