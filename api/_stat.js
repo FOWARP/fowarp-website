@@ -77,7 +77,8 @@ function recordLeave({ dwell, pages, formAbandon }) {
     ['HINCRBY', K.count(d), 'sessions', 1],
     ['EXPIRE', K.count(d), TTL],
   ];
-  (pages || []).forEach((p) => c.push(['HINCRBY', K.pages(d), p, 1]));
+  // 첫 페이지는 enter 때 이미 셌다. 여기서 또 세면 진입 페이지가 두 배로 잡힌다.
+  (pages || []).slice(1).forEach((p) => c.push(['HINCRBY', K.pages(d), p, 1]));
 
   const seen = pages || [];
   const ci = seen.findIndex((p) => /^\/contact/.test(p));

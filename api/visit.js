@@ -75,7 +75,19 @@ function referrerLabel(ref, ua) {
     'linkedin.com': '링크드인', 'facebook.com': '페이스북',
     't.co': '트위터', 'youtube.com': '유튜브',
   };
-  return known[host] || host;
+  if (known[host]) return known[host];
+  // 모바일·지역 서브도메인(m.search.naver.com, m.facebook.com, google.co.jp …)이
+  // 호스트 이름 그대로 찍혀 같은 유입이 여러 줄로 갈라지던 것을 묶는다.
+  if (/(^|\.)search\.naver\.com$/.test(host)) return '네이버 검색';
+  if (/(^|\.)blog\.naver\.com$/.test(host)) return '네이버 블로그';
+  if (/(^|\.)naver\.com$/.test(host)) return '네이버';
+  if (/(^|\.)search\.daum\.net$/.test(host)) return '다음 검색';
+  if (/(^|\.)daum\.net$/.test(host)) return '다음';
+  if (/^google\.[a-z.]+$/.test(host)) return '구글 검색';
+  if (/(^|\.)instagram\.com$/.test(host)) return '인스타그램';
+  if (/(^|\.)facebook\.com$/.test(host)) return '페이스북';
+  if (/(^|\.)bing\.com$/.test(host)) return '빙 검색';
+  return host;
 }
 
 /**

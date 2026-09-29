@@ -16,6 +16,7 @@ const PAGE_NAMES = {
   '/returnity-skinhealer': 'Returnity 스킨힐러',
   '/returnity-scalp': 'Returnity 두피 스왑',
   '/returnity-promo': 'Returnity 시즈널 프로모션',
+  '/antursolais': 'An Túr Solais',
 };
 const pageName = (p) => PAGE_NAMES[(p || '').replace(/\/$/, '') || '/'] || p || '?';
 
