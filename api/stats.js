@@ -7,6 +7,7 @@
 // (민감 정보는 아니지만 굳이 공개할 이유도 없다).
 
 const { readDay, todayKST, configured } = require('./_stat.js');
+const gsc = require('./_gsc.js');
 
 module.exports = async (req, res) => {
   res.setHeader('content-type', 'application/json; charset=utf-8');
@@ -34,8 +35,10 @@ module.exports = async (req, res) => {
       const r = await readDay(d);
       days.push({ date: d, ...(r || { count: {}, uniques: 0, pages: {}, refs: {}, contactFrom: {} }) });
     }
+    // 구글 검색 실적은 설정돼 있을 때만 붙인다
+    const search = gsc.configured() ? await gsc.searchSummary({ days: 7, limit: 5 }) : undefined;
     res.statusCode = 200;
-    res.end(JSON.stringify({ days }));
+    res.end(JSON.stringify({ days, search }));
   } catch (e) {
     res.statusCode = 200;
     res.end(JSON.stringify({ error: e && e.message }));

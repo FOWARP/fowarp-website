@@ -6,6 +6,7 @@
 
 const { send } = require('./_push.js');
 const { readDay, todayKST, configured } = require('./_stat.js');
+const gsc = require('./_gsc.js');
 
 const PAGE_NAMES = {
   '/': '메인', '/index': '메인', '/contact': '컨택트',
@@ -72,12 +73,20 @@ module.exports = async (req, res) => {
       return res.end(JSON.stringify({ skipped: 'no-visits', day }));
     }
 
-    // 알림은 두 줄만. iOS 잠금화면에서 잘리지 않는 분량이고,
+    // 구글 검색 실적(최근 7일). 설정이 없거나 실패하면 null 이라 줄이 빠진다.
+    const g = await gsc.searchSummary({ days: 7, limit: 3 });
+    const searchLine = g && g.impressions
+      ? `🔎 구글 7일 노출 ${g.impressions} · 클릭 ${g.clicks}`
+        + (g.queries.length ? ` · ${g.queries.map((x) => x.q).join(', ')}` : '')
+      : null;
+
+    // 알림은 짧게. iOS 잠금화면에서 잘리지 않는 분량이고,
     // 나머지는 탭해서 /notify 앱의 상세 화면에서 본다.
     const body = [
       `방문 ${visits} · 방문자 ${d.uniques || 0}명` + (avg ? ` · 평균 ${human(avg)}` : ''),
       `📮 컨택트 ${contactViews} · 이탈 ${formAbandon} · 제출 ${submits}`,
-    ].join('\n');
+      searchLine,
+    ].filter(Boolean).join('\n');
 
     await send({
       title: submits ? `🎉 오늘 문의 ${submits}건 · 하루 요약` : '📊 하루 요약',

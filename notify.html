@@ -180,6 +180,19 @@
       .slice(0, n);
   }
 
+  // 구글 서치콘솔 최근 7일. 서버에 설정이 없으면 search 가 없어 아무것도 안 그린다.
+  function searchBlock(s) {
+    if (!s) return '';
+    var out = '<div class="stat-day"><p class="stat-date today">구글 검색 (최근 ' + (+s.days || 7) + '일)</p>'
+      + '<div class="stat-big">'
+      + '<div>노출<b>' + (+s.impressions || 0) + '</b></div>'
+      + '<div>클릭<b>' + (+s.clicks || 0) + '</b></div>'
+      + '<div>평균 순위<b>' + (s.position != null ? s.position : '-') + '</b></div></div>';
+    if (s.queries && s.queries.length) out += '<div class="stat-row"><span class="k">검색어</span>'
+      + s.queries.map(function (x) { return esc(x.q) + ' ' + x.impressions; }).join(' · ') + '</div>';
+    return out + '</div>';
+  }
+
   function renderStats(data) {
     var box = $('statBody');
     if (!data || data.error || !data.days) {
@@ -227,7 +240,8 @@
       out += '</div></div>';
       return out;
     }).join('');
-    box.innerHTML = html || '<p class="stat-empty">최근 7일간 방문 기록이 없다.</p>';
+    box.innerHTML = searchBlock(data.search)
+      + (html || '<p class="stat-empty">최근 7일간 방문 기록이 없다.</p>');
   }
 
   // 통계 키는 한 번만 ?k=… 로 열어 주면 저장해 두고 이후 알아서 붙인다.
