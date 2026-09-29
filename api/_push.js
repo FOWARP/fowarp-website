@@ -14,6 +14,8 @@
 //   PUSH_SUBSCRIPTION   구독 JSON 문자열 (/notify 에서 등록 후 한 번 붙여넣기)
 
 const crypto = require('crypto');
+const { sendMail } = require('./_mail.js');
+const stat = require('./_stat.js');
 
 const VAPID_SUBJECT = 'mailto:hi@fowarp.com';
 
@@ -103,6 +105,14 @@ function encrypt(payload, p256dhB64, authB64) {
  * @param {number} ttl   푸시 서비스가 폰 꺼져 있을 때 붙들고 있을 초
  */
 async function send(data, ttl = 3600) {
+  const out = await deliver(data, ttl);
+  // 429(잠깐 너무 많이 보냄)만 빼고, 알림이 폰에 못 가는 상태면 메일로 알린다.
+  // 2026-08-31 에 구독이 만료됐는데 한 달 동안 아무도 몰랐던 일이 있었다.
+  if (out.skipped || (out.status >= 400 && out.status !== 429)) await alertBroken(out);
+  return out;
+}
+
+async function deliver(data, ttl) {
   const rawSub = process.env.PUSH_SUBSCRIPTION;
   if (!rawSub || !process.env.VAPID_PRIVATE_KEY) return { skipped: 'not-configured' };
 
@@ -140,6 +150,43 @@ async function send(data, ttl = 3600) {
   };
   if (!res.ok) out.reason = (await res.text().catch(() => '')).slice(0, 200);
   return out;
+}
+
+/** 알림이 끊겼다고 하이웍스 메일로 알린다. 하루 한 번만. 실패해도 조용히 넘어간다. */
+async function alertBroken(out) {
+  try {
+    const user = process.env.HIWORKS_EMAIL;
+    const pass = process.env.HIWORKS_PASSWORD;
+    if (!user || !pass) return;
+    if (!(await stat.once('alert:push-broken', 86400))) return;
+
+    const why = out.skipped
+      ? `서버 설정 문제 (${out.skipped})`
+      : out.expired
+        ? `폰의 알림 구독이 만료됨 (${out.status})`
+        : `푸시 서비스가 거절함 (${out.status}) ${out.reason || ''}`;
+
+    await sendMail({
+      user,
+      pass,
+      subject: '[FOWARP] 방문 알림이 끊겼다',
+      body: [
+        '방문 알림이 폰으로 가지 않고 있다.',
+        '',
+        `원인: ${why}`,
+        '',
+        '고치는 법',
+        '1. 폰에서 FOWARP 알림 앱을 열고 "테스트 알림 보내기"를 누른다',
+        '2. 화면에 뜨는 "이 폰의 구독 값 복사" 버튼으로 값을 복사한다',
+        '3. Vercel → fowarp-website → Settings → Environment Variables 에서',
+        '   PUSH_SUBSCRIPTION 값을 바꾸고 Redeploy 한다 (또는 Claude 에게 맡긴다)',
+        '',
+        '이 메일은 하루에 한 번만 온다.',
+      ].join('\n'),
+    });
+  } catch (e) {
+    console.error('[push] 끊김 메일 실패:', e && e.message);
+  }
 }
 
 module.exports = { send, b64u, unb64u };

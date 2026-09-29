@@ -23,7 +23,7 @@
 
   var LS = 'fw_visit';
   var SS = 'fw_session';
-  var COOLDOWN = 30 * 60 * 1000; // 같은 방문자는 30분에 한 번만 1차 알림
+  var COOLDOWN = 30 * 60 * 1000; // 30분 동안 아무 활동이 없어야 새 방문으로 본다
 
   function read(store, key) {
     try { return JSON.parse(store.getItem(key) || 'null'); } catch (e) { return null; }
@@ -40,9 +40,12 @@
   // ── 방문자 기록(영속) ──────────────────────────────
   var v = read(localStorage, LS) || { visits: 0, last: null };
 
-  // ── 세션(탭 단위) ──────────────────────────────────
-  var s = read(sessionStorage, SS);
-  var isNewSession = !s || (now - s.start) > COOLDOWN;
+  // ── 세션(브라우저 단위) ─────────────────────────────
+  // 예전에는 sessionStorage(탭 단위)라서 같은 사람이 새 탭을 열 때마다 새 방문으로
+  // 잡혀 방문 수가 오르고 알림도 다시 갔다. 이제는 브라우저 전체가 세션 하나를
+  // 나눠 쓰고, 마지막 활동 뒤 30분이 지나야 새 방문으로 본다.
+  var s = read(localStorage, SS);
+  var isNewSession = !s || (now - (s.last || s.start)) > COOLDOWN;
 
   if (isNewSession) {
     v.visits = (v.visits || 0) + 1;
@@ -50,7 +53,8 @@
   }
 
   if (s.pages[s.pages.length - 1] !== path) s.pages.push(path);
-  write(sessionStorage, SS, s);
+  s.last = now;
+  write(localStorage, SS, s);
 
   var prevLast = v.last;
   v.last = now;
@@ -122,23 +126,47 @@
     if (t.closest('.header-cta')) markNav();
   }, true);
 
-  // ── 2차: 탭을 닫거나 백그라운드로 보낼 때 요약 ──────
-  var sent = false;
-  function leave() {
-    if (sent || navigating) return;
-    var cur = read(sessionStorage, SS) || s;
+  // 뒤로가기·앞으로가기로 사이트 안을 옮겨 다니는 것도 이탈이 아니다.
+  // 클릭이 아니라 위에서 못 잡으므로 Navigation API 가 있는 브라우저에서 잡는다.
+  if (window.navigation && navigation.addEventListener) {
+    navigation.addEventListener('navigate', function (e) {
+      try {
+        if (new URL(e.destination.url).host === location.host) markNav();
+      } catch (err) {}
+    });
+  }
+
+  // ── 2차: 방문 종료 ─────────────────────────────────
+  // 서버는 세션마다 마지막 상태만 저장하므로 여러 번 보내도 통계는 부풀지 않는다.
+  //   · 탭이 가려질 때(앱 전환·화면 잠금): 중간 저장(final:false). 알림 없음.
+  //   · 페이지를 실제로 떠날 때(pagehide): 최종(final:true). '방문 종료' 알림.
+  // 예전에는 가려지기만 해도 최종으로 보내서, 카톡 잠깐 보고 돌아오는 것까지
+  // 방문 종료로 알렸고 체류시간도 거기서 끊겼다.
+  // 대신 앱을 전환한 채로 브라우저가 정리되면 pagehide 가 안 와서 종료 알림은
+  // 빠질 수 있다. 통계는 마지막 중간 저장으로 남는다.
+  var finalSent = false;
+  function leave(isFinal) {
+    if (finalSent) return;
+    var cur = read(localStorage, SS) || s;
+    if (cur.sid !== s.sid) cur = s; // 다른 탭이 새 세션을 열었으면 이 탭 것만
     var dwell = Math.round((Date.now() - cur.start) / 1000);
     // 예전에는 여기서 30초 미만을 잘라 트래픽을 아꼈지만, 그러면 하루 요약의
     // 방문 수·컨택트 지표에서 짧은 방문이 통째로 빠진다. 서버가 알림만 거른다.
-    sent = true;
+    var fin = isFinal && !navigating;
+    if (fin) finalSent = true;
     post({ phase: 'leave', path: path, dwell: dwell, pages: cur.pages,
-           formAbandon: formAbandoned() }, true);
+           formAbandon: formAbandoned(), final: fin }, true);
   }
 
   // pagehide 가 iOS 사파리에서 가장 확실하다(unload 는 안 불릴 때가 있다)
-  addEventListener('pagehide', leave);
+  addEventListener('pagehide', function () { leave(true); });
   // visibilitychange 는 document 에서 발생한다 — window 에 걸면 놓친다
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden') leave();
+    if (document.visibilityState === 'hidden') { leave(false); return; }
+    // 돌아왔으면 활동으로 친다(30분 판정용)
+    var cur = read(localStorage, SS);
+    if (cur && cur.sid === s.sid) { cur.last = Date.now(); write(localStorage, SS, cur); }
   });
+  // 뒤로가기 캐시(bfcache)에서 되살아나면 이 페이지는 다시 살아 있는 것이다
+  addEventListener('pageshow', function (e) { if (e.persisted) finalSent = false; });
 })();

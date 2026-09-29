@@ -207,7 +207,11 @@ module.exports = async (req, res) => {
 
       // 집계는 짧은 방문도 포함해야 하루 통계가 맞다.
       // 알림만 30초 기준으로 거른다.
-      await stat.recordLeave({ dwell, pages: b.pages, formAbandon: !!b.formAbandon });
+      await stat.recordLeave({ sid: b.sid, dwell, pages: b.pages, formAbandon: !!b.formAbandon });
+
+      // 탭이 가려졌을 뿐인 중간 저장(final:false)은 통계만 갱신하고 알리지 않는다.
+      // 폰에서 카톡 잠깐 보고 돌아오는 것까지 '방문 종료'로 알리던 문제.
+      if (b.final === false) { out = { outcome: 'checkpoint', dwell }; return; }
 
       if (dwell < 30) { out = { outcome: 'short-stay', dwell }; return; } // 스쳐 지나간 방문은 2차 알림을 보내지 않는다
 

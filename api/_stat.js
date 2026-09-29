@@ -52,7 +52,8 @@ const K = {
   sids: (d) => `st:${d}:s`,       // 셋   — 고유 방문자(세션 id)
   pages: (d) => `st:${d}:p`,      // 해시 — 페이지별 조회수
   refs: (d) => `st:${d}:r`,       // 해시 — 유입 경로별
-  cfrom: (d) => `st:${d}:cf`,     // 해시 — 컨택트 직전에 본 페이지
+  cfrom: (d) => `st:${d}:cf`,     // 해시 — 컨택트 직전에 본 페이지 (예전 방식, 읽기만)
+  sess: (d) => `st:${d}:ss`,      // 해시 — 세션 id → 그 세션의 마지막 상태(JSON)
 };
 
 /** 방문 1건 기록 (enter) */
@@ -69,26 +70,36 @@ function recordEnter({ sid, page, ref, returning }) {
   return pipeline(c);
 }
 
-/** 방문 종료 기록 (leave) — 체류시간, 본 페이지, 컨택트 관련 지표 */
-function recordLeave({ dwell, pages, formAbandon }) {
+/**
+ * 방문 종료 기록 (leave) — 세션마다 '마지막 상태'를 덮어쓴다.
+ *
+ * 예전에는 leave 가 올 때마다 체류시간·페이지를 더했다. 그런데 폰에서 앱을
+ * 잠깐 전환하거나 뒤로가기로 이동하면 한 방문에서 leave 가 여러 번 와서
+ * 세션 수와 체류시간이 부풀었다. 이제는 세션 id 하나에 값 하나만 두고
+ * 합계는 읽을 때(readDay) 계산한다. 몇 번이 오든 마지막 값만 남는다.
+ */
+function recordLeave({ sid, dwell, pages, formAbandon }) {
+  if (!sid) return null;
   const d = todayKST();
-  const c = [
-    ['HINCRBY', K.count(d), 'dwellSum', Math.round(dwell) || 0],
-    ['HINCRBY', K.count(d), 'sessions', 1],
-    ['EXPIRE', K.count(d), TTL],
-  ];
-  // 첫 페이지는 enter 때 이미 셌다. 여기서 또 세면 진입 페이지가 두 배로 잡힌다.
-  (pages || []).slice(1).forEach((p) => c.push(['HINCRBY', K.pages(d), p, 1]));
+  const v = JSON.stringify({
+    t: Math.round(dwell) || 0,
+    p: (pages || []).slice(0, 30),
+    f: formAbandon ? 1 : 0,
+  });
+  return pipeline([
+    ['HSET', K.sess(d), sid, v],
+    ['EXPIRE', K.sess(d), TTL],
+  ]);
+}
 
-  const seen = pages || [];
-  const ci = seen.findIndex((p) => /^\/contact/.test(p));
-  if (ci > -1) {
-    c.push(['HINCRBY', K.count(d), 'contactViews', 1]);
-    // 컨택트 바로 앞에 본 페이지 — 어떤 프로젝트가 문의로 이어졌는지
-    if (ci > 0) c.push(['HINCRBY', K.cfrom(d), seen[ci - 1], 1], ['EXPIRE', K.cfrom(d), TTL]);
-  }
-  if (formAbandon) c.push(['HINCRBY', K.count(d), 'formAbandon', 1]);
-  return pipeline(c);
+/**
+ * key 가 처음이면 true. ttl 동안은 false.
+ * 같은 경보를 하루에 한 번만 보내는 용도. 저장소가 없거나 실패하면 false
+ * (중복 발송보다 안 보내는 쪽이 낫다).
+ */
+async function once(key, ttl) {
+  const r = await pipeline([['SET', key, '1', 'NX', 'EX', ttl]]);
+  return !!(r && r[0] && r[0].result === 'OK');
 }
 
 /** 문의 폼 실제 제출 (api/contact.js 에서 호출) */
@@ -108,6 +119,7 @@ async function readDay(d) {
     ['HGETALL', K.pages(d)],
     ['HGETALL', K.refs(d)],
     ['HGETALL', K.cfrom(d)],
+    ['HGETALL', K.sess(d)],
   ]);
   if (!res) return null;
   const val = (i) => (res[i] && res[i].result) || null;
@@ -120,13 +132,40 @@ async function readDay(d) {
     return o;
   };
 
+  const count = toObj(val(0));
+  const pages = toObj(val(2));
+  const contactFrom = toObj(val(4));
+
+  // 세션별 마지막 상태를 합친다. 예전 방식으로 쌓인 값(count 의 sessions 등)은
+  // 그대로 두고 더하기만 해서, 전환한 날도 숫자가 끊기지 않는다.
+  const raw = val(5);
+  const list = [];
+  if (Array.isArray(raw)) for (let i = 1; i < raw.length; i += 2) list.push(raw[i]);
+  else if (raw && typeof raw === 'object') for (const k in raw) list.push(raw[k]);
+  const add = (o, k, n) => { o[k] = (Number(o[k]) || 0) + n; };
+  for (const item of list) {
+    let x;
+    try { x = JSON.parse(item); } catch { continue; }
+    const seen = Array.isArray(x.p) ? x.p : [];
+    add(count, 'sessions', 1);
+    add(count, 'dwellSum', Number(x.t) || 0);
+    if (x.f) add(count, 'formAbandon', 1);
+    // 첫 페이지는 enter 때 이미 셌다
+    seen.slice(1).forEach((p) => add(pages, p, 1));
+    const ci = seen.findIndex((p) => /^\/contact/.test(p));
+    if (ci > -1) {
+      add(count, 'contactViews', 1);
+      if (ci > 0) add(contactFrom, seen[ci - 1], 1);
+    }
+  }
+
   return {
-    count: toObj(val(0)),
+    count,
     uniques: Number(val(1)) || 0,
-    pages: toObj(val(2)),
+    pages,
     refs: toObj(val(3)),
-    contactFrom: toObj(val(4)),
+    contactFrom,
   };
 }
 
-module.exports = { recordEnter, recordLeave, recordSubmit, readDay, todayKST, configured };
+module.exports = { recordEnter, recordLeave, recordSubmit, readDay, todayKST, configured, once };
