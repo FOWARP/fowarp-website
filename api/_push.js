@@ -131,8 +131,15 @@ async function send(data, ttl = 3600) {
     body,
   });
 
-  // 404/410 은 구독 만료 — 폰에서 /notify 로 다시 등록해야 한다
-  return { status: res.status, expired: res.status === 404 || res.status === 410 };
+  // 404/410 은 구독 만료 — 폰에서 /notify 로 다시 등록해야 한다.
+  // 끝자리(ep)는 /notify 가 폰의 현재 구독과 같은지 대조하는 데 쓴다.
+  const out = {
+    status: res.status,
+    expired: res.status === 404 || res.status === 410,
+    ep: sub.endpoint.slice(-12),
+  };
+  if (!res.ok) out.reason = (await res.text().catch(() => '')).slice(0, 200);
+  return out;
 }
 
 module.exports = { send, b64u, unb64u };
