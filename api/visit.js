@@ -177,8 +177,9 @@ module.exports = async (req, res) => {
         who,
       ].filter(Boolean);
 
-      // 집계는 알림과 독립적으로 남긴다(하루 요약용)
-      await stat.recordEnter({ sid: b.sid, page: b.path, ref, returning });
+      // 집계는 알림과 독립적으로 남긴다(하루 요약용).
+      // /notify 테스트 버튼은 실제 방문이 아니라 통계에서 뺀다.
+      if (!b.test) await stat.recordEnter({ sid: b.sid, page: b.path, ref, returning });
 
       out = await send({
         title: returning ? '🔁 재방문자 접속' : '👤 새 방문자 접속',
