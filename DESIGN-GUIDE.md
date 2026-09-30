@@ -10,8 +10,8 @@ fowarp.com 리빌드의 타이포그래피·컬러 기준 문서. 이 문서가 
 
 | 용도 | 폰트 | 웨이트 | 파일 |
 |---|---|---|---|
-| 영문·숫자·기호 | **Karlsbader Grotesk** | 400, 600 | `/fonts/KarlsbaderGrotesk-400.otf`, `-600.otf` |
-| 한글 | **Pretendard Variable** | 400, 600 | CDN |
+| 영문·숫자·기호 | **Karlsbader Grotesk** | 400, 600 | `/fonts/KarlsbaderGrotesk-400.woff2`, `-600.woff2` |
+| 한글 | **Pretendard Variable** | 400, 600 | CDN, v1.3.9 dynamic subset (필요한 글자 묶음만 받음). 버전 고정 |
 
 ### 폰트 스택은 하나로 통일한다
 
