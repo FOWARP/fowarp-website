@@ -52,12 +52,13 @@ const K = {
   sids: (d) => `st:${d}:s`,       // 셋   — 고유 방문자(세션 id)
   pages: (d) => `st:${d}:p`,      // 해시 — 페이지별 조회수
   refs: (d) => `st:${d}:r`,       // 해시 — 유입 경로별
+  kw: (d) => `st:${d}:k`,         // 해시 — 광고 키워드별 방문
   cfrom: (d) => `st:${d}:cf`,     // 해시 — 컨택트 직전에 본 페이지 (예전 방식, 읽기만)
   sess: (d) => `st:${d}:ss`,      // 해시 — 세션 id → 그 세션의 마지막 상태(JSON)
 };
 
 /** 방문 1건 기록 (enter) */
-function recordEnter({ sid, page, ref, returning }) {
+function recordEnter({ sid, page, ref, returning, ad, kw }) {
   const d = todayKST();
   const c = [
     ['HINCRBY', K.count(d), 'visits', 1],
@@ -67,6 +68,8 @@ function recordEnter({ sid, page, ref, returning }) {
   if (sid) c.push(['SADD', K.sids(d), sid], ['EXPIRE', K.sids(d), TTL]);
   if (page) c.push(['HINCRBY', K.pages(d), page, 1], ['EXPIRE', K.pages(d), TTL]);
   if (ref) c.push(['HINCRBY', K.refs(d), ref, 1], ['EXPIRE', K.refs(d), TTL]);
+  if (ad) c.push(['HINCRBY', K.count(d), 'adVisits', 1]);
+  if (ad && kw) c.push(['HINCRBY', K.kw(d), kw, 1], ['EXPIRE', K.kw(d), TTL]);
   return pipeline(c);
 }
 
@@ -78,13 +81,14 @@ function recordEnter({ sid, page, ref, returning }) {
  * 세션 수와 체류시간이 부풀었다. 이제는 세션 id 하나에 값 하나만 두고
  * 합계는 읽을 때(readDay) 계산한다. 몇 번이 오든 마지막 값만 남는다.
  */
-function recordLeave({ sid, dwell, pages, formAbandon }) {
+function recordLeave({ sid, dwell, pages, formAbandon, ad }) {
   if (!sid) return null;
   const d = todayKST();
   const v = JSON.stringify({
     t: Math.round(dwell) || 0,
     p: (pages || []).slice(0, 30),
     f: formAbandon ? 1 : 0,
+    a: ad ? 1 : 0,
   });
   return pipeline([
     ['HSET', K.sess(d), sid, v],
@@ -103,12 +107,12 @@ async function once(key, ttl) {
 }
 
 /** 문의 폼 실제 제출 (api/contact.js 에서 호출) */
-function recordSubmit() {
+function recordSubmit({ ad } = {}) {
   const d = todayKST();
-  return pipeline([
-    ['HINCRBY', K.count(d), 'submits', 1],
-    ['EXPIRE', K.count(d), TTL],
-  ]);
+  const c = [['HINCRBY', K.count(d), 'submits', 1]];
+  if (ad) c.push(['HINCRBY', K.count(d), 'adSubmits', 1]);
+  c.push(['EXPIRE', K.count(d), TTL]);
+  return pipeline(c);
 }
 
 /** 하루치 집계 읽기 */
@@ -120,6 +124,7 @@ async function readDay(d) {
     ['HGETALL', K.refs(d)],
     ['HGETALL', K.cfrom(d)],
     ['HGETALL', K.sess(d)],
+    ['HGETALL', K.kw(d)],
   ]);
   if (!res) return null;
   const val = (i) => (res[i] && res[i].result) || null;
@@ -155,6 +160,7 @@ async function readDay(d) {
     const ci = seen.findIndex((p) => /^\/contact/.test(p));
     if (ci > -1) {
       add(count, 'contactViews', 1);
+      if (x.a) add(count, 'adContactViews', 1);
       if (ci > 0) add(contactFrom, seen[ci - 1], 1);
     }
   }
@@ -165,6 +171,7 @@ async function readDay(d) {
     pages,
     refs: toObj(val(3)),
     contactFrom,
+    keywords: toObj(val(6)),
   };
 }
 

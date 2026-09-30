@@ -12,6 +12,7 @@
 
 const { send } = require('./_push.js');
 const stat = require('./_stat.js');
+const { referrerLabel, adLabel } = require('./_src.js');
 
 const BOT_RE = /bot|crawl|spider|slurp|bing|yandex|baidu|duckduck|facebookexternal|embedly|preview|monitor|uptime|pingdom|lighthouse|headless|curl|wget|python-requests|axios|postman|vercel-screenshot|whatsapp|telegram|slackbot|discord|kakaotalk-scrap|daumoa/i;
 
@@ -38,56 +39,6 @@ function human(sec) {
   const m = Math.floor(sec / 60);
   const s = sec % 60;
   return s ? `${m}분 ${s}초` : `${m}분`;
-}
-
-/** 유입 경로를 사람 말로. 검색어가 붙어 오면 그것까지. */
-/**
- * 앱 안에서 링크를 열면(인스타·카톡 등) referrer 가 대부분 비어서 '직접 입력'
- * 으로 잡힌다. 인앱 브라우저는 User-Agent 에 자기 이름을 박아두므로 그걸로
- * 되살린다. 한국 유입은 카톡·인스타 공유가 큰 비중이라 이게 없으면 통계가
- * 통째로 왜곡된다.
- */
-function inAppSource(ua) {
-  if (!ua) return null;
-  if (/Instagram/i.test(ua)) return '인스타그램 앱';
-  if (/Threads|Barcelona/i.test(ua)) return '스레드 앱';
-  if (/KAKAOTALK/i.test(ua)) return '카카오톡';
-  if (/FBAN|FBAV|FB_IAB/i.test(ua)) return '페이스북 앱';
-  if (/NAVER\(inapp/i.test(ua)) return '네이버 앱';
-  if (/DaumApps/i.test(ua)) return '다음 앱';
-  if (/Line\//i.test(ua)) return '라인';
-  if (/TwitterAndroid|Twitter for/i.test(ua)) return '트위터 앱';
-  if (/everytimeApp/i.test(ua)) return '에브리타임';
-  return null;
-}
-
-function referrerLabel(ref, ua) {
-  if (!ref) return inAppSource(ua) || '직접 입력·북마크';
-  let host;
-  try { host = new URL(ref).hostname.replace(/^www\./, ''); } catch { return '알 수 없음'; }
-  if (/fowarp/.test(host)) return null; // 사이트 내부 이동
-  const known = {
-    'google.com': '구글 검색', 'google.co.kr': '구글 검색',
-    'search.naver.com': '네이버 검색', 'naver.com': '네이버',
-    'daum.net': '다음', 'search.daum.net': '다음 검색',
-    'bing.com': '빙 검색', 'instagram.com': '인스타그램',
-    'l.instagram.com': '인스타그램', 'behance.net': 'Behance',
-    'linkedin.com': '링크드인', 'facebook.com': '페이스북',
-    't.co': '트위터', 'youtube.com': '유튜브',
-  };
-  if (known[host]) return known[host];
-  // 모바일·지역 서브도메인(m.search.naver.com, m.facebook.com, google.co.jp …)이
-  // 호스트 이름 그대로 찍혀 같은 유입이 여러 줄로 갈라지던 것을 묶는다.
-  if (/(^|\.)search\.naver\.com$/.test(host)) return '네이버 검색';
-  if (/(^|\.)blog\.naver\.com$/.test(host)) return '네이버 블로그';
-  if (/(^|\.)naver\.com$/.test(host)) return '네이버';
-  if (/(^|\.)search\.daum\.net$/.test(host)) return '다음 검색';
-  if (/(^|\.)daum\.net$/.test(host)) return '다음';
-  if (/^google\.[a-z.]+$/.test(host)) return '구글 검색';
-  if (/(^|\.)instagram\.com$/.test(host)) return '인스타그램';
-  if (/(^|\.)facebook\.com$/.test(host)) return '페이스북';
-  if (/(^|\.)bing\.com$/.test(host)) return '빙 검색';
-  return host;
 }
 
 /**
@@ -178,23 +129,27 @@ module.exports = async (req, res) => {
         ? `재방문 ${visits}번째${days !== null ? ` (마지막 ${days === 0 ? '오늘' : days + '일 전'})` : ''}`
         : '첫 방문';
 
-      const ref = referrerLabel(b.referrer, ua);
+      // 광고·꼬리표 링크로 왔으면 그게 referrer 보다 정확하다
+      const tag = adLabel(b.tag);
+      const ref = tag ? tag.label : referrerLabel(b.referrer, ua);
       // 메인으로 들어오는 게 기본값이라 매번 찍으면 노이즈다.
       // 프로젝트 상세로 바로 들어온 경우만 알린다(그때는 정보가 된다).
       const entry = pageName(b.path);
       const lines = [
         `${place} | ${device}`,
         entry === '메인' ? null : `${entry} 페이지로 진입`,
-        ref ? `유입: ${ref}` : null,
+        ref ? `유입: ${ref}` + (tag && tag.kw ? ` · "${tag.kw}"` : '') : null,
         who,
       ].filter(Boolean);
 
       // 집계는 알림과 독립적으로 남긴다(하루 요약용).
       // /notify 테스트 버튼은 실제 방문이 아니라 통계에서 뺀다.
-      if (!b.test) await stat.recordEnter({ sid: b.sid, page: b.path, ref, returning });
+      if (!b.test) await stat.recordEnter({ sid: b.sid, page: b.path, ref, returning, ad: tag && tag.paid, kw: tag && tag.paid ? tag.kw : null });
 
       out = await send({
-        title: returning ? '🔁 재방문자 접속' : '👤 새 방문자 접속',
+        title: tag && tag.paid
+          ? (returning ? '📣 광고로 재방문자 접속' : '📣 광고로 새 방문자 접속')
+          : (returning ? '🔁 재방문자 접속' : '👤 새 방문자 접속'),
         body: lines.join('\n'),
         tag: 'visit-' + (b.sid || Date.now()),
         url: b.path || '/',
@@ -207,7 +162,7 @@ module.exports = async (req, res) => {
 
       // 집계는 짧은 방문도 포함해야 하루 통계가 맞다.
       // 알림만 30초 기준으로 거른다.
-      await stat.recordLeave({ sid: b.sid, dwell, pages: b.pages, formAbandon: !!b.formAbandon });
+      await stat.recordLeave({ sid: b.sid, dwell, pages: b.pages, formAbandon: !!b.formAbandon, ad: !!b.ad });
 
       // 탭이 가려졌을 뿐인 중간 저장(final:false)은 통계만 갱신하고 알리지 않는다.
       // 폰에서 카톡 잠깐 보고 돌아오는 것까지 '방문 종료'로 알리던 문제.

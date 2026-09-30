@@ -229,6 +229,12 @@
       var tr = topN(d.refs, 4);
       if (tr.length) out += '<span class="k">유입</span>'
         + tr.map(function (x) { return esc(x[0]) + ' ' + x[1]; }).join(' · ');
+      var ad = +c.adVisits || 0, adSub = +c.adSubmits || 0;
+      if (ad || adSub) {
+        var kw = topN(d.keywords, 3);
+        out += '<br><span class="k">광고</span>방문 ' + ad + ' · 컨택트 ' + (+c.adContactViews || 0) + ' · 문의 ' + adSub
+          + (kw.length ? '<br><span class="k">키워드</span>' + kw.map(function (x) { return esc(x[0]) + ' ' + x[1]; }).join(' · ') : '');
+      }
       out += '</div>';
 
       out += '<div class="stat-contact">📮 컨택트 방문 <b>' + (+c.contactViews || 0)

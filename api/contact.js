@@ -8,6 +8,24 @@
 
 const { sendMail } = require('./_mail.js');
 const stat = require('./_stat.js');
+const { referrerLabel, adLabel } = require('./_src.js');
+
+/** 문의자가 어디서 왔는지 (js/track.js 가 기억해 둔 fw_src). 모르면 null. */
+function sourceOf(src, ua) {
+  if (!src || typeof src !== 'object') return null;
+  const tag = adLabel(src.tag);
+  const label = tag ? tag.label : (typeof src.ref === 'string' && src.ref ? referrerLabel(src.ref, ua) : null);
+  if (!label) return null;
+  const t = Number(src.t);
+  const when = t ? new Date(t + 9 * 3600 * 1000).toISOString().slice(5, 10).split('-').map(Number).join('/') : null;
+  return {
+    paid: !!(tag && tag.paid),
+    text: label
+      + (tag && tag.kw ? ` · 키워드 "${tag.kw}"` : '')
+      + (tag && tag.camp ? ` · 캠페인 "${tag.camp}"` : '')
+      + (when ? ` (${when} 유입)` : ''),
+  };
+}
 
 const MAX_LEN = 4000;
 
@@ -25,7 +43,7 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: '요청 형식이 올바르지 않습니다.' });
   }
 
-  const { brand, email, budget, message, _hp } = payload;
+  const { brand, email, budget, message, _hp, src } = payload;
 
   // 봇이 함정 필드를 채웠으면 조용히 성공 처리 (봇에게 실패를 알려주지 않는다)
   if (_hp) return res.status(200).json({ ok: true });
@@ -54,6 +72,8 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: '서버 메일 설정이 없습니다.' });
   }
 
+  const from = sourceOf(src, req.headers['user-agent']);
+
   const body = [
     'FOWARP 웹사이트 문의',
     '',
@@ -66,6 +86,7 @@ module.exports = async (req, res) => {
     message.trim(),
     '',
     '─────────────────────',
+    `유입 경로 : ${from ? from.text : '모름 (직접 입력·북마크)'}`,
     `수신 경로 : ${req.headers['referer'] || 'fowarp.com/contact'}`,
   ].join('\n');
 
@@ -73,12 +94,12 @@ module.exports = async (req, res) => {
     await sendMail({
       user,
       pass,
-      subject: `[문의] ${brand.trim()}`,
+      subject: `[문의${from && from.paid ? '·광고' : ''}] ${brand.trim()}`,
       body,
       replyTo: email.trim(),
     });
     // 하루 요약용 제출 카운트. 실패해도 메일은 이미 갔으니 응답에 영향 주지 않는다.
-    try { await stat.recordSubmit(); } catch {}
+    try { await stat.recordSubmit({ ad: from && from.paid }); } catch {}
     return res.status(200).json({ ok: true });
   } catch (e) {
     console.error('메일 발송 실패:', e && e.message);

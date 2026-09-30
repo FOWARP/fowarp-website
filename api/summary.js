@@ -66,6 +66,8 @@ module.exports = async (req, res) => {
     const contactViews = Number(c.contactViews) || 0;
     const formAbandon = Number(c.formAbandon) || 0;
     const submits = Number(c.submits) || 0;
+    const adVisits = Number(c.adVisits) || 0;
+    const adSubmits = Number(c.adSubmits) || 0;
 
     // 방문이 하나도 없는 날은 굳이 알리지 않는다
     if (!visits && !submits) {
@@ -85,6 +87,7 @@ module.exports = async (req, res) => {
     const body = [
       `방문 ${visits} · 방문자 ${d.uniques || 0}명` + (avg ? ` · 평균 ${human(avg)}` : ''),
       `📮 컨택트 ${contactViews} · 이탈 ${formAbandon} · 제출 ${submits}`,
+      adVisits || adSubmits ? `📣 광고 방문 ${adVisits} · 컨택트 ${Number(c.adContactViews) || 0} · 문의 ${adSubmits}` : null,
       searchLine,
     ].filter(Boolean).join('\n');
 

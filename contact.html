@@ -1337,7 +1337,9 @@
         btn.disabled = true;
         btn.textContent = 'Sending…';
         errEl.textContent = '';
-        var payload = { brand:data.brand, email:data.email, budget:data.budget, message:data.message, _hp:hp.value };
+        var src = null;
+        try { src = JSON.parse(localStorage.getItem('fw_src') || 'null'); } catch (e) {}
+        var payload = { brand:data.brand, email:data.email, budget:data.budget, message:data.message, _hp:hp.value, src:src };
 
         fetch('/api/contact', {
           method: 'POST',

@@ -47,9 +47,45 @@
   var s = read(localStorage, SS);
   var isNewSession = !s || (now - (s.last || s.start)) > COOLDOWN;
 
+  // ── 광고·꼬리표 링크 ───────────────────────────────
+  // 광고 클릭도 referrer 로는 그냥 '네이버 검색'이라 일반 검색과 섞인다.
+  // 광고 링크에 붙는 꼬리표를 읽는다: 네이버 파워링크 자동 꼬리표(n_*),
+  // 구글 광고(gclid), 직접 단 utm_*. utm_medium 이 광고류가 아니면
+  // 광고가 아닌 꼬리표 링크(명함 QR·프로필 링크 등)로 본다.
+  function tagFromUrl() {
+    var q;
+    try { q = new URLSearchParams(location.search); } catch (e) { return null; }
+    var g = function (k) { return (q.get(k) || '').slice(0, 60); };
+    var src = g('utm_source').toLowerCase();
+    var paid = /^(cpc|ppc|paid|paid_?social|ads?|display|banner)$/i.test(g('utm_medium'));
+    var kw = g('utm_term') || g('n_keyword') || g('n_query');
+    var camp = g('utm_campaign');
+    if (q.has('n_media') || q.has('n_keyword') || q.has('n_query') || q.has('n_ad')) return { ad: 'naver', kw: kw, camp: camp };
+    if (q.has('gclid') || q.has('gad_source')) return { ad: 'google', kw: kw, camp: camp };
+    if (src && paid) return { ad: src, kw: kw, camp: camp };
+    if (src) return { tag: src, camp: camp };
+    return null;
+  }
+  var tag = tagFromUrl();
+
+  // 문의 메일에 실어 보낼 '어디서 왔나'. 광고로 왔던 사람이 며칠 뒤 북마크로
+  // 다시 와서 문의해도 광고 덕으로 잡히게 30일 동안 기억한다.
+  // 직접 입력으로 온 방문은 기록을 덮지 않는다.
+  var SRC = 'fw_src';
+  var SRC_TTL = 30 * 24 * 3600 * 1000;
+  if (isNewSession) {
+    var prevSrc = read(localStorage, SRC);
+    if (prevSrc && now - prevSrc.t > SRC_TTL) prevSrc = null;
+    var extRef = '';
+    try { if (document.referrer && new URL(document.referrer).host !== location.host) extRef = document.referrer; } catch (e) {}
+    if (tag) write(localStorage, SRC, { tag: tag, t: now });
+    else if (extRef && !(prevSrc && prevSrc.tag && prevSrc.tag.ad)) write(localStorage, SRC, { ref: extRef.slice(0, 200), t: now });
+  }
+
   if (isNewSession) {
     v.visits = (v.visits || 0) + 1;
     s = { sid: String(now) + Math.random().toString(36).slice(2, 6), start: now, pages: [] };
+    if (tag && tag.ad) s.ad = 1;
   }
 
   if (s.pages[s.pages.length - 1] !== path) s.pages.push(path);
@@ -83,6 +119,7 @@
       phase: 'enter',
       path: path,
       referrer: document.referrer || '',
+      tag: tag,
       visits: v.visits,
       lastVisit: prevLast,
     });
@@ -155,7 +192,7 @@
     var fin = isFinal && !navigating;
     if (fin) finalSent = true;
     post({ phase: 'leave', path: path, dwell: dwell, pages: cur.pages,
-           formAbandon: formAbandoned(), final: fin }, true);
+           formAbandon: formAbandoned(), ad: !!cur.ad, final: fin }, true);
   }
 
   // pagehide 가 iOS 사파리에서 가장 확실하다(unload 는 안 불릴 때가 있다)
