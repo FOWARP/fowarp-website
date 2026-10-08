@@ -1,4 +1,5 @@
-// 하루 요약 — 매일 밤 11시(KST) Vercel Cron 이 호출한다.
+// 하루 요약 — 매일 자정 직후(00시대, KST) Vercel Cron 이 호출해 '어제'를 보낸다.
+// 예전엔 밤 11시에 오늘치를 보내서 23~24시 방문이 어느 요약에도 안 들어갔다.
 //
 // 개별 방문 알림이 그날의 조각이라면 이건 전체 그림이다.
 // 컨택트 지표(문의 페이지 방문 / 폼 쓰다 이탈 / 실제 제출)를 함께 실어
@@ -52,7 +53,7 @@ module.exports = async (req, res) => {
       return res.end(JSON.stringify({ skipped: 'no-store' }));
     }
 
-    const day = todayKST();
+    const day = todayKST(-1); // 어제
     const d = await readDay(day);
     const c = (d && d.count) || {};
 
@@ -92,7 +93,7 @@ module.exports = async (req, res) => {
     ].filter(Boolean).join('\n');
 
     await send({
-      title: submits ? `🎉 오늘 문의 ${submits}건 · 하루 요약` : '📊 하루 요약',
+      title: submits ? `🎉 어제 문의 ${submits}건 · 하루 요약` : '📊 어제 하루 요약',
       body,
       tag: 'summary-' + day,
       url: '/notify',   // 탭하면 상세 화면으로
