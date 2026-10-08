@@ -144,7 +144,7 @@ module.exports = async (req, res) => {
 
       // 집계는 알림과 독립적으로 남긴다(하루 요약용).
       // /notify 테스트 버튼은 실제 방문이 아니라 통계에서 뺀다.
-      if (!b.test) await stat.recordEnter({ sid: b.sid, page: b.path, ref, returning, ad: tag && tag.paid, kw: tag && tag.paid ? tag.kw : null });
+      if (!b.test) await stat.recordEnter({ sid: b.sid, vid: b.vid, page: b.path, ref, returning, ad: tag && tag.paid, kw: tag && tag.paid ? tag.kw : null });
 
       out = await send({
         title: tag && tag.paid

@@ -49,7 +49,8 @@ async function pipeline(cmds) {
 
 const K = {
   count: (d) => `st:${d}:c`,      // 해시 — 방문/체류 등 단순 카운터
-  sids: (d) => `st:${d}:s`,       // 셋   — 고유 방문자(세션 id)
+  sids: (d) => `st:${d}:s`,       // 셋   — 세션 id (예전 '방문자' 집계, 읽기만)
+  vids: (d) => `st:${d}:v`,       // 셋   — 고유 방문자(브라우저 id)
   pages: (d) => `st:${d}:p`,      // 해시 — 페이지별 조회수
   refs: (d) => `st:${d}:r`,       // 해시 — 유입 경로별
   kw: (d) => `st:${d}:k`,         // 해시 — 광고 키워드별 방문
@@ -58,7 +59,7 @@ const K = {
 };
 
 /** 방문 1건 기록 (enter) */
-function recordEnter({ sid, page, ref, returning, ad, kw }) {
+function recordEnter({ sid, vid, page, ref, returning, ad, kw }) {
   const d = todayKST();
   const c = [
     ['HINCRBY', K.count(d), 'visits', 1],
@@ -66,6 +67,9 @@ function recordEnter({ sid, page, ref, returning, ad, kw }) {
     ['EXPIRE', K.count(d), TTL],
   ];
   if (sid) c.push(['SADD', K.sids(d), sid], ['EXPIRE', K.sids(d), TTL]);
+  // 방문자는 브라우저 id 로 센다. 예전 track.js(캐시)가 vid 없이 보내면 세션 id 로 대신한다.
+  const who = (typeof vid === 'string' && vid.slice(0, 40)) || sid;
+  if (who) c.push(['SADD', K.vids(d), who], ['EXPIRE', K.vids(d), TTL]);
   if (page) c.push(['HINCRBY', K.pages(d), page, 1], ['EXPIRE', K.pages(d), TTL]);
   if (ref) c.push(['HINCRBY', K.refs(d), ref, 1], ['EXPIRE', K.refs(d), TTL]);
   if (ad) c.push(['HINCRBY', K.count(d), 'adVisits', 1]);
@@ -125,6 +129,7 @@ async function readDay(d) {
     ['HGETALL', K.cfrom(d)],
     ['HGETALL', K.sess(d)],
     ['HGETALL', K.kw(d)],
+    ['SCARD', K.vids(d)],
   ]);
   if (!res) return null;
   const val = (i) => (res[i] && res[i].result) || null;
@@ -167,7 +172,8 @@ async function readDay(d) {
 
   return {
     count,
-    uniques: Number(val(1)) || 0,
+    // 브라우저 id 집계가 생기기 전 날짜는 세션 수로 대신한다(그날은 방문 수와 같다)
+    uniques: Number(val(7)) || Number(val(1)) || 0,
     pages,
     refs: toObj(val(3)),
     contactFrom,

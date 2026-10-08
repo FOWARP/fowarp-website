@@ -39,6 +39,9 @@
 
   // ── 방문자 기록(영속) ──────────────────────────────
   var v = read(localStorage, LS) || { visits: 0, last: null };
+  // 이 브라우저 고유 id. 하루 '방문자 수'를 세는 데 쓴다. 세션 id 는 방문마다
+  // 새로 생겨서 그걸로 세면 방문자 수가 방문 수와 늘 같았다.
+  if (!v.vid) v.vid = String(now) + Math.random().toString(36).slice(2, 8);
 
   // ── 세션(브라우저 단위) ─────────────────────────────
   // 예전에는 sessionStorage(탭 단위)라서 같은 사람이 새 탭을 열 때마다 새 방문으로
@@ -120,6 +123,7 @@
       path: path,
       referrer: document.referrer || '',
       tag: tag,
+      vid: v.vid,
       visits: v.visits,
       lastVisit: prevLast,
     });
@@ -184,15 +188,22 @@
   var finalSent = false;
   function leave(isFinal) {
     if (finalSent) return;
-    var cur = read(localStorage, SS) || s;
-    if (cur.sid !== s.sid) cur = s; // 다른 탭이 새 세션을 열었으면 이 탭 것만
+    var stored = read(localStorage, SS);
+    var mine = stored && stored.sid === s.sid;
+    var cur = mine ? stored : s; // 다른 탭이 새 세션을 열었으면 이 탭 것만
     var dwell = Math.round((Date.now() - cur.start) / 1000);
+    // 폼 이탈은 세션에 남겨 둔다. 서버는 세션마다 마지막 값만 쓰는데, 폼을 쓰다
+    // 메뉴로 다른 페이지에 가면 그 페이지의 leave(이탈 아님)가 덮어써서 지워졌다.
+    // 같은 방문 안에서 결국 제출했으면 이탈이 아니다.
+    if (formAbandoned()) cur.fa = 1;
+    if (document.querySelector('.contact.is-done')) cur.done = 1;
+    if (mine) write(localStorage, SS, cur);
     // 예전에는 여기서 30초 미만을 잘라 트래픽을 아꼈지만, 그러면 하루 요약의
     // 방문 수·컨택트 지표에서 짧은 방문이 통째로 빠진다. 서버가 알림만 거른다.
     var fin = isFinal && !navigating;
     if (fin) finalSent = true;
     post({ phase: 'leave', path: path, dwell: dwell, pages: cur.pages,
-           formAbandon: formAbandoned(), ad: !!cur.ad, final: fin }, true);
+           formAbandon: !!cur.fa && !cur.done, ad: !!cur.ad, final: fin }, true);
   }
 
   // pagehide 가 iOS 사파리에서 가장 확실하다(unload 는 안 불릴 때가 있다)
