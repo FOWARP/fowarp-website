@@ -57,7 +57,11 @@ async function lookupOrg(ip) {
     if (!r.ok) return null;
     const j = await r.json();
     if (j.status !== 'success') return null;
-    if (j.hosting) return { org: j.isp || j.org, hosting: true };
+    // 아이폰 'iCloud 비공개 릴레이'는 클라우드플레어·아카마이·Fastly 서버 IP 로
+    // 나간다. 2026-10-08 확인: 한국 릴레이 대역 509개 중 89개가 hosting 으로
+    // 판정돼 실제 방문자가 알림·통계에서 통째로 빠졌다. 이 셋은 사람으로 본다.
+    const relay = /cloudflare|akamai|fastly/i.test(j.isp || '');
+    if (j.hosting && !relay) return { org: j.isp || j.org, hosting: true };
 
     // org 는 회사망이면 회사명("Samsung Electronics")이 잡혀 쓸모가 크지만,
     // 일반 가정회선이면 통신사 지사명을 로마자로 붙여 쓴 한 덩어리
