@@ -66,7 +66,7 @@ function b64Body(s) {
   return (b64(s).match(/.{1,76}/g) || []).join('\r\n');
 }
 
-function sendMail({ user, pass, subject, body, replyTo }) {
+function sendMail({ user, pass, subject, body, replyTo, extra }) {
   return new Promise((resolve, reject) => {
     const socket = tls.connect(
       { host: SMTP_HOST, port: SMTP_PORT, servername: SMTP_HOST },
@@ -107,6 +107,8 @@ function sendMail({ user, pass, subject, body, replyTo }) {
           'MIME-Version: 1.0',
           'Content-Type: text/plain; charset=UTF-8',
           'Content-Transfer-Encoding: base64',
+          // 추가 헤더 { 이름: 값 }. 값은 base64 로 감싸 한 줄로 넣는다 (답장 인용문에는 헤더가 따라가지 않는다)
+          ...Object.entries(extra || {}).filter(([k, v]) => /^X-[A-Za-z-]+$/.test(k) && v).map(([k, v]) => `${k}: ${b64(String(v).slice(0, 400))}`),
         ].filter(Boolean).join('\r\n');
 
         socket.write(headers + '\r\n\r\n' + b64Body(body) + '\r\n.\r\n');

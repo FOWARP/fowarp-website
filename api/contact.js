@@ -84,19 +84,18 @@ module.exports = async (req, res) => {
     '문의 내용',
     '─────────────────────',
     message.trim(),
-    '',
-    '─────────────────────',
-    `유입 경로 : ${from ? from.text : '모름 (직접 입력·북마크)'}`,
-    `수신 경로 : ${req.headers['referer'] || 'fowarp.com/contact'}`,
   ].join('\n');
+  // 유입 경로는 본문에 넣지 않는다: 답장하면 인용문으로 문의자에게 그대로 보이기 때문.
+  // 대신 메일 헤더에 실어 보내고, HQ 메일 화면이 읽어서 누리에게만 보여준다.
 
   try {
     await sendMail({
       user,
       pass,
-      subject: `[문의${from && from.paid ? '·광고' : ''}] ${brand.trim()}`,
+      subject: `[문의] ${brand.trim()}`, // 광고 유입 여부는 제목에 넣지 않는다 (답장 제목으로 상대에게 보임)
       body,
       replyTo: email.trim(),
+      extra: { 'X-Fowarp-Source': from ? from.text : '모름 (직접 입력·북마크)', 'X-Fowarp-Ad': from && from.paid ? '1' : '' },
     });
     // 하루 요약용 제출 카운트. 실패해도 메일은 이미 갔으니 응답에 영향 주지 않는다.
     try { await stat.recordSubmit({ ad: from && from.paid }); } catch {}
