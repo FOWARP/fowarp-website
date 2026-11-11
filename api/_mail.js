@@ -8,6 +8,9 @@
 // 필요한 환경변수 (Vercel → Settings → Environment Variables):
 //   HIWORKS_EMAIL    예: hi@fowarp.com
 //   HIWORKS_PASSWORD 하이웍스 메일 비밀번호
+//   HQ_RELAY_KEY     (있으면) 메일을 SMTP 대신 HQ(hq.fowarp.com/api/mail?relay=1)를 거쳐 보낸다.
+//                    11/9 하이웍스에 OTP·메일 전용 비밀번호를 켜면서 비밀번호를 HQ 한 곳에만 두기로 했다.
+//                    fowarp-hq 의 HQ_RELAY_KEY 와 같은 값이어야 한다.
 
 const tls = require('tls');
 
@@ -66,7 +69,26 @@ function b64Body(s) {
   return (b64(s).match(/.{1,76}/g) || []).join('\r\n');
 }
 
-function sendMail({ user, pass, subject, body, replyTo, extra }) {
+const RELAY_URL = 'https://hq.fowarp.com/api/mail?relay=1';
+
+async function sendViaHq({ subject, body, replyTo, extra }) {
+  const headers = {};
+  for (const [k, v] of Object.entries(extra || {})) if (/^X-[A-Za-z-]+$/.test(k) && v) headers[k] = b64(String(v).slice(0, 400));
+  const r = await fetch(RELAY_URL, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-hq-relay': process.env.HQ_RELAY_KEY },
+    body: JSON.stringify({ subject, text: body, replyTo, headers }),
+    signal: AbortSignal.timeout(TIMEOUT_MS * 2),
+  });
+  if (!r.ok) throw new Error(`HQ 경유 발송 실패 (${r.status}) ${(await r.text().catch(() => '')).slice(0, 200)}`);
+}
+
+function sendMail(opts) {
+  if (process.env.HQ_RELAY_KEY) return sendViaHq(opts);
+  return sendSmtp(opts);
+}
+
+function sendSmtp({ user, pass, subject, body, replyTo, extra }) {
   return new Promise((resolve, reject) => {
     const socket = tls.connect(
       { host: SMTP_HOST, port: SMTP_PORT, servername: SMTP_HOST },
