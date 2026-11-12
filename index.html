@@ -941,7 +941,7 @@
     .ab-media video {
       display: block; width: 100%; aspect-ratio: 16 / 9;
       object-fit: cover; background: #fff;
-      filter: brightness(1.03);   /* 영상의 흰색이 #fff 에 딱 붙도록 */
+      mix-blend-mode: darken;   /* 영상의 흰색이 패널 흰색보다 밝게 뜨지 않도록 배경과 비교해 어두운 쪽만 그린다 */
     }
     .ab-copy {
       padding: 10px 30px 10px calc(var(--vw) * 4.896 + 10px);   /* 본문 시작점과 동일 */
