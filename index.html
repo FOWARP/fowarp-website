@@ -613,6 +613,10 @@
     .gallery-item.is-visible .gallery-media {
       animation: revContent 0.75s cubic-bezier(0.16, 1, 0.3, 1) 1.1s forwards;
     }
+    /* 첫 화면(.is-intro)만 모션. 아래 행들은 처음부터 다 보이는 상태로 둔다 */
+    .gallery-item.is-visible:not(.is-intro)::before { animation: none; transform: scaleX(1); }
+    .gallery-item.is-visible:not(.is-intro) .gallery-label,
+    .gallery-item.is-visible:not(.is-intro) .gallery-media { animation: none; opacity: 1; }
 
     /* ─── PC (1920px 이상): 4열 ──────────────────
        3열 유지 시 QHD 에서 셀이 820px 까지 커져 썸네일이 과해진다.
@@ -1392,10 +1396,8 @@
       }
       check();
       isIntro = false;
-      // 모바일은 첫 화면 이후 요소를 곧바로 표시해 스크롤 중 등장 모션이 없다
-      if (window.innerWidth <= 767) {
-        items.forEach(function(el) { el.classList.add('is-visible'); });
-      }
+      // 첫 화면 이후 요소는 곧바로 표시해 스크롤 중 등장 모션이 없다 (PC·모바일 공통)
+      items.forEach(function(el) { el.classList.add('is-visible'); });
       window.addEventListener('scroll', check, { passive: true });
       window.addEventListener('resize', check);
       if (typeof lenis !== 'undefined' && lenis.on) lenis.on('scroll', check);
@@ -1498,8 +1500,13 @@
       src.src = src.dataset.src;
       src.removeAttribute('data-src');
       v.dataset.loaded = '1';
+      v.preload = 'auto';
       v.load();
     }
+    // 첫 화면이 다 뜬 뒤 나머지 영상도 전부 미리 받아, 스크롤해도 늦게 뜨는 게 없게 한다
+    function loadAll() { Array.prototype.forEach.call(vids, load); }
+    if (document.readyState === 'complete') setTimeout(loadAll, 0);
+    else window.addEventListener('load', loadAll);
 
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
