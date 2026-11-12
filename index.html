@@ -957,30 +957,25 @@
       color: #000;
     }
     .ab-copy-ko { font-family: 'Pretendard Variable', sans-serif; }
+    /* 닫기: 'Close' 글자 버튼. 헤더 메뉴와 같은 글자. 패널 안 오른쪽 위,
+       글자 오른쪽 끝이 패널 오른쪽 경계에서 10px (패딩 10 이 누르는 영역) */
     .about-close {
       position: fixed; z-index: 302;
-      top: calc(var(--vwFont) * 1.042);
-      left: calc(var(--vw) * 33.177);
-      width: 43px; height: 43px; margin-left: 10px;
+      top: calc(var(--vwFont) * 2.083 / 2);            /* 맨 위 칸(마키 높이)의 가운데 */
+      left: min(calc(var(--vw) * 33.177), 92vw);       /* 패널 오른쪽 끝 */
+      transform: translate(-100%, -50%);
+      padding: 8px 10px; margin: 0;
       border: 0; background: transparent; cursor: pointer;
+      font-family: 'Karlsbader Grotesk', 'Pretendard Variable', Arial, sans-serif;
+      font-size: calc(var(--vwFont) * 0.729); line-height: 1; color: #000;
       opacity: 0; pointer-events: none;
       transition: opacity .3s ease .12s;
     }
     body.about-open .about-close { opacity: 1; pointer-events: auto; }
-    .about-close span {
-      position: absolute; left: 10px; top: 21px;
-      width: 23px; height: 1.8px; background: #000;   /* X 20% 축소 (29 → 23) */
-    }
-    .about-close span:first-child { transform: rotate(45deg); }
-    .about-close span:last-child { transform: rotate(-45deg); }
     @media (max-width: 767px) {
       .about-panel { width: 88vw; max-width: none; }
-      /* 패널(88vw) 오른쪽 남는 공간(12vw)의 한가운데 */
-      .about-close {
-        left: calc(88vw + (12vw - 43px) / 2);
-        margin-left: 0;
-        top: 12px; width: 43px; height: 43px;
-      }
+      /* 패널 안 오른쪽 위. 글자 오른쪽 끝이 오른쪽 세로선(10px)에서 10px */
+      .about-close { left: calc(88vw - 10px); top: 13.5px; font-size: 11px; }
       /* 상단은 헤더 마키가 끝나는 지점(28px)에 맞추고,
          하단은 마지막 줄이 가려지지 않게 넉넉히 */
       .about-panel-inner { padding: 27px 0 calc(20px + env(safe-area-inset-bottom)); }
@@ -1003,14 +998,9 @@
     body.about-split .about-overlay { display: none; }
     body.about-split .about-panel { width: var(--about-w); max-width: none; }
     body.about-split .about-close {
-      /* X 의 보이는 오른쪽 끝이 패널 오른쪽 경계선에서 10px (번호와 왼쪽 세로선 사이 10 과 같게).
-         버튼 28, 선 16px 를 45도로 돌리면 보이는 폭 약 12.4 → 중심을 끝에서 16.2 에 */
-      left: calc(var(--about-x, var(--about-w)) - 30.2px); margin-left: 0;   /* --about-x: 패널이 움직이는 동안의 현재 폭(JS) */
+      left: var(--about-x, var(--about-w));   /* --about-x: 패널이 움직이는 동안의 현재 폭(JS) */
       opacity: 1; transition: none;   /* 따로 페이드하지 않고 패널과 함께 들어오고 나간다 */
-      top: calc((var(--vwFont) * 2.083 - 28px) / 2);
-      width: 28px; height: 28px;
     }
-    body.about-split .about-close span { left: 6px; top: 13.1px; width: 16px; height: 1.2px; background: #000; }   /* X 20% 축소 (20 → 16) */
     /* 푸터: 글자가 그대로라 한 줄에 안 들어가면 다음 줄로 넘긴다 */
     body.about-split .site-footer { flex-wrap: wrap; row-gap: 14px; column-gap: calc(var(--vw) * 2.083); }
     body.about-split .footer-intro, body.about-split .footer-info, body.about-split .footer-copy { flex: 0 1 auto; }
@@ -1332,7 +1322,7 @@
       <div class="ab-copy">Copyright © FOWARP. <span class="ab-copy-ko">모든 권리 보유.</span></div>
     </div>
   </aside>
-  <button class="about-close" id="aboutClose" type="button" aria-label="닫기"><span></span><span></span></button>
+  <button class="about-close" id="aboutClose" type="button" aria-label="닫기">Close</button>
 
 <script>
     function updateVW() {
