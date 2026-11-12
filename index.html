@@ -934,7 +934,7 @@
       line-height: 1.5;
       color: #000;
     }
-    .ab-body { padding: 10px 30px 30px 10px; }   /* 우 30 = 번호 왼쪽 여백(30)과 같게, 아래 30 = 블록 아래 여백 */
+    .ab-body { padding: 10px 10px 30px 10px; }   /* 우 10 = 번호와 왼쪽 세로선 사이(10)와 같게, 아래 30 = 블록 아래 여백 */
     .ab-body p { margin: 0; line-height: 1.5; color: #000; }
     .ab-body .ab-en { font-size: calc(var(--vwFont) * .833); }   /* 16 — 메인 본문(.gallery-sub)과 동일 */
     .ab-body .ab-ko { font-size: calc(var(--vwFont) * .833); margin-top: 0.75em; }  /* 16 */
@@ -951,7 +951,7 @@
       mix-blend-mode: darken;   /* 영상의 흰색이 패널 흰색보다 밝게 뜨지 않도록 배경과 비교해 어두운 쪽만 그린다 */
     }
     .ab-copy {
-      padding: 10px 30px 10px calc(var(--vw) * 4.896 + 10px);   /* 본문 시작점과 동일 */
+      padding: 10px 10px 10px calc(var(--vw) * 4.896 + 10px);   /* 본문 시작점과 동일 */
       font-size: calc(var(--vwFont) * .729);   /* 14 — 메인 푸터와 동일 */
       line-height: 1.5;
       color: #000;
@@ -1003,9 +1003,9 @@
     body.about-split .about-overlay { display: none; }
     body.about-split .about-panel { width: var(--about-w); max-width: none; }
     body.about-split .about-close {
-      /* X 의 보이는 오른쪽 끝이 패널 오른쪽에서 30px (번호 왼쪽 여백과 같게).
-         버튼 28, 선 16px 를 45도로 돌리면 보이는 폭 약 12.4 → 중심을 끝에서 36.2 에 */
-      left: calc(var(--about-w) - 50.2px); margin-left: 0;
+      /* X 의 보이는 오른쪽 끝이 패널 오른쪽 경계선에서 10px (번호와 왼쪽 세로선 사이 10 과 같게).
+         버튼 28, 선 16px 를 45도로 돌리면 보이는 폭 약 12.4 → 중심을 끝에서 16.2 에 */
+      left: calc(var(--about-w) - 30.2px); margin-left: 0;
       top: calc((var(--vwFont) * 2.083 - 28px) / 2);
       width: 28px; height: 28px;
     }
