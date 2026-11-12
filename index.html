@@ -1577,12 +1577,14 @@
       function targetW() { return Math.min(window.innerWidth, 2560) * .33177; }   // About 원래 폭 (Figma 637)
       function applySplit(w) {
         splitW = w;
-        // 보던 화면은 About 밑으로 15px 들어가서, 왼쪽 세로 그리드와 About 사이 간격이 20 → 5 가 된다
-        var pl = Math.max(0, w - 15);
-        // 폭은 스크롤바를 뺀 폭(clientWidth)으로 잡는다. innerWidth 는 스크롤바('항상 표시')까지 포함해
-        // 헤더가 스크롤바 밑으로 넘어가고 오른쪽 끝이 안 줄어든다
-        var iw = window.innerWidth, ew = document.documentElement.clientWidth - pl, on = w > 0.5, bs = document.body.style;
-        bs.marginLeft = on ? pl + 'px' : ''; bs.marginRight = on ? '0' : '';
+        // 메인 좌우 여백(20px)을 양쪽 똑같이 15px씩 줄인다(20 → 5).
+        // 왼쪽은 About 밑으로, 오른쪽은 화면 밖으로 15px 내보내고 잘라낸다.
+        // 폭은 스크롤바를 뺀 폭(clientWidth) 기준. innerWidth 는 스크롤바까지 포함해 오른쪽이 어긋난다
+        var T = 15;
+        var pl = Math.max(0, w - T), on = w > 0.5;
+        var iw = window.innerWidth, ew = document.documentElement.clientWidth - pl + (on ? T : 0), bs = document.body.style;
+        document.documentElement.style.overflowX = on ? 'clip' : '';
+        bs.marginLeft = on ? pl + 'px' : ''; bs.marginRight = on ? (-T) + 'px' : '';
         hdr.style.left = on ? pl + 'px' : ''; hdr.style.width = on ? ew + 'px' : ''; hdr.style.transform = on ? 'none' : '';
         // 여백·칸 폭(--vw)만 남은 폭에 맞추고, 글자(--vwFont)는 건드리지 않는다
         scoped.forEach(function (el) {
