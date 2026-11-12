@@ -1628,7 +1628,12 @@
       }
       function endSplit() {
         splitOn = false; applySplit(0); panel.style.transition = ''; panel.style.transform = '';
+        // 분할이 끝나는 순간 X 가 기본 자리로 돌아가며 흐려지는 잔상이 남지 않게, 페이드 없이 바로 숨긴다
+        closeBtn.style.transition = 'none';
         document.body.classList.remove('about-split'); document.body.style.removeProperty('--about-w');
+        document.body.style.removeProperty('--about-x');
+        void closeBtn.offsetWidth;
+        requestAnimationFrame(function () { closeBtn.style.transition = ''; });
       }
       function open() {
         document.body.classList.add('about-open');
