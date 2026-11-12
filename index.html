@@ -907,8 +907,8 @@
       width: 1px; background: #D9D9D9; pointer-events: none;
     }
     .about-panel-inner::before { left: 20px; }
-    /* 오른쪽 끝 띠(20px)에서는 가로 그리드를 가리고 세로 줄만 남긴다 */
-    .about-panel-inner::after  { right: 0; width: 20px; background: #fff; border-left: 1px solid #D9D9D9; }
+    /* 오른쪽 끝 띠(10px)에서는 가로 그리드를 가리고 세로 줄만 남긴다 */
+    .about-panel-inner::after  { right: 0; width: 10px; background: #fff; border-left: 1px solid #D9D9D9; }
 
     /* 헤더의 마키 아래 선은 마키 높이 '안쪽' 마지막 1px 에 그려진다 → 1px 올려 같은 줄에 맞춘다 */
     .about-panel-inner { padding: calc(var(--vwFont) * 2.083 - 1px) 0 40px; }
@@ -930,7 +930,7 @@
       line-height: 1.5;
       color: #000;
     }
-    .ab-body { padding: 10px 30px 30px 10px; }   /* 우 30 = 그리드 20 + 10, 아래 30 = 블록 아래 여백 */
+    .ab-body { padding: 10px 20px 30px 10px; }   /* 우 20 = 오른쪽 띠 10 + 10, 아래 30 = 블록 아래 여백 */
     .ab-body p { margin: 0; line-height: 1.5; color: #000; }
     .ab-body .ab-en { font-size: calc(var(--vwFont) * .833); }   /* 16 — 메인 본문(.gallery-sub)과 동일 */
     .ab-body .ab-ko { font-size: calc(var(--vwFont) * .833); margin-top: 0.75em; }  /* 16 */
@@ -947,7 +947,7 @@
       mix-blend-mode: darken;   /* 영상의 흰색이 패널 흰색보다 밝게 뜨지 않도록 배경과 비교해 어두운 쪽만 그린다 */
     }
     .ab-copy {
-      padding: 10px 30px 10px calc(var(--vw) * 4.896 + 10px);   /* 본문 시작점과 동일 */
+      padding: 10px 20px 10px calc(var(--vw) * 4.896 + 10px);   /* 본문 시작점과 동일 */
       font-size: calc(var(--vwFont) * .729);   /* 14 — 메인 푸터와 동일 */
       line-height: 1.5;
       color: #000;
@@ -999,7 +999,7 @@
     body.about-split .about-overlay { display: none; }
     body.about-split .about-panel { width: var(--about-w); max-width: none; }
     body.about-split .about-close {
-      left: calc(var(--about-w) - 58px); margin-left: 0;
+      left: calc(var(--about-w) - 48px); margin-left: 0;
       top: calc((var(--vwFont) * 2.083 - 28px) / 2);
       width: 28px; height: 28px;
     }
@@ -1577,9 +1577,11 @@
       function targetW() { return Math.min(window.innerWidth, 2560) * .33177; }   // About 원래 폭 (Figma 637)
       function applySplit(w) {
         splitW = w;
-        // 보던 화면은 About 밑으로 10px 들어가서, 왼쪽 세로 그리드와 About 사이 간격이 20 → 10 이 된다
-        var pl = Math.max(0, w - 10);
-        var iw = window.innerWidth, ew = iw - pl, on = w > 0.5, bs = document.body.style;
+        // 보던 화면은 About 밑으로 15px 들어가서, 왼쪽 세로 그리드와 About 사이 간격이 20 → 5 가 된다
+        var pl = Math.max(0, w - 15);
+        // 폭은 스크롤바를 뺀 폭(clientWidth)으로 잡는다. innerWidth 는 스크롤바('항상 표시')까지 포함해
+        // 헤더가 스크롤바 밑으로 넘어가고 오른쪽 끝이 안 줄어든다
+        var iw = window.innerWidth, ew = document.documentElement.clientWidth - pl, on = w > 0.5, bs = document.body.style;
         bs.marginLeft = on ? pl + 'px' : ''; bs.marginRight = on ? '0' : '';
         hdr.style.left = on ? pl + 'px' : ''; hdr.style.width = on ? ew + 'px' : ''; hdr.style.transform = on ? 'none' : '';
         // 여백·칸 폭(--vw)만 남은 폭에 맞추고, 글자(--vwFont)는 건드리지 않는다
