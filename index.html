@@ -1577,10 +1577,10 @@
       function targetW() { return Math.min(window.innerWidth, 2560) * .33177; }   // About 원래 폭 (Figma 637)
       function applySplit(w) {
         splitW = w;
-        // 메인 좌우 여백(20px)을 양쪽 똑같이 15px씩 줄인다(20 → 5).
-        // 왼쪽은 About 밑으로, 오른쪽은 화면 밖으로 15px 내보내고 잘라낸다.
+        // 메인 좌우 여백(20px)을 양쪽 똑같이 10px씩 줄인다(20 → 10). 더 좁히지 않는다.
+        // 왼쪽은 About 밑으로, 오른쪽은 화면 밖으로 10px 내보내고 잘라낸다.
         // 폭은 스크롤바를 뺀 폭(clientWidth) 기준. innerWidth 는 스크롤바까지 포함해 오른쪽이 어긋난다
-        var T = 15;
+        var T = 10;
         var pl = Math.max(0, w - T), on = w > 0.5;
         var iw = window.innerWidth, ew = document.documentElement.clientWidth - pl + (on ? T : 0), bs = document.body.style;
         document.documentElement.style.overflowX = on ? 'clip' : '';
