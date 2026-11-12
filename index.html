@@ -225,7 +225,7 @@
 
     .header-nav {
       display: flex;
-      gap: calc(var(--vwFont) * 4.167); /* 80px */
+      gap: calc(var(--vwFont) * 4.167 * var(--nav-k, 1)); /* 80px */
       align-items: center;
     }
 
@@ -1571,7 +1571,8 @@
 
       // ── 2분할: About 과 보던 화면이 나란히 선다 ──
       var hdr = document.querySelector('.header');
-      var scoped = [hdr, document.querySelector('.page-body'), document.querySelector('.grid-rules')].filter(Boolean);
+      var scoped = [hdr, document.querySelector('.page-body'), document.querySelector('.contact'), document.querySelector('.grid-rules')].filter(Boolean);
+      var has4 = !!document.querySelector('.project-gallery');   // 4열(1920 이상) 갤러리가 있는 페이지만 3열로 되돌린다
       var splitOn = false, splitW = 0, splitRaf = 0;
       function canSplit() { var iw = window.innerWidth; return iw >= 1200 && iw <= 2560; }
       function targetW() { return Math.min(window.innerWidth, 2560) * .33177; }   // About 원래 폭 (Figma 637)
@@ -1591,7 +1592,9 @@
           if (on) el.style.setProperty('--vw', (Math.min(ew, 2560) / 100) + 'px');
           else el.style.removeProperty('--vw');
         });
-        document.body.classList.toggle('about-split3', on && iw >= 1920 && ew < 1920);
+        // 헤더 메뉴 간격도 남은 폭 비율만큼 좁힌다 (글자 크기는 그대로)
+        if (on) hdr.style.setProperty('--nav-k', (ew / document.documentElement.clientWidth).toFixed(4)); else hdr.style.removeProperty('--nav-k');
+        document.body.classList.toggle('about-split3', has4 && on && iw >= 1920 && ew < 1920);
         syncRules();
       }
       function settle() { if (typeof lenis !== 'undefined' && lenis.resize) lenis.resize(); window.dispatchEvent(new Event('scroll')); }
