@@ -907,7 +907,8 @@
       width: 1px; background: #D9D9D9; pointer-events: none;
     }
     .about-panel-inner::before { left: 20px; }
-    .about-panel-inner::after  { right: 20px; }
+    /* 오른쪽 끝 띠(20px)에서는 가로 그리드를 가리고 세로 줄만 남긴다 */
+    .about-panel-inner::after  { right: 0; width: 20px; background: #fff; border-left: 1px solid #D9D9D9; }
 
     /* 헤더의 마키 아래 선은 마키 높이 '안쪽' 마지막 1px 에 그려진다 → 1px 올려 같은 줄에 맞춘다 */
     .about-panel-inner { padding: calc(var(--vwFont) * 2.083 - 1px) 0 40px; }
@@ -983,7 +984,7 @@
       .ab-no { padding: calc(10px + 0.075em) 0 10px 20px; }
       .ab-body { padding: 10px 20px 30px 10px; }
       .about-panel-inner::before { left: 10px; }
-      .about-panel-inner::after { right: 10px; }
+      .about-panel-inner::after { right: 0; width: 10px; }
       .ab-no { font-size: 12px; }
       .ab-body .ab-en { font-size: 13px; }
       .ab-body .ab-ko { font-size: 14px; }
@@ -996,6 +997,11 @@
        칸 폭만 바뀐다(1920 이상 창은 4열 → 3열). 폭 값은 JS 가 넣는다.
        그보다 좁은 창과 모바일은 기존처럼 덮는 패널을 쓴다. */
     body.about-split .about-overlay { display: none; }
+    /* 두 화면 사이 띠: 보던 화면 왼쪽 여백(20px)을 지나는 가로 그리드를 가리고 세로 줄만 남긴다 */
+    body.about-split::after {
+      content: ''; position: fixed; top: 0; bottom: 0; left: var(--about-w); width: 20px;
+      background: #fff; z-index: 299; pointer-events: none;
+    }
     body.about-split .about-panel { width: var(--about-w); max-width: none; }
     body.about-split .about-close {
       left: calc(var(--about-w) - 58px); margin-left: 0;
