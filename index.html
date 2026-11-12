@@ -997,11 +997,6 @@
        칸 폭만 바뀐다(1920 이상 창은 4열 → 3열). 폭 값은 JS 가 넣는다.
        그보다 좁은 창과 모바일은 기존처럼 덮는 패널을 쓴다. */
     body.about-split .about-overlay { display: none; }
-    /* 두 화면 사이 띠: 보던 화면 왼쪽 여백(20px)을 지나는 가로 그리드를 가리고 세로 줄만 남긴다 */
-    body.about-split::after {
-      content: ''; position: fixed; top: 0; bottom: 0; left: var(--about-w); width: 20px;
-      background: #fff; z-index: 299; pointer-events: none;
-    }
     body.about-split .about-panel { width: var(--about-w); max-width: none; }
     body.about-split .about-close {
       left: calc(var(--about-w) - 58px); margin-left: 0;
@@ -1582,9 +1577,11 @@
       function targetW() { return Math.min(window.innerWidth, 2560) * .33177; }   // About 원래 폭 (Figma 637)
       function applySplit(w) {
         splitW = w;
-        var iw = window.innerWidth, ew = iw - w, on = w > 0.5, bs = document.body.style;
-        bs.marginLeft = on ? w + 'px' : ''; bs.marginRight = on ? '0' : '';
-        hdr.style.left = on ? w + 'px' : ''; hdr.style.width = on ? ew + 'px' : ''; hdr.style.transform = on ? 'none' : '';
+        // 보던 화면은 About 밑으로 10px 들어가서, 왼쪽 세로 그리드와 About 사이 간격이 20 → 10 이 된다
+        var pl = Math.max(0, w - 10);
+        var iw = window.innerWidth, ew = iw - pl, on = w > 0.5, bs = document.body.style;
+        bs.marginLeft = on ? pl + 'px' : ''; bs.marginRight = on ? '0' : '';
+        hdr.style.left = on ? pl + 'px' : ''; hdr.style.width = on ? ew + 'px' : ''; hdr.style.transform = on ? 'none' : '';
         // 여백·칸 폭(--vw)만 남은 폭에 맞추고, 글자(--vwFont)는 건드리지 않는다
         scoped.forEach(function (el) {
           if (on) el.style.setProperty('--vw', (Math.min(ew, 2560) / 100) + 'px');
