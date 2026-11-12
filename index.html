@@ -986,6 +986,31 @@
       .ab-copy { padding: 10px 20px 10px 56px; font-size: 13px; }
     }
 
+    /* ─── About 2분할 (PC) ───────────────────────────────────────
+       창 폭이 1200~2560 이면 About 이 화면을 덮지 않고, 보던 화면을 패널 폭만큼
+       오른쪽으로 밀어 둘로 나눈다. 오른쪽 화면은 창을 그만큼 줄였을 때와 똑같이
+       다시 짜인다(글자·여백 축소, 4열이면 3열). 밀어내는 값은 JS 가 매 프레임 넣는다.
+       그보다 좁은 창과 모바일은 기존처럼 덮는 패널을 쓴다. */
+    body.about-split .about-overlay { display: none; }
+    body.about-split .about-close {
+      left: calc(var(--vw) * 33.177 - 58px); margin-left: 0;
+      top: calc((var(--vwFont) * 2.083 - 28px) / 2);
+      width: 28px; height: 28px;
+    }
+    body.about-split .about-close span { left: 4px; top: 13px; width: 20px; height: 1.5px; background: #fff; }
+    /* 1920 이상 창에서 남은 폭이 1920 아래로 내려가면 4열 → 3열 (위 1920 미디어쿼리 되돌림) */
+    body.about-split3 .gallery-title { font-weight: 600; }
+    body.about-split3 .project-gallery { grid-template-columns: repeat(3, 1fr); }
+    body.about-split3 .header-rules i:nth-child(2), body.about-split3 .grid-rules i:nth-child(2) { left: 33.3333%; }
+    body.about-split3 .header-rules i:nth-child(3), body.about-split3 .grid-rules i:nth-child(3) { left: 66.6667%; }
+    body.about-split3 .header-rules i:nth-child(4), body.about-split3 .grid-rules i:nth-child(4) { left: 100%; margin-left: -1px; }
+    body.about-split3 .header-rules i:nth-child(5), body.about-split3 .grid-rules i:nth-child(5) { display: none; }
+    body.about-split3 .gallery-item:nth-child(4n+1)::before { content: none; }
+    body.about-split3 .gallery-item:nth-child(3n+1)::before {
+      content: ''; position: absolute; top: 0; left: -30px;
+      width: calc(300% + 100px); height: 1px; background: #D9D9D9; z-index: 1;
+    }
+
     /* ─── Get in Touch 전환 베일 ──────────────────────────
        흰 페이지 위로 검정이 위에서 아래로 덮으며 컨택트로 넘어간다.
        경계선이 보이면 안 되므로 아래쪽을 긴 그라데이션으로 흘리고
@@ -1533,19 +1558,73 @@
         }, 2000);
       }
 
+      // ── 2분할: 보던 화면을 패널 폭만큼 밀고, 그 폭의 창처럼 다시 짠다 ──
+      var hdr = document.querySelector('.header');
+      var scoped = [hdr, document.querySelector('.page-body'), document.querySelector('.grid-rules')].filter(Boolean);
+      var splitOn = false, splitW = 0, splitRaf = 0;
+      function canSplit() { var iw = window.innerWidth; return iw >= 1200 && iw <= 2560; }
+      function applySplit(w) {
+        splitW = w;
+        var iw = window.innerWidth, ew = iw - w, on = w > 0.5, bs = document.body.style;
+        bs.marginLeft = on ? w + 'px' : ''; bs.marginRight = on ? '0' : '';
+        hdr.style.left = on ? w + 'px' : ''; hdr.style.width = on ? ew + 'px' : ''; hdr.style.transform = on ? 'none' : '';
+        scoped.forEach(function (el) {
+          if (on) {
+            el.style.setProperty('--vw', (Math.min(ew, 2560) / 100) + 'px');
+            el.style.setProperty('--vwFont', (Math.min(ew, 1920) / 100) + 'px');
+          } else { el.style.removeProperty('--vw'); el.style.removeProperty('--vwFont'); }
+        });
+        document.body.classList.toggle('about-split3', on && iw >= 1920 && ew < 1920);
+        syncRules();
+      }
+      function tweenSplit(to, done) {
+        cancelAnimationFrame(splitRaf);
+        var from = splitW, pw = panel.getBoundingClientRect().width, t0 = null;
+        panel.style.transition = 'none';
+        function fr(t) {
+          if (t0 === null) t0 = t;
+          var k = Math.min((t - t0) / 460, 1);
+          var e = k < .5 ? 16 * Math.pow(k, 5) : 1 - Math.pow(-2 * k + 2, 5) / 2;
+          var w = from + (to - from) * e;
+          panel.style.transform = 'translateX(' + (w - pw).toFixed(1) + 'px)';
+          applySplit(w);
+          if (k < 1) splitRaf = requestAnimationFrame(fr);
+          else { if (typeof lenis !== 'undefined' && lenis.resize) lenis.resize(); window.dispatchEvent(new Event('scroll')); if (done) done(); }
+        }
+        splitRaf = requestAnimationFrame(fr);
+      }
+      function endSplit() { splitOn = false; applySplit(0); panel.style.transition = ''; panel.style.transform = ''; document.body.classList.remove('about-split'); }
+
       function open() {
         document.body.classList.add('about-open');
         panel.setAttribute('aria-hidden', 'false');
         if (typeof syncPlay === 'function') syncPlay();
+        if (canSplit()) {
+          splitOn = true;
+          document.body.classList.add('about-split');
+          tweenSplit(panel.getBoundingClientRect().width);
+          return;
+        }
         if (typeof lenis !== 'undefined') lenis.stop();
       }
       function close() {
         document.body.classList.remove('about-open');
         panel.setAttribute('aria-hidden', 'true');
+        if (splitOn) { tweenSplit(0, endSplit); return; }
         if (typeof lenis !== 'undefined') lenis.start();
       }
+      window.addEventListener('resize', function () {
+        if (!splitOn) return;
+        cancelAnimationFrame(splitRaf);
+        if (!canSplit()) { endSplit(); if (typeof lenis !== 'undefined') lenis.stop(); return; }   // 좁아지면 덮는 패널로
+        panel.style.transform = 'translateX(0)';
+        applySplit(panel.getBoundingClientRect().width);
+      });
       [].forEach.call(document.querySelectorAll('[data-about]'), function (el) {
-        el.addEventListener('click', function (e) { e.preventDefault(); open(); });
+        el.addEventListener('click', function (e) {
+          e.preventDefault();
+          if (document.body.classList.contains('about-open')) close(); else open();
+        });
       });
       closeBtn.addEventListener('click', close);
       overlay.addEventListener('click', close);
