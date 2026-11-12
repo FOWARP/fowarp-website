@@ -1583,8 +1583,8 @@
       var scoped = [hdr, document.querySelector('.page-body'), document.querySelector('.grid-rules')].filter(Boolean);
       var grip = document.createElement('div'); grip.className = 'about-resize'; document.body.appendChild(grip);
       var MIN_PANEL = 400;
-      // 글자 크기를 그대로 두므로, 헤더 메뉴와 로고가 겹치지 않는 폭까지만 줄인다
-      function minMain() { return Math.min(window.innerWidth, 1920) * .68; }
+      // 본문이 창의 절반 아래로는 줄지 않는다
+      function minMain() { return Math.min(window.innerWidth, 1920) * .5; }
       var splitOn = false, splitW = 0, splitRaf = 0, userW = 0;
       try { userW = parseFloat(localStorage.getItem('aboutW')) || 0; } catch (e) {}
       function canSplit() { var iw = window.innerWidth; return iw >= 1200 && iw <= 2560; }
@@ -1601,7 +1601,19 @@
           else el.style.removeProperty('--vw');
         });
         document.body.classList.toggle('about-split3', on && iw >= 1920 && ew < 1920);
+        fitNav(on);
         syncRules();
+      }
+      // 글자 크기가 그대로라 좁아지면 헤더 메뉴가 로고에 닿는다. 닿는 항목은 뒤에서부터 숨긴다
+      // (Behance, Instagram 은 푸터에도 있다). About 과 Project 는 항상 남는다.
+      var navItems = [].slice.call(document.querySelectorAll('.header-nav > *')), logoC = document.querySelector('.header-logo-center');
+      function fitNav(on) {
+        navItems.forEach(function (el) { el.style.display = ''; });
+        if (!on || !logoC) return;
+        var limit = logoC.getBoundingClientRect().left - 16;
+        for (var i = navItems.length - 1; i >= 2; i--) {
+          if (navItems[i].getBoundingClientRect().right > limit) navItems[i].style.display = 'none'; else break;
+        }
       }
       function settle() { if (typeof lenis !== 'undefined' && lenis.resize) lenis.resize(); window.dispatchEvent(new Event('scroll')); }
       function setW(w) {   // 패널이 다 나온 상태에서 폭만 바꾼다 (끌기, 창 크기 변경)
