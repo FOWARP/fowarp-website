@@ -1353,9 +1353,12 @@
       var KICK_MAX = 6;               // 드래그 관성 상한
       var DECAY    = 0.01;            // 얹은 속도가 1초에 이만큼으로 준다
       var A, B, Y0, BLUR;
+      // 모바일(767px 이하)은 15장이 다 올라가면 겹쳐 보여서 9장만 궤도에 올린다.
+      // 나머지는 맨 뒤(가장 작고 흐린 지점)에서 숨었다가 차례가 오면 그 자리에서 다시 나온다.
+      var K = N, S0 = 0.5, S1 = 0.55, O0 = 0.35, RATE = 1;
       var pos = 0, boost = 0, last = null, frame = 0, raf;
       var dragging = false, pending = false, startX = 0, lastX = 0, vel = 0, pid = null;
-      var looks = items.map(function () { return { o: '', f: '', z: '' }; });
+      var looks = items.map(function () { return { o: '', f: '', z: '', v: '' }; });
 
       function measure() {
         var cs = getComputedStyle(stage);
@@ -1363,13 +1366,17 @@
         B  = stage.clientHeight * (parseFloat(cs.getPropertyValue('--orbit-b')) || 0.2);
         Y0 = -stage.clientHeight * 0.02;
         BLUR = 6 * Math.min(stage.clientWidth, 2560) / 1920;   // 1920 기준 뒤쪽 최대 6px
+        if (window.matchMedia('(max-width: 767px)').matches) {
+          K = Math.min(9, N); S0 = 0.42; S1 = 0.63; O0 = 0.16; BLUR = 5;   // 뒤쪽을 더 작고 옅고 흐리게
+        } else { K = N; S0 = 0.5; S1 = 0.55; O0 = 0.35; }
+        RATE = K / N;   // 장수가 줄어도 도는 속도(각속도)는 그대로
       }
       function draw(t) {
         if (last === null) last = t;
         var dt = Math.min((t - last) / 1000, 0.05);
         last = t;
         if (!dragging) {
-          pos += (SPEED + boost) * dt;
+          pos += (SPEED + boost) * dt * RATE;
           boost *= Math.pow(DECAY, dt);
           if (Math.abs(boost) < 0.001) boost = 0;
         }
@@ -1377,13 +1384,18 @@
         var check = (frame++ % 12) === 0;
         for (var i = 0; i < N; i++) {
           var el = items[i], lk = looks[i];
-          var th = (pos + i) / N * 2 * Math.PI;
+          var u = (pos + i) % N; if (u > N / 2) u -= N;      // 앞(0)에서 몇 칸 떨어졌는지
+          var edge = K / 2 - Math.abs(u);                      // 0 이하면 궤도 밖(숨김)
+          var vis = edge > 0 ? '' : 'hidden';
+          if (vis !== lk.v) { el.style.visibility = vis; lk.v = vis; }
+          if (edge <= 0) continue;
+          var th = u / K * 2 * Math.PI;
           var co = Math.cos(th), dp = (co + 1) / 2;
-          var s = 0.5 + 0.55 * dp;
+          var s = S0 + S1 * dp;
           el.style.transform =
             'translate(-50%,-50%) translate3d(' + (A * Math.sin(th)).toFixed(1) + 'px,' +
             (B * co + Y0).toFixed(1) + 'px,0) scale(' + s.toFixed(4) + ')';
-          var o = (0.35 + 0.65 * dp).toFixed(3);
+          var o = ((O0 + (1 - O0) * dp) * (K < N ? Math.min(1, edge / 0.5) : 1)).toFixed(3);
           if (o !== lk.o) { el.style.opacity = o; lk.o = o; }
           var b = (1 - dp) * BLUR;
           var f = b > 0.05 ? 'blur(' + b.toFixed(2) + 'px)' : '';
@@ -1421,9 +1433,9 @@
           stage.classList.add('is-drag');
           if (stage.setPointerCapture) stage.setPointerCapture(pid);
         }
-        var du = dx / (2 * Math.PI * A / N);
+        var du = dx / (2 * Math.PI * A / K);
         pos += du;
-        vel = du * 60;
+        vel = du * 60 / RATE;
       });
       function endDrag() {
         pending = false;
